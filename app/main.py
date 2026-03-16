@@ -2,18 +2,12 @@ from fastapi import FastAPI
 from database import engine
 import models
 
+from app.routes import auth_routes
+from app.routes import task_routes
+
 app = FastAPI()
 
-models.Base.metadata.create_all(dind=engine)
+models.Base.metadata.create_all(bind=engine)
 
-from database import SessionLocal
-from fastapi import Depends
-from sqlalchemy.orm import Session
-
-def get_db():
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
+app.include_router(auth_routes.router)
+app.include_router(task_routes.router)
