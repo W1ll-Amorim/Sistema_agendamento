@@ -1,0 +1,36 @@
+### Python ###
+# Ambientes virtuais (o principal que você pediu)
+venv/
+.venv/
+env/
+venv.bak/
+ENV/
+
+# Arquivos compilados e cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Distribuição / Pacotes
+dist/
+build/
+*.egg-info/
+nosetests.xml
+coverage.xml
+htmlcov/
+.tower/
+
+### Variáveis de Ambiente (Segurança!) ###
+# Nunca suba senhas ou chaves de API
+.env
+.flaskenv
+
+### Editores de Código ###
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
