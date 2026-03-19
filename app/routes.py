@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import session
+from sqlalchemy.orm import Session
 from datetime import datetime
 
 from app.database import SessionLocal
@@ -14,12 +14,3 @@ def get_db():
         yield db
     finally:
         db.closed()
-
-@router.post("/tasks")
-
-def nova_tarefa(
-
-
-
-
-):
