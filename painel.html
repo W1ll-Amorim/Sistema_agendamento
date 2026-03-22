@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemfront - Meu Painel</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #12121c; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* BARRA LATERAL (MENU DO CLIENTE) */
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            margin-bottom: 40px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #f72585, #7209b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(247, 37, 133, 0.1);
+            color: white;
+            border-left: 4px solid #f72585;
+        }
+
+        .menu-item.sair {
+            margin-top: auto; 
+            border-left: none;
+        }
+        .menu-item.sair:hover {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4d4d;
+        }
+
+        /* ÁREA PRINCIPAL DO CLIENTE */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header-painel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header-painel h1 {
+            margin: 0;
+            font-weight: 600;
+        }
+        .header-painel p {
+            margin: 5px 0 0 0;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .btn-novo {
+            background: linear-gradient(90deg, #f72585, #7209b7);
+            border: none;
+            padding: 12px 25px;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-novo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+        }
+
+        /* GRID DOS AGENDAMENTOS DO CLIENTE */
+        .grid-agendamentos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .card-agendamento {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .card-agendamento:hover {
+            border-color: rgba(247, 37, 133, 0.5);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .servico-titulo {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            color: white;
+        }
+
+        .local-desc {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .status.confirmado { background: rgba(76, 175, 80, 0.15); color: #4caf50; }
+        .status.aguardando { background: rgba(249, 168, 38, 0.15); color: #f9a826; }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 15px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* MÁGICA DO POP-UP UNIVERSAL */
+        .modal-overlay {
+            display: none; 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1e1e2d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            width: 450px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            animation: deslizarCima 0.3s ease-out;
+        }
+
+        @keyframes deslizarCima {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 15px;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 20px; }
+        
+        .btn-fechar {
+            background: none; border: none; color: rgba(255, 255, 255, 0.5);
+            font-size: 24px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-fechar:hover { color: #f72585; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block; margin-bottom: 5px; font-size: 13px; color: rgba(255, 255, 255, 0.7);
+        }
+        .form-group input, .form-group textarea {
+            width: 95%; padding: 10px; background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px;
+            color: white; outline: none; font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: #f72585; }
+        
+        .linha-dupla { display: flex; gap: 15px; }
+        .linha-dupla .form-group { flex: 1; }
+
+        .btn-salvar {
+            width: 100%; background: #f72585; color: white; border: none;
+            padding: 12px; border-radius: 8px; font-weight: bold;
+            margin-top: 15px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-salvar:hover { background: #7209b7; }
+
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <h2>SISTEMFRONT</h2>
+        <div class="menu-item active">📅 Meus Agendamentos</div>
+        <div class="menu-item">⭐ Locais Favoritos</div>
+        <div class="menu-item">👤 Meu Perfil</div>
+        <div class="menu-item sair" onclick="window.location.href='index.html'">🚪 Sair</div>
+    </nav>
+
+    <main class="main-content">
+        <header class="header-painel">
+            <div>
+                <h1>Olá, Gabriel! 👋</h1>
+                <p>Acompanhe e gerencie todos os seus serviços em um só lugar.</p>
+            </div>
+            <button class="btn-novo" id="btnAbrirModal">+ FAZER AGENDAMENTO</button>
+        </header>
+
+        <div class="grid-agendamentos">
+            
+            <div class="card-agendamento">
+                <span class="status confirmado">Confirmado</span>
+                <h3 class="servico-titulo">Cabelo & Barba</h3>
+                <div class="local-desc">
+                    <strong>Local:</strong> Barbearia Vintage<br>
+                    <strong>Profissional:</strong> Marcos Silva
+                </div>
+                <div class="card-footer"><span>🗓️ Hoje</span><span>⏰ 18:30</span></div>
+            </div>
+
+            <div class="card-agendamento">
+                <span class="status aguardando">Aguardando Aprovação</span>
+                <h3 class="servico-titulo">Consulta Odontológica</h3>
+                <div class="local-desc">
+                    <strong>Local:</strong> Clínica Sorriso Perfeito<br>
+                    <strong>Profissional:</strong> Dra. Ana Costa
+                </div>
+                <div class="card-footer"><span>🗓️ 25/03/2026</span><span>⏰ 10:00</span></div>
+            </div>
+
+            <div class="card-agendamento">
+                <span class="status confirmado">Confirmado</span>
+                <h3 class="servico-titulo">Revisão 10.000km</h3>
+                <div class="local-desc">
+                    <strong>Local:</strong> Oficina Central<br>
+                    <strong>Veículo:</strong> Honda Civic (Placa ABC-1234)
+                </div>
+                <div class="card-footer"><span>🗓️ 28/03/2026</span><span>⏰ 08:00</span></div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="meuModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>O que vamos agendar hoje?</h2>
+                <button class="btn-fechar" id="btnFecharModal">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Qual é o serviço? (Ex: Limpeza de pele, Formatar PC)</label>
+                <input type="text" placeholder="Digite o serviço desejado...">
+            </div>
+            <div class="form-group">
+                <label>Local ou Profissional (Opcional)</label>
+                <input type="text" placeholder="Ex: Salão Beleza Pura / Dr. Carlos">
+            </div>
+            
+            <div class="linha-dupla">
+                <div class="form-group">
+                    <label>Data desejada</label>
+                    <input type="date">
+                </div>
+                <div class="form-group">
+                    <label>Horário</label>
+                    <input type="time">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Observações (Detalhes importantes para o profissional)</label>
+                <textarea rows="2" placeholder="Ex: Meu carro está fazendo um barulho estranho..."></textarea>
+            </div>
+
+            <button class="btn-salvar" id="btnSalvar">Confirmar Solicitação</button>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('meuModal');
+        const btnAbrir = document.getElementById('btnAbrirModal');
+        const btnFechar = document.getElementById('btnFecharModal');
+        const btnSalvar = document.getElementById('btnSalvar');
+
+        btnAbrir.onclick = function() { modal.style.display = 'flex'; }
+        btnFechar.onclick = function() { modal.style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == modal) modal.style.display = 'none'; }
+        
+        btnSalvar.onclick = function() {
+            alert('Sua solicitação foi enviada para o estabelecimento! Assim que confirmarem, avisaremos você.');
+            modal.style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
