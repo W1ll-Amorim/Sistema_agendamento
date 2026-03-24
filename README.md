@@ -13,6 +13,7 @@ Sistema Web para agendamento de tarefas, desenvolvido com foco em organização 
 
 ## ⚙️ Como rodar
 ## 📸 Screenshots
+## 🗄️ Banco de Dados
 ## 📌 Funcionalidades
 
 Cadastro e histórico de clientes:  
