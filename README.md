@@ -14,6 +14,8 @@ Sistema Web para agendamento de tarefas, desenvolvido com foco em organização 
 ## ⚙️ Como rodar
 ## 📸 Screenshots
 ## 🗄️ Banco de Dados
+![Diagrama](imagens/banco01.jpg)
+![Diagrama](imagens/banco02.jpg)
 ## 📌 Funcionalidades
 
 Cadastro e histórico de clientes:  
