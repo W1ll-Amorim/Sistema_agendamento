@@ -72,6 +72,7 @@ class OrdemServico(Base):
 class Agendamento(Base):
     __tablename__ = "agendamento"
 
+    job_id = Column(String)
     id_agendamento = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     data_agendamento = Column(DateTime, default=datetime.utcnow)
     status = Column(String, default="Agendado")
