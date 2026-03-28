@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.core.database import engine, Base
+from app.scheduler import Scheduler
 
 
 from app.routes import usuario_routes
