@@ -31,3 +31,11 @@ def agendar_ordem(data_execucao: datetime, id_ordem_servico: str):
         run_date=data_execucao,
         args=[id_ordem_servico]
     )
+
+def listar_jobs():
+    return scheduler.get_jobs()
+
+
+def cancelar_job (job_id: str):
+    scheduler.remove_job(job_id)
+
