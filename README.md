@@ -36,3 +36,5 @@ Organiza automaticamente quem aguarda uma vaga, preenchendo horários vagos rapi
 - [João victor de Oliveira Cavalcante](https://github.com/Victoroliveira07)
 - [Lohan da Silva](https://github.com/LilNavaHoods)
 - [Gabriel Ferreira da Silva](https://github.com/bielgb13)
+- [Allan Fernandes Rodrigues](https://github.com/allawder09-source)
+- [Davi Sena](https://github.com/davifsena-nv)
