@@ -60,11 +60,8 @@ Exibe horários disponíveis instantaneamente, evitando choques de agenda e dupl
 Gestão de Fila de Espera:  
 Organiza automaticamente quem aguarda uma vaga, preenchendo horários vagos rapidamente em caso de cancelamento.
 
-## 👨‍💻 Autor
+## 👨‍💻 Autores
 
-- [Wiliam de Amorim Barreto](https://github.com/W1ll-Amorim)
-- [João victor de Oliveira Cavalcante](https://github.com/Victoroliveira07)
-- [Lohan da Silva](https://github.com/LilNavaHoods)
-- [Gabriel Ferreira da Silva](https://github.com/bielgb13)
-- [Allan Fernandes Rodrigues](https://github.com/allawder09-source)
-- [Davi Sena](https://github.com/davifsena-nv)
+| [<img src="https://github.com/W1ll-Amorim.png" width=115><br><sub>Wiliam de Amorim</sub>](https://github.com/W1ll-Amorim) | [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) |
+| :---: | :---: | :---: |
+| [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) | [<img src="https://github.com/allawder09-source.png" width=115><br><sub>Allan Fernandes</sub>](https://github.com/allawder09-source) | [<img src="https://github.com/davifsena-nv.png" width=115><br><sub>Davi Sena</sub>](https://github.com/davifsena-nv) |
