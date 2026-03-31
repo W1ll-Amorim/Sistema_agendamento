@@ -37,7 +37,6 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 ---
 
 ## ⚙️ Como Rodar o Projeto
-## ⚙️ Como Rodar o Projeto
 
 1. **Clone o repositório:**
    ```bash
