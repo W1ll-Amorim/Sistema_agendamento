@@ -16,7 +16,7 @@ Sistema Web para agendamento de tarefas, desenvolvido com foco em organização 
 
 ##​ 🛠️ Fluxo de Desenvolvimento.  
 
-## Estratégia de Branching.  
+### Estratégia de Branching.  
 
   Este projeto utiliza o modelo de ramificação para garantir a estabilidade da versão principal:  
 
