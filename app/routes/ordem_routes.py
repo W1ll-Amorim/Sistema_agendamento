@@ -15,7 +15,7 @@ def criar_ordem(
     id_servico: str,
     db: Session = Depends(get_db)
 ):
-    ordem = OrdemServico(
+    nova_ordem = OrdemServico(
         titulo = titulo,
         descricao = descricao,
         id_usuario = id_usuario,
@@ -24,9 +24,9 @@ def criar_ordem(
         id_servico = id_servico
     )
 
-    db.add(ordem)
+    db.add(nova_ordem)
     db.commit()
-    db.refresh(ordem)
+    db.refresh(nova_ordem)
     
-    return(ordem)
+    return(nova_ordem)
     

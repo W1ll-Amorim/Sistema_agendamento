@@ -14,13 +14,13 @@ def criar_servico(
     db: Session = Depends(get_db)
 ):
 
-    servico = TipoServico(
+    novo_servico = TipoServico(
         nome=nome,
         descricao=descricao
     )
 
-    db.add(servico)
+    db.add(novo_servico)
     db.commit()
-    db.refresh(servico)
+    db.refresh(novo_servico)
 
     return {"msg": "Serviço criado"}

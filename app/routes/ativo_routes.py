@@ -6,20 +6,20 @@ from app.core import get_db
 from app.models.models import Ativo
 router = APIRouter(prefix="ativo", tags= ["Ativo"])
 
-router.post("/")
+@router.post("/")
 def criar_ativo(
         nome: str,
         tipo: str,
         id_usuario: str,
         db: Session = Depends(get_db)
 ):
-    ativo = Ativo (
+    novo_ativo = Ativo (
         nome = nome,
         tipo = tipo,
         id_usuario = id_usuario,
     )
-    db.add(ativo)
+    db.add(novo_ativo)
     db.commit()
-    db.refresh(ativo)
+    db.refresh(novo_ativo)
     
-    return(ativo)
+    return(novo_ativo)
