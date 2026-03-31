@@ -13,14 +13,14 @@ def criar_historico(
     id_usuario: str,
     db: Session = Depends(get_db)
 ):
-    historico = Historico(
+    novo_historico = Historico(
         id_ordem_servico = id_ordem_servico,
         acao = acao,
         id_usuario = id_usuario,
     )
 
-    db.add = (historico)
+    db.add = (novo_historico)
     db.commit()
-    db.refresh(historico)
+    db.refresh(novo_historico)
 
-    return historico
+    return novo_historico

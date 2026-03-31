@@ -19,17 +19,17 @@ def criar_agendamento(
     db: Session = Depends(get_db)
 ):
     
-    agendamento = Agendamento(
+    novo_agendamento = Agendamento(
         id_ordem_servico = id_ordem_servico,
         id_usuario = id_usuario,
         data_agendamento = data_agendamento
 
     )
 
-    db.add(agendamento)
+    db.add(novo_agendamento)
     db.commit()
-    db.refresh(agendamento)
+    db.refresh(novo_agendamento)
 
     agendar_ordem(data_agendamento, id_ordem_servico)
 
-    return agendamento
+    return novo_agendamento
