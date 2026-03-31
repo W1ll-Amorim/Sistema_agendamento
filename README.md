@@ -40,7 +40,7 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/W1ll-Amorim/Sistema_agendamento.git](https://github.com/W1ll-Amorim/Sistema_agendamento.git)
+ git clone https://github.com/W1ll-Amorim/Sistema_agendamento.git
 
 ## 📸 Screenshots
 ## 🗄️ Banco de Dados
