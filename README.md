@@ -46,19 +46,6 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 ## 🗄️ Banco de Dados
 ![Diagrama](imagens/banco01.jpg)
 ![Diagrama](imagens/banco02.jpg)
-## 📌 Funcionalidades
-
-Cadastro e histórico de clientes:  
-Armazena dados dos clientes e histórico de agendamentos para agilizar o atendimento e personalizar o serviço.  
-
-Planejamento de Tarefas:  
-Permite que clientes marquem, reagendem ou cancelem consultas/serviços a qualquer hora, sem depender da recepção.  
-
-Calendário e Disponibilidade em Tempo Real:  
-Exibe horários disponíveis instantaneamente, evitando choques de agenda e duplicidade de marcações.
-
-Gestão de Fila de Espera:  
-Organiza automaticamente quem aguarda uma vaga, preenchendo horários vagos rapidamente em caso de cancelamento.
 
 ## 👨‍💻 Autores
 
