@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=Montserrat:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <title>Dashboard - Stellare Kitchens</title>
+</head>
+
+<body class="board-body">
+
+    <main class="board">
+        <section id="board-section">
+            <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="column-header">
+                    <h3>Tarefas</h3>
+                    <button class="btn-add" onclick="adicionarNovaTarefa()">+</button>
+                </div>
+
+                <div class="card-list">
+                </div>
+            </div>
+
+            <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="column-header">
+                    <h3>Em Progresso</h3>
+                    
+                </div>
+                <div class="card-list">
+                </div>
+            </div>
+
+            <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="column-header">
+                    <h3>Concluído</h3>
+                    
+                </div>
+                <div class="card-list"></div>
+            </div>
+
+            <div class="column" id="coluna-lixeira" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="column-header">
+                    <h3>Lixeira</h3>
+                    
+                </div>
+                <div class="card-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // ==========================================
+        // CONFIGURAÇÕES DO SISTEMA
+        // ==========================================
+        // Simula o nome da pessoa que logou no sistema
+        const USUARIO_LOGADO = "Gabriel";
+
+        // ==========================================
+        // LÓGICA DE DRAG AND DROP
+        // ==========================================
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var card = document.getElementById(data);
+            var targetColumn = ev.target.closest('.column');
+            if (targetColumn) {
+                var cardList = targetColumn.querySelector('.card-list');
+                cardList.appendChild(card);
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DE TROCA DE CORES (Select Inicial)
+        // ==========================================
+        document.querySelectorAll('.tag-select').forEach(select => {
+            select.addEventListener('change', function () {
+                this.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
+                this.classList.add('urgency-' + this.value);
+            });
+        });
+
+        // ==========================================
+        // LÓGICA DE COMENTÁRIOS
+        // ==========================================
+        function abrirComentarios(botaoClicado) {
+            const card = botaoClicado.closest('.card');
+            const gaveta = card.querySelector('.comments-div');
+
+            // Alterna entre mostrar e esconder a gaveta
+            if (gaveta.style.display === 'none' || gaveta.style.display === '') {
+                gaveta.style.display = 'block';
+            } else {
+                gaveta.style.display = 'none';
+            }
+        }
+
+        function adicionarComentario(botaoClicado) {
+            const card = botaoClicado.closest('.card');
+            const input = card.querySelector('.comment-input');
+            const textoDoComentario = input.value.trim();
+
+            if (textoDoComentario !== "") {
+                const lista = card.querySelector('.comments-list');
+
+                // Cria o visual do novo comentário
+                const novoComentario = document.createElement('div');
+                novoComentario.className = 'comment-item';
+                novoComentario.innerHTML = `<span class="comment-author">${USUARIO_LOGADO}:</span> <span class="comment-text">${textoDoComentario}</span>`;
+
+                lista.appendChild(novoComentario);
+                input.value = ""; // Limpa a caixa de texto
+
+                // Atualiza o contador de comentários lá no ícone 💬
+                const contadorSpan = card.querySelector('.comment-count');
+                let contagem = parseInt(contadorSpan.innerText);
+                contadorSpan.innerText = contagem + 1;
+
+                // Rola a lista para baixo para ver o comentário novo
+                lista.scrollTop = lista.scrollHeight;
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DE BOTÕES: CONCLUIR E EXCLUIR
+        // ==========================================
+        function concluirTarefa(botaoClicado) {
+            const cardToMove = botaoClicado.closest('.card');
+            // Acha a penúltima coluna (Concluído, antes da lixeira)
+            const colunas = document.querySelectorAll('.column');
+            const colunaConcluido = colunas[2].querySelector('.card-list');
+            colunaConcluido.appendChild(cardToMove);
+        }
+
+        function excluirTarefa(botaoClicado) {
+            const cardToRemove = botaoClicado.closest('.card');
+            const colunaAtual = cardToRemove.closest('.column');
+            const colunaLixeira = document.getElementById('coluna-lixeira').querySelector('.card-list');
+
+            // Se o card JÁ ESTIVER na lixeira e clicar na lixeira de novo, apaga de verdade.
+            if (colunaAtual.id === 'coluna-lixeira') {
+                if (confirm("Tem certeza que deseja apagar esta tarefa DEFINITIVAMENTE?")) {
+                    cardToRemove.remove();
+                }
+            } else {
+                // Se não, apenas joga o card pra coluna "Lixeira"
+                colunaLixeira.appendChild(cardToRemove);
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DE ADICIONAR NOVA TAREFA
+        // ==========================================
+        let contadorCartoes = 3;
+
+        function adicionarNovaTarefa() {
+            const colunaTarefas = document.querySelector('.column:first-child .card-list');
+            const idNovoCartao = 'card-' + contadorCartoes;
+            contadorCartoes++;
+
+            const novoCartao = document.createElement('div');
+            novoCartao.className = 'card';
+            novoCartao.draggable = true;
+            novoCartao.id = idNovoCartao;
+            novoCartao.ondragstart = drag;
+
+            // Card novo completo com botões e gaveta de comentários!
+            novoCartao.innerHTML = `
+                <div class="card-content">
+                    <div class="tags">
+                        <select class="tag-select urgency-do">
+                            <option value="do" selected>Fazer (Urgente)</option>
+                            <option value="schedule">Agendar</option>
+                            <option value="delegate">Delegar</option>
+                            <option value="delete">Eliminar</option>
+                        </select>
+                    </div>
+                    <p class="card-title" contenteditable="true" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva a tarefa aqui...</p>
+                    <p id="card-title-maquina" class="card-title" contenteditable="true" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva o nome do ativo</p>
+                    <div class="card-footer">
+                        <span class="footer-item comment-btn" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">💬 <span class="comment-count">0</span></span>
+                        <div class="date-wrapper">
+                            <input type="date" class="date-input">
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn complete-btn" title="Concluir Tarefa" onclick="concluirTarefa(this)">✓</button>
+                            <button class="action-btn delete-task-btn" title="Mover para Lixeira" onclick="excluirTarefa(this)">🗑</button>
+                        </div>
+                    </div>
+                    
+
+                    <div class="comments-div">
+                        <div class="comments-list"></div>
+                        <div class="comment-input-area">
+                            <input type="text" class="comment-input" placeholder="Escreva um comentário...">
+                            <button class="comment-submit" onclick="adicionarComentario(this)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            colunaTarefas.appendChild(novoCartao);
+
+            const novoSelect = novoCartao.querySelector('.tag-select');
+            novoSelect.addEventListener('change', function () {
+                this.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
+                this.classList.add('urgency-' + this.value);
+            });
+
+            const tituloNovo = novoCartao.querySelector('.card-title');
+            tituloNovo.focus();
+        }
+    </script>
+</body>
+
+</html>

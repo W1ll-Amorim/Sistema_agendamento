@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Stellare Kitchens - Login</title>
+</head>
+<body>
+    <div class="login_box">
+        <h2> Stellare Kitchens </h2>
+        
+        <form action="telainicial.html">
+            <h3>Bem-vindo de volta!</h3>
+            
+            <input type="email" placeholder="E-mail" required><br>
+    <div class="senha-container">
+             <input type="password" id="senha" placeholder="Senha" required>
+             <span class="toggle-senha" onclick="toggleSenha()">👁️</span>
+    </div>
+            <div class="lembrar-container">
+                <input type="checkbox" id="remember">
+                <label for="remember">Lembrar senha</label>
+            </div>
+            
+            <input type="submit" value="Entrar">
+        </form>
+
+        <a href="cadastro.html" class="link-cadastro">
+            Não tem uma conta? <span>Cadastre-se</span>
+        </a>
+    </div>
+    
+    <script>
+    function toggleSenha() {
+        const input = document.getElementById("senha");
+
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    }
+    </script>
+
+</body>
+</html>
