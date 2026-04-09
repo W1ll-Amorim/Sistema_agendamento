@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 import uuid
 import enum
 from datetime import datetime
-from database import Base #o Base vem do seu arquivo de config database.db
+from app.core.database import Base #o Base vem do seu arquivo de config database.db
 
 class Prioridade(enum.Enum):
     baixo = "Baixo"

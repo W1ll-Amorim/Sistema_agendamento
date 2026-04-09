@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.core import get_db
+from app.core.database import get_db
 from app.schemas.usuario_schema import UsuarioCreate
 from app.models.models import UsuarioEmpresa
 
-router = APIRouter(prefix="usuario_empresa", tags=["Usuario_Empresa"])
+router = APIRouter(prefix="/usuario_empresa", tags=["Usuario_Empresa"])
 
 @router.post("/")
 def criar_usuario(

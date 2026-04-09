@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
-from app.core import get_db
+from app.core.database import get_db
 
 from app.models.models import Ativo
-router = APIRouter(prefix="ativo", tags= ["Ativo"])
+router = APIRouter(prefix="/ativo", tags= ["Ativo"])
 
 @router.post("/")
 def criar_ativo(

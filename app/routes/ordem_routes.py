@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
-from app.core import get_db
+from app.core.database import get_db
 
 from app.models.models import OrdemServico
-router = APIRouter(prefix="ordens", tags=["Ordens"])
+router = APIRouter(prefix="/ordens", tags=["Ordens"])
 
 @router.post ("/")
 def criar_ordem(
@@ -21,7 +21,6 @@ def criar_ordem(
         id_usuario = id_usuario,
         id_ativo = id_ativo,
         id_servico = id_servico,
-        id_servico = id_servico
     )
 
     db.add(nova_ordem)

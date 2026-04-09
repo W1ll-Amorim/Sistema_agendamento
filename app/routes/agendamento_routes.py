@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
-from app.core import get_db
+from app.core.database import get_db
 from datetime import datetime
 from app.models.models import Agendamento
-from app.scheduler import agendar_ordem
+from app.scheduler.Scheduler import agendar_ordem
 
 
 
