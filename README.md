@@ -44,8 +44,8 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 
 ## 📸 Screenshots
 ## 🗄️ Banco de Dados
-![Diagrama](imagens/banco01.jpg)
-![Diagrama](imagens/banco02.jpg)
+![Diagrama](static/img/banco01.jpg)
+![Diagrama](static/img/banco02.jpg)
 
 ## 👨‍💻 Autores
 
