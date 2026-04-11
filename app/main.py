@@ -1,9 +1,9 @@
 import os
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI, Request
 from app.core.database import engine, Base
-from app.scheduler import Scheduler
+from app.scheduler.Scheduler import start_scheduler
+from contextlib import asynccontextmanager
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -15,30 +15,43 @@ from app.routes import ordem_routes
 from app.routes import historico_routes
 from app.routes import servico_routes
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # STARTUP
+    start_scheduler()
+    print("Scheduler iniciado")
+
+    yield
+
+    # SHUTDOWN (opcional)
+    print("Encerrando aplicação")
+
+app = FastAPI(lifespan=lifespan)
+
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 Base.metadata.create_all(bind=engine)
 
-app.include_router(usuario_routes.router)
-app.include_router(agendamento_routes.router)
-app.include_router(servico_routes.router)
-app.include_router(ordem_routes.router)
-app.include_router(ativo_routes.router)
-app.include_router(historico_routes.router)
+app.include_router(usuario_routes.router, prefix="/usuarios")
+app.include_router(agendamento_routes.router, prefix="/agendamentos")
+app.include_router(servico_routes.router, prefix="/servicos")
+app.include_router(ordem_routes.router, prefix="/ordens")
+app.include_router(ativo_routes.router, prefix="/ativos")
+app.include_router(historico_routes.router, prefix="/historico")
 
-# Esta linha é a "mágica" que faz o CSS funcionar
+# Static + Templates
+app.mount("/static", StaticFiles(directory=os.path.join(base_dir, "static")), name="static")
+templates = Jinja2Templates(directory=os.path.join(base_dir,"templates"))
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
-
+# Views
 @app.get("/index")
-async def read_cadastro(request: Request):
+async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/cadastro")
-async def read_cadastro(request: Request):
+async def cadastro(request: Request):
     return templates.TemplateResponse("cadastro.html", {"request": request})
 
 @app.get("/telainicial")
-async def read_cadastro(request: Request):
+async def telainicial(request: Request):
     return templates.TemplateResponse("telainicial.html", {"request": request})

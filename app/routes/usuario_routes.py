@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.schemas.usuario_schema import UsuarioCreate
+from app.schemas.usuario_schema import UsuarioCreate, UsuarioResponse
 from app.models.models import UsuarioEmpresa
 
 router = APIRouter(prefix="/usuario_empresa", tags=["Usuario_Empresa"])
@@ -20,9 +20,15 @@ def criar_usuario(
     db.add(novo_usuario)
     db.commit()
     db.refresh(novo_usuario)
+
     return novo_usuario
-@router.get("/")
+
+@router.get("/", response_model=list[UsuarioResponse])
 def listar_usuarios(
     db: Session = Depends(get_db)
 ):
-    return db.query(UsuarioEmpresa).all()  
+    usuarios = db.query(UsuarioEmpresa).all()  
+
+    if not usuarios:
+        raise HTTPException(status_code=404, detail="Nenhum usuário encontrado")
+    return usuarios

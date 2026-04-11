@@ -4,14 +4,16 @@ from app.core.database import SessionLocal
 from app.models.models import Agendamento, OrdemServico
 
 scheduler = BackgroundScheduler()
-scheduler.start()
+def start_scheduler():
+    if not scheduler.running:
+        scheduler.start()
 
-def executar_odrdem(id_ordem_servico: str):
+def executar_ordem(id_ordem_servico: str):
 
     db = SessionLocal()
 
     try:
-        ordem = db.query(OrdemServico).filter_by(id_ordem_servico).first()
+        ordem = db.query(OrdemServico).filter_by(id_ordem_servico=id_ordem_servico).first()
 
         if ordem:
             ordem.status = "Em execução"
@@ -26,7 +28,7 @@ def executar_odrdem(id_ordem_servico: str):
 def agendar_ordem(data_execucao: datetime, id_ordem_servico: str):
 
     scheduler.add_job(
-        executar_odrdem,
+        executar_ordem,
         trigger="date",
         run_date=data_execucao,
         args=[id_ordem_servico]

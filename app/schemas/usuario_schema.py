@@ -4,13 +4,13 @@ class UsuarioCreate(BaseModel):
 
     nome: str
     email: EmailStr
-    senha: str
+    senha_hash: str
 
 
-class UsuárioResponde(BaseModel):
+class UsuarioResponse(BaseModel):
     id: int
     nome: str
-    email: str
+    email: EmailStr
 
     class Config:
-        orm_mode = True
+        from_attributes = True
