@@ -6,7 +6,7 @@ from app.models.models import UsuarioEmpresa
 
 router = APIRouter(prefix="/usuario_empresa", tags=["Usuario_Empresa"])
 
-@router.post("/")
+@router.post("/cadastro")
 def criar_usuario(
         usuario: UsuarioCreate,
 
