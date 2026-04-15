@@ -9,6 +9,7 @@ ENV/
 # Arquivos compilados e cache
 __pycache__/
 *.py[cod]
+*.pyc
 *$py.class
 .pytest_cache/
 .mypy_cache/
