@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse
 from app.core.database import engine, Base
 from app.scheduler.Scheduler import start_scheduler
 from contextlib import asynccontextmanager
@@ -14,6 +15,7 @@ from app.routes import ativo_routes
 from app.routes import ordem_routes
 from app.routes import historico_routes
 from app.routes import servico_routes
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,6 +47,10 @@ templates = Jinja2Templates(directory=os.path.join(base_dir,"templates"))
 
 # Views
 @app.get("/")
+def root():
+    return RedirectResponse(url="/index")
+
+@app.get("/index")
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 

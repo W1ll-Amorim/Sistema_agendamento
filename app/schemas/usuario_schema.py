@@ -5,7 +5,7 @@ class UsuarioCreate(BaseModel):
     nome: str
     email: EmailStr
     senha_hash: str
-
+    confirmar_senha: str
 
 class UsuarioResponse(BaseModel):
     id: int
@@ -14,3 +14,7 @@ class UsuarioResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class LoginSchema(BaseModel):
+    email: EmailStr
+    senha: str
