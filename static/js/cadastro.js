@@ -39,11 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
             });
 
-            const data = await response.json();
+                        let data;
+
+            try {
+                data = await response.json();
+            } catch {
+                data = { detail: "Erro interno do servidor (não retornou JSON)" };
+            }
 
             if (response.ok) {
                 alert("Cadastro realizado com sucesso!");
-
+                form.reset();
+                window.location.href = "/";
                 // 🔥 limpa o formulário
                 form.reset();
 
@@ -54,8 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         } catch (error) {
-            console.error(error);
             alert("Erro ao conectar com o servidor");
+            console.error("Erro real:", error);
         }
     });
 });
