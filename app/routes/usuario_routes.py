@@ -5,6 +5,7 @@ from app.schemas.usuario_schema import UsuarioCreate, UsuarioResponse
 from app.models.models import UsuarioEmpresa
 from app.core.security import hash_senha
 from app.core.security import verificar_senha, criar_token
+from app.schemas.usuario_schema import LoginSchema
 
 router = APIRouter(prefix="/usuario_empresa", tags=["Usuario_Empresa"])
 

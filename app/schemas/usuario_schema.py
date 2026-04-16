@@ -4,7 +4,7 @@ class UsuarioCreate(BaseModel):
 
     nome: str
     email: EmailStr
-    senha_hash: str
+    senha: str
     confirmar_senha: str
 
 class UsuarioResponse(BaseModel):
