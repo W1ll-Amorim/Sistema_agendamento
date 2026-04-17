@@ -15,7 +15,13 @@ Sistema Web para agendamento de tarefas, desenvolvido com foco em organização 
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
 
 ---
+## 🔐 Segurança
 
+![bcrypt](https://img.shields.io/badge/Hashing-bcrypt-blue)
+![JWT](https://img.shields.io/badge/Auth-JWT-black)
+![Security](https://img.shields.io/badge/Security-Best%20Practices-green)
+
+---
 ## 🛠️ Fluxo de Desenvolvimento
 
 ### Estratégia de Branching
