@@ -34,7 +34,7 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 Base.metadata.create_all(bind=engine)
 
-app.include_router(usuario_routes.router, prefix="/usuarios")
+app.include_router(usuario_routes.router)
 app.include_router(agendamento_routes.router, prefix="/agendamentos")
 app.include_router(servico_routes.router, prefix="/servicos")
 app.include_router(ordem_routes.router, prefix="/ordens")

@@ -16,10 +16,12 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # =========================
 
 def hash_senha(senha: str) -> str:
+    senha = senha[:72]
     return pwd_context.hash(senha)
 
 
 def verificar_senha(senha: str, senha_hash: str) -> bool:
+    senha = senha[:72]
     return pwd_context.verify(senha, senha_hash)
 
 
