@@ -26,6 +26,7 @@ main {
 }
 
 /* =========================================
+<<<<<<< HEAD
    HEADER DO DASHBOARD
    ========================================= */
 .app-header {
@@ -118,6 +119,8 @@ main {
 }
 
 /* =========================================
+=======
+>>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
    TELA DE LOGIN E CADASTRO
    ========================================= */
 .login_box {
@@ -293,6 +296,7 @@ form {
 .board-body {
     background-color: #0b0e14;
     padding: 20px;
+<<<<<<< HEAD
     padding-top: 80px;
     display: block !important;
     align-items: unset !important;
@@ -303,11 +307,34 @@ form {
 
 .board {
     display: flex !important;
+=======
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start; 
+    width: 100%;
+    position: relative;
+}
+
+/* Botão de Logout (ajustado) */
+
+
+.btn-logout:hover {
+    background-color: #ff6b81;
+    box-shadow: 0 4px 16px rgba(255,71,87,0.15);
+}
+
+.board {
+    display: flex;
+>>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
     gap: 20px;
     padding: 20px;
     overflow-x: auto;
     width: 100%;
+<<<<<<< HEAD
     align-items: flex-start;
+=======
+    align-items: flex-start; 
+>>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
 }
 
 
@@ -522,6 +549,11 @@ button.action-btn {
     opacity: 0.8;
 }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
 button.action-btn:hover {
     transform: scale(1.2) !important;
     opacity: 1;
@@ -672,3 +704,10 @@ button.comment-submit:hover {
     width: 100%;
   }
 }
+<<<<<<< HEAD
+=======
+
+#button-logout {
+    width: 300px;
+}
+>>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41

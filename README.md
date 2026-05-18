@@ -49,8 +49,11 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
    git clone https://github.com/W1ll-Amorim/Sistema_agendamento.git
 
 ## 📸 Screenshots
+<<<<<<< HEAD
 ![Diagrama](static/img/sistema_tela1.png)
 ![Diagrama](static/img/sistema_tela2.png)
+=======
+>>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
 ## 🗄️ Banco de Dados
 ![Diagrama](static/img/banco01.jpg)
 ![Diagrama](static/img/banco02.jpg)
