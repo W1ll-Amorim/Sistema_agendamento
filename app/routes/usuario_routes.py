@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Form
+from fastapi import APIRouter, Depends, HTTPException, Form, Header
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.usuario_schema import UsuarioCreate, UsuarioResponse
 from app.models.models import UsuarioEmpresa
 from app.core.security import hash_senha
-from app.core.security import verificar_senha, criar_token
+from app.core.security import verificar_senha, criar_token, verificar_token
 from app.schemas.usuario_schema import LoginSchema
+from typing import Optional
 
 router = APIRouter(prefix="/usuario_empresa", tags=["Usuario_Empresa"])
 
@@ -62,3 +63,25 @@ def login(dados: LoginSchema, db: Session = Depends(get_db)):
         "access_token": token,
         "token_type": "bearer"
     }
+
+@router.get("/me")
+def dados_usuario_logado(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token não fornecido")
+
+    token = authorization.split(" ")[1]
+    payload = verificar_token(token)
+
+    if not payload:
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+
+    email = payload.get("sub")
+    usuario = db.query(UsuarioEmpresa).filter(UsuarioEmpresa.email == email).first()
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    return {"nome": usuario.nome, "email": usuario.email}
