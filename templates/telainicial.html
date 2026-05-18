@@ -16,6 +16,15 @@
 
 <body class="board-body">
 
+    <header class="app-header">
+        <span class="app-header-logo">Stellare Kitchens</span>
+        <div class="app-header-user">
+            <span class="user-avatar" id="user-avatar">?</span>
+            <span class="user-name" id="user-name">Carregando...</span>
+            <button class="btn-logout" onclick="logout()">Sair</button>
+        </div>
+    </header>
+
     <main class="board">
         <section id="board-section">
             <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
@@ -57,10 +66,39 @@
 
     <script>
         // ==========================================
-        // CONFIGURAÇÕES DO SISTEMA
+        // AUTENTICAÇÃO E USUÁRIO LOGADO
         // ==========================================
-        // Simula o nome da pessoa que logou no sistema
-        const USUARIO_LOGADO = "Gabriel";
+        let USUARIO_LOGADO = "Usuário";
+
+        async function carregarUsuario() {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "/";
+                return;
+            }
+            try {
+                const resp = await fetch("/usuario_empresa/me", {
+                    headers: { "Authorization": "Bearer " + token }
+                });
+                if (!resp.ok) {
+                    logout();
+                    return;
+                }
+                const dados = await resp.json();
+                USUARIO_LOGADO = dados.nome;
+                document.getElementById("user-name").textContent = dados.nome;
+                document.getElementById("user-avatar").textContent = dados.nome.charAt(0).toUpperCase();
+            } catch (e) {
+                logout();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "/";
+        }
+
+        carregarUsuario();
 
         // ==========================================
         // LÓGICA DE DRAG AND DROP
