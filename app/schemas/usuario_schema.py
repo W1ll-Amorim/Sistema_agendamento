@@ -8,7 +8,7 @@ class UsuarioCreate(BaseModel):
     confirmar_senha: str
 
 class UsuarioResponse(BaseModel):
-    id: int
+    id_usuario: str
     nome: str
     email: EmailStr
 

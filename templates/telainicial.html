@@ -16,14 +16,33 @@
 
 <body class="board-body">
 
-    <header class="app-header">
-        <span class="app-header-logo">Stellare Kitchens</span>
-        <div class="app-header-user">
-            <span class="user-avatar" id="user-avatar">?</span>
-            <span class="user-name" id="user-name">Carregando...</span>
-            <button class="btn-logout" onclick="logout()">Sair</button>
-        </div>
-    </header>
+    <script>
+        // Verificação de autenticação ao carregar a página
+        (function() {
+            const token = localStorage.getItem('token');
+            const idUsuario = localStorage.getItem('id_usuario');
+            
+            if (!token || !idUsuario) {
+                // Usuário não está logado, redirecionar para login
+                window.location.href = '/index';
+            }
+        })();
+
+        // Detectar quando o usuário volta pelo botão "voltar" do navegador
+        window.addEventListener('pageshow', function(event) {
+            // Se a página veio do cache (usuário voltou no histórico)
+            if (event.persisted) {
+                const token = localStorage.getItem('token');
+                const idUsuario = localStorage.getItem('id_usuario');
+                
+                // Verificar se ainda está logado
+                if (!token || !idUsuario) {
+                    window.location.href = '/index';
+                }
+            }
+        });
+    </script>
+
 
     <main class="board">
         <section id="board-section">
@@ -62,43 +81,273 @@
                 <div class="card-list"></div>
             </div>
         </section>
+        <!-- Botão de Logout -->
+        <div style="width: 100px" id="button-logout">
+            <button class="btn-logout" onclick="fazerLogout()" title="Sair">Sair</button>
+        </div>
     </main>
 
     <script>
         // ==========================================
-        // AUTENTICAÇÃO E USUÁRIO LOGADO
+        // CONFIGURAÇÕES DO SISTEMA
         // ==========================================
-        let USUARIO_LOGADO = "Usuário";
+        // Simula o nome da pessoa que logou no sistema
+        const USUARIO_LOGADO = "Gabriel";
+        let contadorCartoes = 1;
+        const autoSaveTimers = {}; // Para controlar timers de salvamento automático por cartão
 
-        async function carregarUsuario() {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                window.location.href = "/";
+        // ==========================================
+        // SALVAMENTO AUTOMÁTICO COM TIMER
+        // ==========================================
+        function resetAutoSave(card) {
+            const cardId = card.id;
+            
+            // Limpa timer anterior se existir
+            if (autoSaveTimers[cardId]) {
+                clearTimeout(autoSaveTimers[cardId]);
+            }
+            
+            // Define novo timer para salvar após 1 minuto
+            autoSaveTimers[cardId] = setTimeout(() => {
+                salvarAgendamento(card, false);
+                delete autoSaveTimers[cardId]; // Remove o timer após executar
+            }, 60000); // 1 minuto = 60000 ms
+        }
+
+        // ==========================================
+        // LÓGICA DE CAMPOS EDITÁVEIS (PLACEHOLDER)
+        // ==========================================
+        function inicializarCamposEditaveis() {
+            document.querySelectorAll('[contenteditable="true"]').forEach(campo => {
+                // Adiciona atributo data-placeholder se não existir
+                if (!campo.hasAttribute('data-placeholder')) {
+                    campo.setAttribute('data-placeholder', campo.textContent.trim());
+                }
+
+                campo.addEventListener('focus', function() {
+                    const placeholder = this.getAttribute('data-placeholder');
+                    if (this.textContent.trim() === placeholder) {
+                        this.textContent = '';
+                    }
+                });
+
+                campo.addEventListener('blur', function() {
+                    const placeholder = this.getAttribute('data-placeholder');
+                    if (this.textContent.trim() === '') {
+                        this.textContent = placeholder;
+                    }
+                });
+            });
+        }
+
+        // Inicializa campos editáveis quando a página carrega
+        document.addEventListener('DOMContentLoaded', inicializarCamposEditaveis);
+
+        // ==========================================
+        // CARREGAR AGENDAMENTOS EXISTENTES
+        // ==========================================
+        async function carregarAgendamentos() {
+            console.log('Iniciando carregarAgendamentos');
+            const token = localStorage.getItem('token');
+            const idUsuario = localStorage.getItem('id_usuario');
+
+            console.log('Token e ID:', {token: !!token, idUsuario});
+
+            if (!token || !idUsuario) {
+                console.log('Usuário não autenticado, pulando carregamento');
                 return;
             }
+
             try {
-                const resp = await fetch("/usuario_empresa/me", {
-                    headers: { "Authorization": "Bearer " + token }
+                console.log('Fazendo fetch para carregar agendamentos');
+                const response = await fetch(`/agendamentos/?id_usuario=${idUsuario}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
-                if (!resp.ok) {
-                    logout();
-                    return;
+
+                console.log('Response status:', response.status);
+
+                // Tentar interpretar resposta como JSON, cair para text se falhar
+                let result;
+                try {
+                    result = await response.json();
+                } catch (parseErr) {
+                    const text = await response.text();
+                    result = { error: text || 'Resposta inválida do servidor' };
                 }
-                const dados = await resp.json();
-                USUARIO_LOGADO = dados.nome;
-                document.getElementById("user-name").textContent = dados.nome;
-                document.getElementById("user-avatar").textContent = dados.nome.charAt(0).toUpperCase();
-            } catch (e) {
-                logout();
+
+                console.log('Response result:', result);
+
+                if (response.ok && result.agendamentos) {
+                    console.log('Carregando', result.agendamentos.length, 'agendamentos');
+
+                    result.agendamentos.forEach(agendamento => {
+                        const card = criarCardDoAgendamento(agendamento);
+                        // Adicionar o cartão na coluna correta baseado no status
+                        const colunas = document.querySelectorAll('.column');
+                        let coluna = colunas[0]; // Padrão: Tarefas
+
+                        if (agendamento.status === 'Em Progresso') {
+                            coluna = colunas[1];
+                        } else if (agendamento.status === 'Concluído') {
+                            coluna = colunas[2];
+                        } else if (agendamento.status === 'Lixeira') {
+                            coluna = colunas[3];
+                        }
+
+                        const cardList = coluna.querySelector('.card-list');
+                        cardList.appendChild(card);
+                    });
+                    console.log('Agendamentos carregados com sucesso');
+                } else {
+                    // Se for 401, redirecionar para login
+                    if (response.status === 401) {
+                        console.warn('Não autenticado. Redirecionando para login.');
+                        window.location.href = '/index';
+                        return;
+                    }
+
+                    // Mostrar erro detalhado quando possível
+                    console.error('Erro ao carregar agendamentos:', result);
+                    if (result && result.error) {
+                        console.error('Detalhe do erro:', result.error);
+                    }
+                }
+            } catch (error) {
+                // Alguns erros vistos no console podem ser originados de extensões do navegador
+                // Se for um erro de conexão, exibimos mensagem clara
+                console.error('Erro de conexão ao carregar agendamentos:', error);
             }
         }
 
-        function logout() {
-            localStorage.removeItem("token");
-            window.location.href = "/";
+        function criarCardDoAgendamento(agendamento) {
+            const idNovoCartao = 'card-' + contadorCartoes;
+            contadorCartoes++;
+
+            const novoCartao = document.createElement('div');
+            novoCartao.className = 'card';
+            novoCartao.draggable = true;
+            novoCartao.id = idNovoCartao;
+            novoCartao.ondragstart = drag;
+            novoCartao.setAttribute('data-salvo', 'true');
+            novoCartao.setAttribute('data-id-agendamento', agendamento.id_agendamento);
+            // guarda id da ordem para comentários
+            if (agendamento.id_ordem_servico) {
+                novoCartao.setAttribute('data-id-ordem-servico', agendamento.id_ordem_servico);
+            }
+            novoCartao.setAttribute('data-status', agendamento.status);
+            novoCartao.style.borderLeft = '4px solid #00E5FF';
+
+            // Formatar data para input date
+            const dataFormatada = new Date(agendamento.data_agendamento).toISOString().split('T')[0];
+
+            novoCartao.innerHTML = `
+                <div class="card-content">
+                    <div class="tags">
+                        <select class="tag-select urgency-do">
+                            <option value="do" selected>Fazer (Urgente)</option>
+                            <option value="schedule">Agendar</option>
+                            <option value="delegate">Delegar</option>
+                            <option value="delete">Eliminar</option>
+                        </select>
+                    </div>
+                    <p class="card-title" contenteditable="true" data-placeholder="Escreva a tarefa aqui..." style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">${agendamento.titulo}</p>
+                    <p id="card-title-maquina" class="card-title" contenteditable="true" data-placeholder="Escreva o nome do ativo" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">${agendamento.nome_ativo}</p>
+                    <div class="card-footer">
+                        <span class="footer-item comment-btn" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">💬 <span class="comment-count">0</span></span>
+                        <div class="date-wrapper">
+                            <input type="date" class="date-input" value="${dataFormatada}">
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn save-btn" title="Salvar Agendamento" onclick="salvarAgendamento(this.closest('.card'), true)">💾</button>
+                            
+                            <button class="action-btn delete-task-btn" title="Mover para Lixeira" onclick="excluirTarefa(this)">🗑</button>
+                        </div>
+                    </div>
+
+                    <div class="comments-div">
+                        <div class="comments-list"></div>
+                        <div class="comment-input-area">
+                            <input type="text" class="comment-input" placeholder="Escreva um comentário...">
+                            <button class="comment-submit" onclick="adicionarComentario(this)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Adicionar event listeners e aplicar criticidade vinda do servidor
+            const novoSelect = novoCartao.querySelector('.tag-select');
+            // Se o agendamento trouxe criticidade, aplica no select
+            try {
+                const criticidadeServer = agendamento.criticidade;
+                if (criticidadeServer) {
+                    novoSelect.value = criticidadeServer;
+                }
+            } catch (e) {
+                // ignore se agendamento indefinido
+            }
+
+            // Aplica classe visual correta
+            novoSelect.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
+            novoSelect.classList.add('urgency-' + (novoSelect.value || 'do'));
+
+            novoSelect.addEventListener('change', function () {
+                this.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
+                this.classList.add('urgency-' + this.value);
+            });
+
+            // Carregar comentários do servidor para esta ordem
+            (async function carregarComentarios() {
+                const idOrdem = novoCartao.getAttribute('data-id-ordem-servico');
+                if (!idOrdem) return;
+                const token = localStorage.getItem('token');
+                try {
+                    const resp = await fetch(`/historico/?id_ordem_servico=${idOrdem}`, {
+                        method: 'GET',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await resp.json();
+                    if (resp.ok && data.historicos) {
+                        const lista = novoCartao.querySelector('.comments-list');
+                        lista.innerHTML = '';
+                        data.historicos.forEach(h => {
+                            const item = document.createElement('div');
+                            item.className = 'comment-item';
+                            item.innerHTML = `<span class="comment-author">${h.nome_usuario || 'Usuário'}:</span> <span class="comment-text">${h.observacao}</span>`;
+                            lista.appendChild(item);
+                        });
+                        const contadorSpan = novoCartao.querySelector('.comment-count');
+                        contadorSpan.innerText = data.historicos.length;
+                    }
+                } catch (e) {
+                    console.error('Erro ao carregar comentários:', e);
+                }
+            })();
+
+            // Inicializa os campos editáveis
+            inicializarCamposEditaveis();
+
+            // Adiciona event listener para resetar timer de salvamento automático
+            const camposEditaveis = novoCartao.querySelectorAll('[contenteditable="true"]');
+            const dateInput = novoCartao.querySelector('.date-input');
+
+            camposEditaveis.forEach(campo => {
+                campo.addEventListener('input', function() {
+                    resetAutoSave(novoCartao);
+                });
+            });
+
+            dateInput.addEventListener('change', function() {
+                resetAutoSave(novoCartao);
+            });
+
+            return novoCartao;
         }
 
-        carregarUsuario();
+        // Carregar agendamentos quando a página carrega
+        document.addEventListener('DOMContentLoaded', carregarAgendamentos);
 
         // ==========================================
         // LÓGICA DE DRAG AND DROP
@@ -113,6 +362,33 @@
             if (targetColumn) {
                 var cardList = targetColumn.querySelector('.card-list');
                 cardList.appendChild(card);
+                
+                // Determinar o novo status baseado na coluna
+                const colunas = document.querySelectorAll('.column');
+                let colunaIndex = -1;
+                colunas.forEach((col, index) => {
+                    if (col === targetColumn) {
+                        colunaIndex = index;
+                    }
+                });
+                
+                let novoStatus = 'Tarefas';
+                if (colunaIndex === 1) novoStatus = 'Em Progresso';
+                else if (colunaIndex === 2) novoStatus = 'Concluído';
+                else if (colunaIndex === 3) novoStatus = 'Lixeira';
+                
+                console.log(`=== DROP EVENT ===`);
+                console.log(`Coluna index: ${colunaIndex}`);
+                console.log(`Novo status: ${novoStatus}`);
+                console.log(`Data salvo: ${card.getAttribute('data-salvo')}`);
+                console.log(`ID Agendamento: ${card.getAttribute('data-id-agendamento')}`);
+                
+                // Atualizar status no back-end se o card for salvo
+                if (card.getAttribute('data-salvo') === 'true') {
+                    atualizarStatusAgendamento(card, novoStatus);
+                } else {
+                    console.log('Card não foi salvo ainda, apenas atualizando localmente');
+                }
             }
         }
 
@@ -149,21 +425,54 @@
             if (textoDoComentario !== "") {
                 const lista = card.querySelector('.comments-list');
 
-                // Cria o visual do novo comentário
+                // Cria o visual do novo comentário (otimista)
+                const nomeAutor = localStorage.getItem('nome_usuario') || USUARIO_LOGADO;
                 const novoComentario = document.createElement('div');
                 novoComentario.className = 'comment-item';
-                novoComentario.innerHTML = `<span class="comment-author">${USUARIO_LOGADO}:</span> <span class="comment-text">${textoDoComentario}</span>`;
+                novoComentario.innerHTML = `<span class="comment-author">${nomeAutor}:</span> <span class="comment-text">${textoDoComentario}</span>`;
 
                 lista.appendChild(novoComentario);
                 input.value = ""; // Limpa a caixa de texto
 
                 // Atualiza o contador de comentários lá no ícone 💬
                 const contadorSpan = card.querySelector('.comment-count');
-                let contagem = parseInt(contadorSpan.innerText);
+                let contagem = parseInt(contadorSpan.innerText || '0');
                 contadorSpan.innerText = contagem + 1;
 
                 // Rola a lista para baixo para ver o comentário novo
                 lista.scrollTop = lista.scrollHeight;
+
+                // Tenta enviar para o backend; se não houver ordem/id ainda, guarda como pendente
+                const idOrdem = card.getAttribute('data-id-ordem-servico');
+                const idUsuario = localStorage.getItem('id_usuario');
+                const token = localStorage.getItem('token');
+
+                if (idOrdem && idUsuario) {
+                    // enviar ao backend
+                    fetch('/historico/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: textoDoComentario, id_usuario: idUsuario })
+                    }).then(async resp => {
+                        const data = await resp.json().catch(() => ({}));
+                        if (!resp.ok) {
+                            console.error('Erro ao salvar comentário:', data);
+                            // opcional: indicar falha visualmente
+                        }
+                    }).catch(err => {
+                        console.error('Erro de conexão ao salvar comentário:', err);
+                    });
+                } else {
+                    // salvar em lista pendente no atributo do card
+                    const pendentes = card.getAttribute('data-pending-comments');
+                    let arr = [];
+                    try { arr = pendentes ? JSON.parse(pendentes) : []; } catch(e) { arr = []; }
+                    arr.push({ texto: textoDoComentario, autor: USUARIO_LOGADO });
+                    card.setAttribute('data-pending-comments', JSON.stringify(arr));
+                }
             }
         }
 
@@ -176,6 +485,11 @@
             const colunas = document.querySelectorAll('.column');
             const colunaConcluido = colunas[2].querySelector('.card-list');
             colunaConcluido.appendChild(cardToMove);
+            
+            // Atualiza o status no back-end se o card já foi salvo
+            if (cardToMove.getAttribute('data-salvo') === 'true') {
+                atualizarStatusAgendamento(cardToMove, 'Concluído');
+            }
         }
 
         function excluirTarefa(botaoClicado) {
@@ -186,18 +500,265 @@
             // Se o card JÁ ESTIVER na lixeira e clicar na lixeira de novo, apaga de verdade.
             if (colunaAtual.id === 'coluna-lixeira') {
                 if (confirm("Tem certeza que deseja apagar esta tarefa DEFINITIVAMENTE?")) {
+                    // Se o card estiver salvo, deletar do back-end
+                    if (cardToRemove.getAttribute('data-salvo') === 'true') {
+                        deletarAgendamentoBackend(cardToRemove);
+                    }
                     cardToRemove.remove();
                 }
             } else {
                 // Se não, apenas joga o card pra coluna "Lixeira"
                 colunaLixeira.appendChild(cardToRemove);
+                
+                // Atualiza o status no back-end se o card já foi salvo
+                if (cardToRemove.getAttribute('data-salvo') === 'true') {
+                    atualizarStatusAgendamento(cardToRemove, 'Lixeira');
+                }
             }
         }
 
         // ==========================================
-        // LÓGICA DE ADICIONAR NOVA TAREFA
+        // DELETAR AGENDAMENTO NO BACK-END
         // ==========================================
-        let contadorCartoes = 3;
+        async function deletarAgendamentoBackend(card) {
+            const idAgendamento = card.getAttribute('data-id-agendamento');
+            if (!idAgendamento) {
+                console.error('ID do agendamento não encontrado');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await fetch(`/agendamentos/${idAgendamento}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    console.log('Agendamento deletado do back-end:', result);
+                } else {
+                    console.error('Erro ao deletar agendamento:', result);
+                    alert('Erro ao deletar agendamento: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro de conexão ao deletar:', error);
+                alert('Erro ao conectar com o servidor para deletar');
+            }
+        }
+
+        // ==========================================
+        // ATUALIZAR STATUS DO AGENDAMENTO
+        // ==========================================
+        async function atualizarStatusAgendamento(card, novoStatus) {
+            const idAgendamento = card.getAttribute('data-id-agendamento');
+            if (!idAgendamento) {
+                console.error('ID do agendamento não encontrado');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            console.log(`=== Atualizando status ===`);
+            console.log(`ID: ${idAgendamento}`);
+            console.log(`Novo status: ${novoStatus}`);
+            console.log(`Token presente: ${!!token}`);
+
+            try {
+                const url = `/agendamentos/${idAgendamento}/status?novo_status=${encodeURIComponent(novoStatus)}`;
+                console.log(`URL: ${url}`);
+                
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log(`Status HTTP: ${response.status}`);
+                const result = await response.json();
+                console.log(`Resposta: `, result);
+
+                if (response.ok) {
+                    console.log('Status atualizado com sucesso no back-end');
+                    card.setAttribute('data-status', novoStatus);
+                } else {
+                    console.error('Erro ao atualizar status:', result);
+                    alert('Erro ao atualizar status: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro de conexão ao atualizar status:', error);
+                alert('Erro ao conectar com o servidor: ' + error.message);
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DE SALVAR AGENDAMENTO
+        // ==========================================
+        async function salvarAgendamento(card, showAlert = false) {
+            console.log('Iniciando salvarAgendamento');
+            const titulo = card.querySelector('.card-title').textContent.trim();
+            const nomeAtivo = card.querySelector('#card-title-maquina').textContent.trim();
+            const dateInput = card.querySelector('.date-input');
+            const dataAgendamento = dateInput.value;
+
+            console.log('Campos:', {titulo, nomeAtivo, dataAgendamento});
+
+            // Só salva se tiver título, nome do ativo e data
+            if (!titulo || titulo === 'Escreva a tarefa aqui...' ||
+                !nomeAtivo || nomeAtivo === 'Escreva o nome do ativo' ||
+                !dataAgendamento) {
+                if (showAlert) {
+                    alert('Por favor, preencha todos os campos: título, nome do ativo e data do agendamento.');
+                }
+                console.log('Aguardando preenchimento completo dos campos');
+                return;
+            }
+
+            // Pega dados do usuário logado
+            const token = localStorage.getItem('token');
+            const idUsuario = localStorage.getItem('id_usuario');
+
+            console.log('Token e ID:', {token: !!token, idUsuario});
+
+            if (!token || !idUsuario) {
+                alert('Usuário não autenticado. Faça login novamente.');
+                window.location.href = '/';
+                return;
+            }
+
+            // Determina o status atual do card (não sobrescrever progresso ao salvar)
+            function obterStatusDoCard(card) {
+                const statusAtributo = card.getAttribute('data-status');
+                if (statusAtributo) return statusAtributo;
+                // Se não tiver atributo, infere pela coluna
+                const colunas = document.querySelectorAll('.column');
+                let colunaIndex = -1;
+                colunas.forEach((col, index) => {
+                    if (col.contains(card)) colunaIndex = index;
+                });
+                if (colunaIndex === 1) return 'Em Progresso';
+                if (colunaIndex === 2) return 'Concluído';
+                if (colunaIndex === 3) return 'Lixeira';
+                return 'Tarefas';
+            }
+
+            // Prepara os dados para envio
+            const agendamentoData = {
+                titulo: titulo,
+                descricao: titulo, // Usando o título como descrição por enquanto
+                nome_ativo: nomeAtivo,
+                tipo_ativo: 'Equipamento', // Tipo padrão
+                nome_servico: 'Manutenção', // Serviço padrão
+                descricao_servico: 'Serviço de manutenção preventiva',
+                data_agendamento: new Date(dataAgendamento).toISOString(),
+                id_usuario: idUsuario,
+                status: obterStatusDoCard(card), // preserva status atual do card
+                criticidade: (card.querySelector('.tag-select') ? card.querySelector('.tag-select').value : 'do')
+            };
+
+            console.log('Dados para envio:', agendamentoData);
+
+            try {
+                // Decide se é criação (POST) ou atualização (PUT) dependendo do atributo data-id-agendamento
+                const idAgendamento = card.getAttribute('data-id-agendamento');
+                let url = '/agendamentos/';
+                let method = 'POST';
+
+                if (idAgendamento) {
+                    url = `/agendamentos/${idAgendamento}`;
+                    method = 'PUT';
+                }
+
+                console.log(`Fazendo fetch para ${url} com método ${method}`);
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(agendamentoData)
+                });
+
+                console.log('Response status:', response.status);
+                const result = await response.json();
+                console.log('Response result:', result);
+
+                if (response.ok) {
+                    console.log('Agendamento salvo/atualizado:', result);
+                    // Adiciona uma marca visual de que foi salvo
+                    card.style.borderLeft = '4px solid #00E5FF';
+                    card.setAttribute('data-salvo', 'true');
+
+                    // Se era criação, o servidor deve retornar o id; se atualização, manter o id existente
+                    if (result.agendamento && result.agendamento.id_agendamento) {
+                        card.setAttribute('data-id-agendamento', result.agendamento.id_agendamento);
+                    } else if (!idAgendamento && result.id) {
+                        // Rota simples pode retornar id
+                        card.setAttribute('data-id-agendamento', result.id);
+                    }
+
+                    // Atualiza id_ordem_servico local caso retornado (importante para comentários)
+                    if (result.agendamento && result.agendamento.id_ordem_servico) {
+                        card.setAttribute('data-id-ordem-servico', result.agendamento.id_ordem_servico);
+                    }
+
+                    // Atualiza status local caso o servidor tenha retornado
+                    if (result.agendamento && result.agendamento.status) {
+                        card.setAttribute('data-status', result.agendamento.status);
+                    }
+
+                    // Se existirem comentários pendentes, enviar ao backend agora que temos id_ordem_servico
+                    try {
+                        const pendentesRaw = card.getAttribute('data-pending-comments');
+                        const idOrdem = card.getAttribute('data-id-ordem-servico');
+                        const idUsuario = localStorage.getItem('id_usuario');
+                        const token = localStorage.getItem('token');
+                        if (pendentesRaw && idOrdem && idUsuario) {
+                            const pendentes = JSON.parse(pendentesRaw);
+                            for (const p of pendentes) {
+                                await fetch('/historico/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${token}`
+                                    },
+                                    body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: p.texto, id_usuario: idUsuario })
+                                });
+                            }
+                            // limpa pendentes
+                            card.removeAttribute('data-pending-comments');
+                        }
+                    } catch (e) {
+                        console.error('Erro ao enviar comentários pendentes:', e);
+                    }
+
+                    if (showAlert) alert('Agendamento salvo com sucesso!');
+                } else {
+                    console.error('Erro ao salvar/agendamento:', result);
+                    alert('Erro ao salvar agendamento: ' + (result.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+                alert('Erro ao conectar com o servidor: ' + error.message);
+            }
+        }
+
+        // ==========================================
+        // FUNÇÃO DE LOGOUT
+        // ==========================================
+        function fazerLogout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('id_usuario');
+                localStorage.removeItem('email');
+                window.location.href = '/index';
+            }
+        }
 
         function adicionarNovaTarefa() {
             const colunaTarefas = document.querySelector('.column:first-child .card-list');
@@ -221,19 +782,20 @@
                             <option value="delete">Eliminar</option>
                         </select>
                     </div>
-                    <p class="card-title" contenteditable="true" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva a tarefa aqui...</p>
-                    <p id="card-title-maquina" class="card-title" contenteditable="true" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva o nome do ativo</p>
+                    <p class="card-title" contenteditable="true" data-placeholder="Escreva a tarefa aqui..." style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva a tarefa aqui...</p>
+                    <p id="card-title-maquina" class="card-title" contenteditable="true" data-placeholder="Escreva o nome do ativo" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva o nome do ativo</p>
                     <div class="card-footer">
                         <span class="footer-item comment-btn" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">💬 <span class="comment-count">0</span></span>
                         <div class="date-wrapper">
                             <input type="date" class="date-input">
                         </div>
                         <div class="card-actions">
-                            <button class="action-btn complete-btn" title="Concluir Tarefa" onclick="concluirTarefa(this)">✓</button>
+                            <button class="action-btn save-btn" title="Salvar Agendamento" onclick="salvarAgendamento(this.closest('.card'), true)">💾</button>
+                            
                             <button class="action-btn delete-task-btn" title="Mover para Lixeira" onclick="excluirTarefa(this)">🗑</button>
                         </div>
                     </div>
-                    
+
 
                     <div class="comments-div">
                         <div class="comments-list"></div>
@@ -251,6 +813,23 @@
             novoSelect.addEventListener('change', function () {
                 this.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
                 this.classList.add('urgency-' + this.value);
+            });
+
+            // Inicializa os campos editáveis do novo cartão
+            inicializarCamposEditaveis();
+
+            // Adiciona event listener para resetar timer de salvamento automático
+            const camposEditaveis = novoCartao.querySelectorAll('[contenteditable="true"]');
+            const dateInput = novoCartao.querySelector('.date-input');
+
+            camposEditaveis.forEach(campo => {
+                campo.addEventListener('input', function() {
+                    resetAutoSave(novoCartao);
+                });
+            });
+
+            dateInput.addEventListener('change', function() {
+                resetAutoSave(novoCartao);
             });
 
             const tituloNovo = novoCartao.querySelector('.card-title');
