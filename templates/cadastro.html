@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <title>Cadastro</title>
+</head>
+<body>
+
+<div class="cadastro_box">
+    <h2>Stellare Kitchens</h2>
+
+    <form id="cadastroForm">
+    <h3>Cadastre-se para começar!</h3>
+
+    <input type="text" id="nome" name="nome" placeholder="Nome" required><br>
+
+    <input type="email" id="email" name="email" placeholder="E-mail" required><br>
+
+    <input type="password" id="senha" name="senha" placeholder="Senha" required><br>
+
+    <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme a Senha" required><br>
+
+    <div class="lembrar-container">
+        <input type="checkbox" id="remember">
+        <label for="remember">Lembrar senha</label>
+    </div>
+
+    <input type="submit" value="Cadastrar">
+</form>
+
+<!-- JS separado -->
+<script src="/static/js/cadastro.js"></script>
+
+    <a href="/">Já tem uma conta? Faça login</a>
+</div>
+
+</body>
+</html>
