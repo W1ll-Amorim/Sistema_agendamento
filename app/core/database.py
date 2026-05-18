@@ -1,9 +1,5 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
-<<<<<<< HEAD
-=======
-from sqlalchemy import text
->>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
 
 DATABASE_URL = "sqlite:///database/database.db"
 
@@ -18,9 +14,7 @@ def get_db():
     try:
         yield db
     finally:
-<<<<<<< HEAD
-        db.close()
-=======
+
         db.close()
 
 
@@ -44,4 +38,3 @@ def ensure_migrations():
                 print("Falha ao aplicar migration 'prioridade':", e)
     finally:
         conn.close()
->>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41

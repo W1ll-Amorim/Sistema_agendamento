@@ -33,12 +33,10 @@ app = FastAPI(lifespan=lifespan)
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 Base.metadata.create_all(bind=engine)
-<<<<<<< HEAD
-=======
+
 # Aplicar migrações simples (ex: adicionar colunas não existentes)
 from app.core.database import ensure_migrations
 ensure_migrations()
->>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
 
 app.include_router(usuario_routes.router)
 app.include_router(agendamento_routes.router, prefix="/agendamentos")

@@ -1,40 +1,3 @@
-<<<<<<< HEAD
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app.core.database import SessionLocal
-from app.core.database import get_db
-from datetime import datetime
-from app.models.models import Agendamento
-from app.scheduler.Scheduler import agendar_ordem
-
-
-
-router = APIRouter(prefix= "/agendamentos", tags=["Agendamentos"])
-
-@router.post("/")
-def criar_agendamento(
-    id_ordem_servico: str,
-    id_usuario: str,
-    data_agendamento: datetime,
-
-    db: Session = Depends(get_db)
-):
-    
-    novo_agendamento = Agendamento(
-        id_ordem_servico = id_ordem_servico,
-        id_usuario = id_usuario,
-        data_agendamento = data_agendamento
-
-    )
-
-    db.add(novo_agendamento)
-    db.commit()
-    db.refresh(novo_agendamento)
-
-    agendar_ordem(data_agendamento, id_ordem_servico)
-
-    return novo_agendamento
-=======
 from fastapi import APIRouter, Depends, HTTPException, Query, Header
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
@@ -43,8 +6,7 @@ from app.core.security import verificar_token
 from datetime import datetime
 from app.models.models import Agendamento, OrdemServico, Ativo, TipoServico
 from app.schemas.agendamento_schema import AgendamentoCreate, AgendamentoResponse
-# from app.scheduler.Scheduler import agendar_ordem
-
+from app.scheduler.Scheduler import agendar_ordem # Reativado do GitHub
 
 # Dependência para verificar autenticação
 def get_current_user(authorization: str = Header(None)):
@@ -132,6 +94,9 @@ def criar_agendamento_completo(
         db.commit()
         db.refresh(novo_agendamento)
 
+        # Aciona o disparador de tarefas automáticas vindo do GitHub
+        agendar_ordem(agendamento_data.data_agendamento, nova_ordem.id_ordem_servico)
+
         return {
             "message": "Agendamento criado com sucesso",
             "agendamento": {
@@ -154,12 +119,11 @@ def criar_agendamento_simples(
     current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Criar apenas um agendamento simples para teste
         from datetime import datetime
         data = datetime.fromisoformat(data_agendamento.replace('Z', '+00:00'))
         
         novo_agendamento = Agendamento(
-            id_ordem_servico="teste-ordem",  # ID fake para teste
+            id_ordem_servico="teste-ordem",
             id_usuario=id_usuario,
             data_agendamento=data
         )
@@ -176,20 +140,17 @@ def criar_agendamento_simples(
 @router.get("/")
 def listar_agendamentos(id_usuario: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
-        # Buscar agendamentos do usuário
         agendamentos = db.query(Agendamento).filter(
             Agendamento.id_usuario == id_usuario
         ).all()
 
         resultado = []
         for agendamento in agendamentos:
-            # Buscar a ordem de serviço relacionada
             ordem = db.query(OrdemServico).filter(
                 OrdemServico.id_ordem_servico == agendamento.id_ordem_servico
             ).first()
             
             if ordem:
-                # Buscar ativo e serviço
                 ativo = db.query(Ativo).filter(Ativo.id_ativo == ordem.id_ativo).first()
                 servico = db.query(TipoServico).filter(TipoServico.id_servico == ordem.id_servico).first()
                 
@@ -213,7 +174,6 @@ def listar_agendamentos(id_usuario: str, db: Session = Depends(get_db), current_
 @router.delete("/{id_agendamento}")
 def deletar_agendamento(id_agendamento: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
-        # Buscar o agendamento
         agendamento = db.query(Agendamento).filter(
             Agendamento.id_agendamento == id_agendamento
         ).first()
@@ -221,7 +181,6 @@ def deletar_agendamento(id_agendamento: str, db: Session = Depends(get_db), curr
         if not agendamento:
             return {"error": "Agendamento não encontrado"}
 
-        # Deletar o agendamento (isso pode cascadear ou não, dependendo das constraints)
         db.delete(agendamento)
         db.commit()
 
@@ -233,7 +192,6 @@ def deletar_agendamento(id_agendamento: str, db: Session = Depends(get_db), curr
 @router.put("/{id_agendamento}/status")
 def atualizar_status_agendamento(id_agendamento: str, novo_status: str = Query(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
-        # Buscar o agendamento
         agendamento = db.query(Agendamento).filter(
             Agendamento.id_agendamento == id_agendamento
         ).first()
@@ -241,12 +199,11 @@ def atualizar_status_agendamento(id_agendamento: str, novo_status: str = Query(.
         if not agendamento:
             return {"error": "Agendamento não encontrado"}
 
-        # Atualizar o status
         agendamento.status = novo_status
         db.commit()
         db.refresh(agendamento)
 
-        return {"message": "Status atualizado com sucesso", "novo_status": novo_status}
+        return {"message": "Status updated com sucesso", "novo_status": novo_status}
     except Exception as e:
         db.rollback()
         return {"error": f"Erro ao atualizar status: {str(e)}"}
@@ -260,7 +217,6 @@ def atualizar_agendamento(
     current_user: dict = Depends(get_current_user)
 ):
     try:
-        # Buscar o agendamento existente
         agendamento = db.query(Agendamento).filter(
             Agendamento.id_agendamento == id_agendamento
         ).first()
@@ -268,7 +224,6 @@ def atualizar_agendamento(
         if not agendamento:
             return {"error": "Agendamento não encontrado"}
 
-        # Atualizar/garantir existência do serviço
         servico = db.query(TipoServico).filter(
             TipoServico.nome == agendamento_data.nome_servico
         ).first()
@@ -282,7 +237,6 @@ def atualizar_agendamento(
             db.commit()
             db.refresh(servico)
 
-        # Atualizar/garantir existência do ativo
         ativo = db.query(Ativo).filter(
             Ativo.nome == agendamento_data.nome_ativo,
             Ativo.id_usuario == agendamento_data.id_usuario
@@ -298,7 +252,6 @@ def atualizar_agendamento(
             db.commit()
             db.refresh(ativo)
 
-        # Atualizar a ordem de serviço relacionada (se existir)
         ordem = db.query(OrdemServico).filter(
             OrdemServico.id_ordem_servico == agendamento.id_ordem_servico
         ).first()
@@ -312,7 +265,6 @@ def atualizar_agendamento(
             db.commit()
             db.refresh(ordem)
         else:
-            # Se não há ordem vinculada, criar uma nova
             nova_ordem = OrdemServico(
                 titulo=agendamento_data.titulo,
                 descricao=agendamento_data.descricao,
@@ -326,7 +278,6 @@ def atualizar_agendamento(
             db.refresh(nova_ordem)
             agendamento.id_ordem_servico = nova_ordem.id_ordem_servico
 
-        # Atualizar campos do agendamento
         agendamento.data_agendamento = agendamento_data.data_agendamento
         if agendamento_data.status:
             agendamento.status = agendamento_data.status
@@ -346,4 +297,3 @@ def atualizar_agendamento(
     except Exception as e:
         db.rollback()
         return {"error": f"Erro ao atualizar agendamento: {str(e)}"}
->>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41

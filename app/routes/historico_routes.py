@@ -1,31 +1,3 @@
-<<<<<<< HEAD
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app.core.database import SessionLocal
-from app.core.database import get_db
-
-from app.models.models import Historico
-router = APIRouter(prefix = "/historico", tags=["Historico"])
-
-@router.post("/")
-def criar_historico(
-    id_ordem_servico: str,
-    acao: str,
-    id_usuario: str,
-    db: Session = Depends(get_db)
-):
-    novo_historico = Historico(
-        id_ordem_servico = id_ordem_servico,
-        acao = acao,
-        id_usuario = id_usuario,
-    )
-
-    db.add = (novo_historico)
-    db.commit()
-    db.refresh(novo_historico)
-
-    return novo_historico
-=======
 from fastapi import APIRouter, Depends, HTTPException, Query, Header, Body
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -35,7 +7,7 @@ from app.models.models import Historico, UsuarioEmpresa
 router = APIRouter(prefix="", tags=["Historico"])
 
 
-# Dependência simples para checar token (opcional)
+# Dependência para checar token (vinda da sua máquina local)
 def get_current_user(authorization: str = Header(None)):
     if not authorization:
         return None
@@ -102,4 +74,3 @@ def listar_historico(id_ordem_servico: str = Query(...), db: Session = Depends(g
         return {"historicos": resultado}
     except Exception as e:
         return {"error": str(e)}
->>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41

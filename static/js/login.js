@@ -25,15 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (response.ok) {
-                // 🔐 salva o token (IMPORTANTE)
+                // 🔐 Salva as credenciais e estados essenciais no navegador
                 localStorage.setItem("token", data.access_token);
-<<<<<<< HEAD
-=======
                 localStorage.setItem("id_usuario", data.id_usuario);
                 localStorage.setItem("nome_usuario", data.nome);
->>>>>>> 90eb54dae882f9d8128c746bb2e118408616fb41
 
-                // redireciona
+                // Redireciona para o painel principal
                 window.location.href = "/telainicial";
             } else {
                 alert(data.detail || "Erro no login");
