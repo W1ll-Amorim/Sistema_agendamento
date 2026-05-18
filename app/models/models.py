@@ -56,6 +56,7 @@ class OrdemServico(Base):
     descricao = Column(String)
     data_criacao = Column(DateTime, default=datetime.utcnow)
     status = Column(String)
+    prioridade = Column(String)
     
     # Chaves Estrangeiras (Onde os dados se conectam)
     id_usuario = Column(String, ForeignKey("usuario_empresa.id_usuario"), nullable=False)

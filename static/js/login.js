@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                 // 🔐 salva o token (IMPORTANTE)
                 localStorage.setItem("token", data.access_token);
+                localStorage.setItem("id_usuario", data.id_usuario);
+                localStorage.setItem("nome_usuario", data.nome);
 
                 // redireciona
                 window.location.href = "/telainicial";

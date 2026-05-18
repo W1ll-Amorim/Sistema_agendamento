@@ -7,6 +7,13 @@
     <title>Stellare Kitchens - Login</title>
 </head>
 <body>
+    <script>
+        // Limpar sessão ao acessar a página de login (usuário voltou pelo botão do navegador)
+        localStorage.removeItem('token');
+        localStorage.removeItem('id_usuario');
+        localStorage.removeItem('email');
+    </script>
+
     <div class="login_box">
         <h2> Stellare Kitchens </h2>
         
