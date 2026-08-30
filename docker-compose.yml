@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  sistema_agendamento:
+    build: .
+    container_name: agendamento_v2
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mapeia a pasta database local para não perder os dados do SQLite
+      - ./database:/app/database
+      # Útil para desenvolvimento: atualiza o código em tempo real sem precisar de rebuild
+      - .:/app
+    environment:
+      - TZ=America/Sao_Paulo # Mantém o fuso horário correto
+    restart: unless-stopped
