@@ -13,6 +13,11 @@ Sistema Web para agendamento de tarefas, desenvolvido com foco em organização 
 ![APScheduler](https://img.shields.io/badge/APScheduler-blue?style=for-the-badge&logo=python&logoColor=white)
 ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Alembic](https://img.shields.io/badge/Alembic-4584b6?style=for-the-badge&logo=python&logoColor=white)
+
 
 ---
 ## 🔐 Segurança
