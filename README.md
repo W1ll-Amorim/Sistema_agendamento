@@ -1,4 +1,4 @@
-# 📅 Sistema_agendamento 
+# 📅 Sistema de agendamento 
 
 Sistema Web para agendamento de tarefas, desenvolvido com foco em organização e produtividade.
 
@@ -58,8 +58,22 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 ![Diagrama](static/img/banco01.jpg)
 ![Diagrama](static/img/banco02.jpg)
 
-## 👨‍💻 Autores
+## 👨‍💻 Autor Principal
+<div align="center">
+  <a href="https://github.com/W1ll-Amorim">
+    <img src="https://github.com/W1ll-Amorim.png" width="150" alt="Foto de Wiliam de Amorim"/><br>
+    <sub><b>Wiliam de Amorim</b></sub>
+  </a>
+  <br>
+  <i>Desenvolvedor Principal</i>
+  <br><br>
+  <a href="https://linkedin.com/in/SEU_LINKEDIN_AQUI" target="_blank">
+    <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+  </a>
+</div>
+---
+## 🤝 Contribuidores
 
-| [<img src="https://github.com/W1ll-Amorim.png" width=115><br><sub>Wiliam de Amorim</sub>](https://github.com/W1ll-Amorim) | [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) |
-| :---: | :---: | :---: |
-| [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) | [<img src="https://github.com/allawder09-source.png" width=115><br><sub>Allan Fernandes</sub>](https://github.com/allawder09-source) | [<img src="https://github.com/davifsena-nv.png" width=115><br><sub>Davi Sena</sub>](https://github.com/davifsena-nv) |
+| [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) | [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) |
+| :--- | :--- | :--- |
+| [<img src="https://github.com/allawder09-source.png" width=115><br><sub>Allan Fernandes</sub>](https://github.com/allawder09-source) | [<img src="https://github.com/davifsena-nv.png" width=115><br><sub>Davi Sena</sub>](https://github.com/davifsena-nv) | <sub>*Vaga aberta para sua PR!*</sub> |
