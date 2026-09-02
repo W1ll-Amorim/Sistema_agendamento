@@ -67,7 +67,7 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
   <br>
   <i>Desenvolvedor Principal</i>
   <br><br>
-  <a href="https://linkedin.com/in/SEU_LINKEDIN_AQUI" target="_blank">
+  <a href="https://www.linkedin.com/in/wiliam-amorim-241784331" target="_blank">
     <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
   </a>
 </div>
