@@ -1,5 +1,10 @@
 import sys
 import os
+
+# 1. NOVO: Importa e carrega o arquivo .env
+from dotenv import load_dotenv
+load_dotenv()
+
 #Adiciona a raiz do projeto no path do Python
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from app.core.database import Base
@@ -15,6 +20,12 @@ from alembic import context
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# 2. NOVO: Puxa a URL segura do .env e injeta no Alembic, 
+# ignorando qualquer senha falsa que esteja no alembic.ini
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
