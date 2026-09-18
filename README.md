@@ -83,4 +83,4 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 
 | [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) | [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) |
 | :--- | :--- | :--- |
-| [<img src="https://github.com/allawder09-source.png" width=115><br><sub>Allan Fernandes</sub>](https://github.com/allawder09-source) | [<img src="https://github.com/davifsena-nv.png" width=115><br><sub>Davi Sena</sub>](https://github.com/davifsena-nv) | <sub>*Vaga aberta para sua PR!*</sub> |
+| <sub>*Vaga aberta para sua PR!*</sub> |
