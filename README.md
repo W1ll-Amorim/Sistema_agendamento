@@ -2,6 +2,25 @@
 
 Sistema Web para agendamento de tarefas, desenvolvido com foco em organização e produtividade.
 
+## 🗺️ Roadmap do Projeto
+
+### ✅ Concluído (Base do Sistema)
+- [x] Modelagem inicial do banco de dados (SQLite).
+- [x] CRUD completo de usuário e agendamentos.
+- [x] Funcionalidade de verificação de horários disponíveis.
+
+### 🚧 Em Andamento (Transição para v2.0)
+- [x] Migração de banco de dados para PostgreSQL para maior escalabilidade.
+- [x] Implementação do Alembic para versionamento do esquema de dados.
+- [x] Conteinerização da aplicação (Docker e Docker Compose).
+- [ ] Refatoração completa da Interface de Usuário (UI).
+- [ ] Ajustes de responsividade para dispositivos móveis.
+
+### 📅 Planejado (Futuro)
+- [ ] Integração com sistema de notificações (Email/WhatsApp).
+- [ ] Dashboard analítico com métricas de agendamento para administradores.
+- [ ] Configuração de pipeline de CI/CD via GitHub Actions.
+
 ## 🚀 Tecnologias Utilizadas
 
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
