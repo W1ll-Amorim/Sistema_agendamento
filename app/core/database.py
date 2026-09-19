@@ -1,6 +1,7 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
+
 
 # 1. Puxa a URL do PostgreSQL injetada pelo Docker via .env
 # Se não encontrar a variável no ambiente, usa o SQLite como fallback local

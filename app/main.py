@@ -2,9 +2,14 @@ import os
 
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
-from app.core.database import engine, Base
-from app.scheduler.Scheduler import start_scheduler
 from contextlib import asynccontextmanager
+
+# Importações de Banco de Dados e Segurança
+from app.core.database import engine, Base, SessionLocal, ensure_migrations
+from app.models.models import UsuarioEmpresa, TipoUsuario
+from app.core.security import obter_hash_senha # Certifique-se de ter essa função criada no seu core/security.py
+
+from app.scheduler.Scheduler import start_scheduler
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -16,12 +21,42 @@ from app.routes import ordem_routes
 from app.routes import historico_routes
 from app.routes import servico_routes
 
+# ---------------------------------------------------------
+# FUNÇÃO DE CRIAÇÃO DO ADMIN PADRÃO
+# ---------------------------------------------------------
+def inicializar_admin_padrao():
+    db = SessionLocal()
+    try:
+        # Verifica se já existe algum administrador no sistema
+        admin_existente = db.query(UsuarioEmpresa).filter(UsuarioEmpresa.tipo == TipoUsuario.admin).first()
+        
+        if not admin_existente:
+            # Cria o Admin Master
+            novo_admin = UsuarioEmpresa(
+                nome="Administrador Padrão",
+                email="admin@sistema.com",
+                senha_hash=obter_hash_senha("admin123"), # Altere a senha se necessário
+                tipo=TipoUsuario.admin
+            )
+            db.add(novo_admin)
+            db.commit()
+            print("Conta de Administrador padrão criada com sucesso (admin@sistema.com / admin123).")
+    except Exception as e:
+        print(f"Erro ao inicializar admin padrão: {e}")
+    finally:
+        db.close()
 
+# ---------------------------------------------------------
+# LIFESPAN (EVENTOS DE INICIALIZAÇÃO)
+# ---------------------------------------------------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # STARTUP
     start_scheduler()
     print("Scheduler iniciado")
+    
+    # Inicializa o admin logo depois que o banco (e tabelas) estiver pronto
+    inicializar_admin_padrao()
 
     yield
 
@@ -32,13 +67,14 @@ app = FastAPI(lifespan=lifespan)
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Cria as tabelas do banco de dados caso não existam
 Base.metadata.create_all(bind=engine)
 
 # Aplicar migrações simples (ex: adicionar colunas não existentes)
-from app.core.database import ensure_migrations
 ensure_migrations()
 
-app.include_router(usuario_routes.router)
+# Inclusão de Rotas
+app.include_router(usuario_routes.router) # Se for usar a rota de listagem/promoção de usuários, certifique-se de adicioná-la aqui ou dentro deste arquivo
 app.include_router(agendamento_routes.router, prefix="/agendamentos")
 app.include_router(servico_routes.router, prefix="/servicos")
 app.include_router(ordem_routes.router, prefix="/ordens")
