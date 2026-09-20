@@ -13,6 +13,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_HOST=db
       - DB_PORT=5432
+
     restart: unless-stopped
     depends_on:
       - db
@@ -21,6 +22,7 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
+
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}

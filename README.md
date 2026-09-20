@@ -1,6 +1,25 @@
-# 📅 Sistema_agendamento 
+# 📅 Sistema de agendamento 
 
 Sistema Web para agendamento de tarefas, desenvolvido com foco em organização e produtividade.
+
+## 🗺️ Roadmap do Projeto
+
+### ✅ Concluído (Base do Sistema)
+- [x] Modelagem inicial do banco de dados (SQLite).
+- [x] CRUD completo de usuário e agendamentos.
+- [x] Funcionalidade de verificação de horários disponíveis.
+
+### 🚧 Em Andamento (Transição para v2.0)
+- [x] Migração de banco de dados para PostgreSQL para maior escalabilidade.
+- [x] Implementação do Alembic para versionamento do esquema de dados.
+- [x] Conteinerização da aplicação (Docker e Docker Compose).
+- [ ] Refatoração completa da Interface de Usuário (UI).
+- [ ] Ajustes de responsividade para dispositivos móveis.
+
+### 📅 Planejado (Futuro)
+- [ ] Integração com sistema de notificações (Email/WhatsApp).
+- [ ] Dashboard analítico com métricas de agendamento para administradores.
+- [ ] Configuração de pipeline de CI/CD via GitHub Actions.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -13,6 +32,11 @@ Sistema Web para agendamento de tarefas, desenvolvido com foco em organização 
 ![APScheduler](https://img.shields.io/badge/APScheduler-blue?style=for-the-badge&logo=python&logoColor=white)
 ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Alembic](https://img.shields.io/badge/Alembic-4584b6?style=for-the-badge&logo=python&logoColor=white)
+
 
 ---
 ## 🔐 Segurança
@@ -58,8 +82,24 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 ![Diagrama](static/img/banco01.jpg)
 ![Diagrama](static/img/banco02.jpg)
 
-## 👨‍💻 Autores
+## 👨‍💻 Autor Principal
+<div align="center">
+  <a href="https://github.com/W1ll-Amorim">
+    <img src="https://github.com/W1ll-Amorim.png" width="150" alt="Foto de Wiliam de Amorim"/><br>
+    <sub><b>Wiliam de Amorim</b></sub>
+  </a>
+  <br>
+  <i>Desenvolvedor Principal</i>
+  <br><br>
+  <a href="https://www.linkedin.com/in/wiliam-amorim-241784331" target="_blank">
+    <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+  </a>
+</div>
 
-| [<img src="https://github.com/W1ll-Amorim.png" width=115><br><sub>Wiliam de Amorim</sub>](https://github.com/W1ll-Amorim) | [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) |
-| :---: | :---: | :---: |
-| [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) | [<img src="https://github.com/allawder09-source.png" width=115><br><sub>Allan Fernandes</sub>](https://github.com/allawder09-source) | [<img src="https://github.com/davifsena-nv.png" width=115><br><sub>Davi Sena</sub>](https://github.com/davifsena-nv) |
+---
+
+## 🤝 Contribuidores
+
+| [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) | [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) |
+| :--- | :--- | :--- |
+| <sub>*Vaga aberta para sua PR!*</sub> |
