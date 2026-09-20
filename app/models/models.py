@@ -10,6 +10,11 @@ class Prioridade(enum.Enum):
     medio = "Médio"
     alto  = "Alto"
 
+class TipoUsuario(enum.Enum):
+    comum = "comum"
+    tecnico = "tecnico" 
+    admin = "admin"  
+
 class UsuarioEmpresa(Base):
     __tablename__ = "usuario_empresa"
 
@@ -18,9 +23,11 @@ class UsuarioEmpresa(Base):
     email = Column(String, unique=True)
     senha_hash = Column(String, nullable=False)
     telefone = Column(String)
-    endereco = Column(String)
 
-    # Relacionamentos
+    # Nova coluna para controle de acesso (default para usuário padrão)
+    tipo = Column(Enum(TipoUsuario), default=TipoUsuario.COMUM, nullable=False)
+
+    # Relacionamentos preservados
     agendamentos = relationship("Agendamento", back_populates="usuario")
     ordens_servico = relationship("OrdemServico", back_populates="usuario")
     ativos = relationship("Ativo", back_populates="usuario")
