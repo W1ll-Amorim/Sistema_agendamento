@@ -2,6 +2,25 @@
 
 Sistema Web para agendamento de tarefas, desenvolvido com foco em organização e produtividade.
 
+## 🗺️ Roadmap do Projeto
+
+### ✅ Concluído (Base do Sistema)
+- [x] Modelagem inicial do banco de dados (SQLite).
+- [x] CRUD completo de usuário e agendamentos.
+- [x] Funcionalidade de verificação de horários disponíveis.
+
+### 🚧 Em Andamento (Transição para v2.0)
+- [x] Migração de banco de dados para PostgreSQL para maior escalabilidade.
+- [x] Implementação do Alembic para versionamento do esquema de dados.
+- [x] Conteinerização da aplicação (Docker e Docker Compose).
+- [ ] Refatoração completa da Interface de Usuário (UI).
+- [ ] Ajustes de responsividade para dispositivos móveis.
+
+### 📅 Planejado (Futuro)
+- [ ] Integração com sistema de notificações (Email/WhatsApp).
+- [ ] Dashboard analítico com métricas de agendamento para administradores.
+- [ ] Configuração de pipeline de CI/CD via GitHub Actions.
+
 ## 🚀 Tecnologias Utilizadas
 
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
@@ -76,9 +95,11 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
     <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
   </a>
 </div>
+
 ---
+
 ## 🤝 Contribuidores
 
 | [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) | [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) |
 | :--- | :--- | :--- |
-| [<img src="https://github.com/allawder09-source.png" width=115><br><sub>Allan Fernandes</sub>](https://github.com/allawder09-source) | [<img src="https://github.com/davifsena-nv.png" width=115><br><sub>Davi Sena</sub>](https://github.com/davifsena-nv) | <sub>*Vaga aberta para sua PR!*</sub> |
+| <sub>*Vaga aberta para sua PR!*</sub> |
