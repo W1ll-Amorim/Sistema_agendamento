@@ -11,9 +11,9 @@ class Prioridade(enum.Enum):
     alto  = "Alto"
 
 class TipoUsuario(enum.Enum):
-    comum = "comum"
-    tecnico = "tecnico" 
-    admin = "admin"  
+    COMUM = "comum"
+    TECNICO = "tecnico" 
+    ADMIN = "admin"  
 
 class UsuarioEmpresa(Base):
     __tablename__ = "usuario_empresa"
