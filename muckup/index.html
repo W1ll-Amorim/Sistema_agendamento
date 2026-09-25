@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Agenda & Pedidos - Mockup</title>
+    <!-- Google Fonts: Orbitron, Exo 2, Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           PALETA DE CORES ORIGINAIS DO PROJETO (CYBER DARK / NEON CYAN & PURPLE)
+           ========================================================================== */
+        :root {
+            --bg-main: #0b0e14;
+            --bg-card: #161922;
+            --bg-surface: #1f2330;
+            --bg-input: #11141c;
+            --bg-dark-popover: #0d1017;
+            --text-main: #ffffff;
+            --text-muted: #9ba1b0;
+            --text-light: #656c7d;
+            --border-color: rgba(0, 229, 255, 0.18);
+            --border-hover: #00E5FF;
+            --border-dark: #00E5FF;
+            
+            /* Acentos Neon */
+            --color-primary: #00E5FF;
+            --color-secondary: #7000FF;
+            --grad-primary: linear-gradient(90deg, #00E5FF 0%, #7000FF 100%);
+            --grad-glow: 0px 4px 15px rgba(0, 229, 255, 0.35);
+            
+            /* Prioridades & Status */
+            --color-critical: #FF4757;
+            --color-high: #FFA502;
+            --color-medium: #00E5FF;
+            --color-low: #747D8C;
+            --color-success: #2ED573;
+            
+            /* Tipografia */
+            --font-sans: 'Inter', sans-serif;
+            --font-brand: 'Orbitron', sans-serif;
+            --font-tech: 'Exo 2', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            /* Efeitos */
+            --shadow-popover: 0 12px 30px rgba(0, 0, 0, 0.7);
+            --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.8);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 24px 28px 60px;
+            flex: 1;
+        }
+
+        /* ==========================================================================
+           TOP BAR NAVIGATION
+           ========================================================================== */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 36px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+
+        .brand-logo-box {
+            width: 22px;
+            height: 22px;
+            background: var(--grad-primary);
+            display: inline-block;
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .brand-label {
+            font-family: var(--font-brand);
+            font-size: 13px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-surface);
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 18px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--grad-primary);
+            color: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+        }
+
+        /* ==========================================================================
+           VIEW: VISÃO GERAL (HERO / DASHBOARD)
+           ========================================================================== */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+            font-family: var(--font-sans);
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1.2px;
+            margin-bottom: 16px;
+        }
+
+        .hero-title .highlight {
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 680px;
+            line-height: 1.6;
+            margin-bottom: 48px;
+        }
+
+        /* Metrics Bar */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            padding: 32px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 48px;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -1.5px;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .metric-value.critical {
+            color: var(--color-critical);
+        }
+
+        .metric-label {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Overview Action Cards */
+        .overview-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .action-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 32px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+        }
+
+        .action-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.15);
+        }
+
+        .card-num {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .card-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .card-title-row h3 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .card-arrow {
+            font-size: 20px;
+            transition: transform 0.2s ease;
+            color: var(--color-primary);
+        }
+
+        .action-card:hover .card-arrow {
+            transform: translateX(6px);
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           VIEW: AGENDA DE TAREFAS
+           ========================================================================== */
+        .module-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .module-meta {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .module-title {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+        }
+
+        .btn-primary-action {
+            background: var(--grad-primary);
+            color: #FFFFFF;
+            font-family: var(--font-tech);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--grad-glow);
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5);
+            filter: brightness(1.1);
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 36px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .filter-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .custom-select-trigger {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .custom-select-trigger:hover,
+        .custom-select-trigger.active {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .select-chevron {
+            font-size: 10px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .custom-select-trigger.active .select-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Dark Floating Popover Menu */
+        .dark-popover-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background-color: var(--bg-dark-popover);
+            color: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: var(--shadow-popover);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 220px;
+        }
+
+        .dark-popover-menu.open {
+            display: flex;
+            animation: popIn 0.15s ease-out;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .popover-item {
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.15s;
+        }
+
+        .popover-item:hover {
+            background-color: rgba(0, 229, 255, 0.12);
+            color: var(--color-primary);
+        }
+
+        .popover-item.selected {
+            background-color: rgba(0, 229, 255, 0.2);
+            color: #FFFFFF;
+        }
+
+        .item-check {
+            width: 14px;
+            font-size: 12px;
+            color: var(--color-primary);
+            display: inline-block;
+        }
+
+        /* Timeline / Grouped Days */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+        }
+
+        .day-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .day-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .day-title {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .day-count {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--color-primary);
+        }
+
+        /* Task Cards */
+        .task-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left-width: 5px;
+            border-radius: 8px;
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 20px;
+            align-items: flex-start;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .task-card.border-critical { border-left-color: var(--color-critical); }
+        .task-card.border-high { border-left-color: var(--color-high); }
+        .task-card.border-medium { border-left-color: var(--color-medium); }
+        .task-card.border-low { border-left-color: var(--color-low); }
+
+        .task-time {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding-top: 2px;
+        }
+
+        .task-body {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-title {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            line-height: 1.3;
+        }
+
+        .task-badges-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 2px 0 4px;
+        }
+
+        .badge-priority {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-priority.critical {
+            background-color: rgba(255, 71, 87, 0.15);
+            color: var(--color-critical);
+            border: 1px solid rgba(255, 71, 87, 0.4);
+        }
+
+        .badge-priority.high {
+            background-color: rgba(255, 165, 2, 0.15);
+            color: var(--color-high);
+            border: 1px solid rgba(255, 165, 2, 0.4);
+        }
+
+        .badge-priority.medium {
+            background-color: rgba(0, 229, 255, 0.15);
+            color: var(--color-medium);
+            border: 1px solid rgba(0, 229, 255, 0.4);
+        }
+
+        .badge-priority.low {
+            background-color: rgba(116, 125, 140, 0.15);
+            color: var(--color-low);
+            border: 1px solid rgba(116, 125, 140, 0.4);
+        }
+
+        .badge-status {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background-color: var(--bg-surface);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .badge-status.concluida {
+            background-color: rgba(46, 213, 115, 0.15);
+            color: var(--color-success);
+            border-color: rgba(46, 213, 115, 0.4);
+        }
+
+        .task-metadata-list {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .metadata-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-icon {
+            color: var(--color-primary);
+            font-size: 12px;
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon-action {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-icon-action:hover {
+            color: #FFFFFF;
+            border-color: var(--color-primary);
+            background-color: rgba(0, 229, 255, 0.15);
+        }
+
+        /* ==========================================================================
+           VIEW: PEDIDOS (PASTAS & ITENS)
+           ========================================================================== */
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .folder-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 28px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 190px;
+        }
+
+        .folder-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.15);
+        }
+
+        .folder-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .folder-icon-box {
+            font-size: 28px;
+        }
+
+        .folder-code {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-primary);
+            background-color: var(--bg-surface);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .folder-client-name {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 6px;
+        }
+
+        .folder-card-bottom {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+            margin-top: 16px;
+        }
+
+        .folder-items-count {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .folder-total-val {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        /* Order Details Screen (Inside Folder) */
+        .back-nav-btn {
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            padding: 4px 0;
+            transition: var(--transition);
+        }
+
+        .back-nav-btn:hover {
+            text-decoration: underline;
+        }
+
+        .order-detail-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .order-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-outline {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: var(--font-tech);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            background-color: rgba(0, 229, 255, 0.1);
+        }
+
+        /* Products Table */
+        .table-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .products-table th {
+            background-color: var(--bg-surface);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .products-table td {
+            padding: 16px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .products-table tbody tr:hover {
+            background-color: rgba(0, 229, 255, 0.04);
+        }
+
+        .td-product {
+            font-weight: 600;
+        }
+
+        .td-mono {
+            font-family: var(--font-mono);
+        }
+
+        .table-total-row td {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            background-color: var(--bg-surface);
+            border-bottom: none;
+            color: #FFFFFF;
+        }
+
+        /* ==========================================================================
+           MODALS
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(11, 14, 20, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: modalFade 0.2s ease-out;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-window {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: var(--shadow-modal);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-surface);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close-btn:hover {
+            color: #FFFFFF;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: #FFFFFF;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Toast feedback notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--color-primary);
+            color: #FFFFFF;
+            padding: 14px 22px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3);
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* ==========================================================================
+           RESPONSIVIDADE (MOBILE & TABLETS)
+           ========================================================================== */
+        @media (max-width: 860px) {
+            .hero-title { font-size: 38px; }
+            .overview-cards-grid { grid-template-columns: 1fr; }
+            .filter-panel { grid-template-columns: 1fr; }
+            .folders-grid { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: 1fr; gap: 24px; }
+            .task-card { grid-template-columns: 1fr; }
+            .task-time { font-size: 13px; }
+            .top-nav { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .nav-right-actions { width: 100%; justify-content: space-between; }
+            .order-detail-header { flex-direction: column; align-items: flex-start; }
+            .form-row-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- ==========================================================================
+             TOP NAVIGATION BAR
+             ========================================================================== -->
+        <header class="top-nav">
+            <div class="brand-section" onclick="switchView('overview')">
+                <span class="brand-logo-box"></span>
+                <span class="brand-label">Operações / Núcleo</span>
+            </div>
+
+            <div class="nav-right-actions">
+                <nav class="nav-tabs">
+                    <button class="tab-btn active" id="tab-overview" onclick="switchView('overview')">Início</button>
+                    <button class="tab-btn" id="tab-agenda" onclick="switchView('agenda')">Agenda</button>
+                    <button class="tab-btn" id="tab-pedidos" onclick="switchView('pedidos')">Pedidos</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- ==========================================================================
+             VIEW: VISÃO GERAL (HERO & MÉTRICAS)
+             ========================================================================== -->
+        <main id="view-overview" class="view-section active">
+            <h1 class="hero-title">Central de<br>Agenda & <span class="highlight">Pedidos</span></h1>
+            
+            <p class="hero-description">
+                Planeje tarefas por prioridade e urgência, atribua setor e profissional, e mantenha os pedidos dos clientes organizados em pastas — com exportação direta para Excel.
+            </p>
+
+            <!-- Métricas Principais -->
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <span class="metric-value" id="count-tarefas">04</span>
+                    <span class="metric-label">Tarefas Abertas</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value critical" id="count-criticas">00</span>
+                    <span class="metric-label">Críticas</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value" id="count-pedidos">07</span>
+                    <span class="metric-label">Itens em Pedidos</span>
+                </div>
+            </div>
+
+            <!-- Cartões de Ação Rápida -->
+            <div class="overview-cards-grid">
+                <div class="action-card" onclick="switchView('agenda')">
+                    <span class="card-num">01</span>
+                    <div>
+                        <div class="card-title-row">
+                            <h3>Agenda de tarefas</h3>
+                            <span class="card-arrow">→</span>
+                        </div>
+                        <p class="card-subtitle">Cronograma, prioridades, urgência, setor e profissional responsável.</p>
+                    </div>
+                </div>
+
+                <div class="action-card" onclick="switchView('pedidos')">
+                    <span class="card-num">02</span>
+                    <div>
+                        <div class="card-title-row">
+                            <h3>Pedidos</h3>
+                            <span class="card-arrow">→</span>
+                        </div>
+                        <p class="card-subtitle">Pastas por cliente com os produtos comprados. Importe e exporte via Excel.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ==========================================================================
+             VIEW: MÓDULO 01 - AGENDA DE TAREFAS
+             ========================================================================== -->
+        <main id="view-agenda" class="view-section">
+            <div class="module-header">
+                <div>
+                    <div class="module-meta">Módulo 01</div>
+                    <h2 class="module-title">Agenda</h2>
+                </div>
+                <button class="btn-primary-action" onclick="openModal('modal-tarefa')">
+                    <span>+</span> Nova tarefa
+                </button>
+            </div>
+
+            <!-- Painel de Filtros com Menus Dark Popover -->
+            <div class="filter-panel">
+                <!-- Filtro Setor -->
+                <div class="filter-group">
+                    <label class="filter-label">Setor</label>
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-setor', this)">
+                        <span id="selected-setor-text">Todos os setores</span>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <div class="dark-popover-menu" id="popover-setor">
+                        <div class="popover-item selected" onclick="selectFilter('setor', 'all', 'Todos os setores')"><span class="item-check">✓</span> Todos os setores</div>
+                        <div class="popover-item" onclick="selectFilter('setor', 'Produção', 'Produção')"><span class="item-check"></span> Produção</div>
+                        <div class="popover-item" onclick="selectFilter('setor', 'Logística', 'Logística')"><span class="item-check"></span> Logística</div>
+                        <div class="popover-item" onclick="selectFilter('setor', 'Comercial', 'Comercial')"><span class="item-check"></span> Comercial</div>
+                        <div class="popover-item" onclick="selectFilter('setor', 'Manutenção', 'Manutenção')"><span class="item-check"></span> Manutenção</div>
+                        <div class="popover-item" onclick="selectFilter('setor', 'Financeiro', 'Financeiro')"><span class="item-check"></span> Financeiro</div>
+                        <div class="popover-item" onclick="selectFilter('setor', 'Qualidade', 'Qualidade')"><span class="item-check"></span> Qualidade</div>
+                    </div>
+                </div>
+
+                <!-- Filtro Status -->
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-status', this)">
+                        <span id="selected-status-text">Todos</span>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <div class="dark-popover-menu" id="popover-status">
+                        <div class="popover-item selected" onclick="selectFilter('status', 'all', 'Todos')"><span class="item-check">✓</span> Todos</div>
+                        <div class="popover-item" onclick="selectFilter('status', 'Pendente', 'Pendente')"><span class="item-check"></span> Pendente</div>
+                        <div class="popover-item" onclick="selectFilter('status', 'Em andamento', 'Em andamento')"><span class="item-check"></span> Em andamento</div>
+                        <div class="popover-item" onclick="selectFilter('status', 'Concluída', 'Concluída')"><span class="item-check"></span> Concluída</div>
+                    </div>
+                </div>
+
+                <!-- Filtro Prioridade -->
+                <div class="filter-group">
+                    <label class="filter-label">Prioridade</label>
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-prioridade', this)">
+                        <span id="selected-prioridade-text">Todas</span>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <div class="dark-popover-menu" id="popover-prioridade">
+                        <div class="popover-item selected" onclick="selectFilter('prioridade', 'all', 'Todas')"><span class="item-check">✓</span> Todas</div>
+                        <div class="popover-item" onclick="selectFilter('prioridade', 'Crítica', 'Crítica')"><span class="item-check"></span> Crítica</div>
+                        <div class="popover-item" onclick="selectFilter('prioridade', 'Alta', 'Alta')"><span class="item-check"></span> Alta</div>
+                        <div class="popover-item" onclick="selectFilter('prioridade', 'Média', 'Média')"><span class="item-check"></span> Média</div>
+                        <div class="popover-item" onclick="selectFilter('prioridade', 'Baixa', 'Baixa')"><span class="item-check"></span> Baixa</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline de Tarefas Agrupadas por Dia -->
+            <div class="timeline-container" id="timeline-task-list">
+                <!-- Renderizado dinamicamente via JS -->
+            </div>
+        </main>
+
+        <!-- ==========================================================================
+             VIEW: MÓDULO 02 - PEDIDOS (LISTA DE PASTAS)
+             ========================================================================== -->
+        <main id="view-pedidos" class="view-section">
+            <div class="module-header">
+                <div>
+                    <div class="module-meta">Módulo 02</div>
+                    <h2 class="module-title">Pedidos</h2>
+                </div>
+                <button class="btn-primary-action" onclick="openModal('modal-pasta')">
+                    <span>+</span> Nova pasta
+                </button>
+            </div>
+
+            <div class="folders-grid" id="folders-container">
+                <!-- Pastas renderizadas dinamicamente via JS -->
+            </div>
+        </main>
+
+        <!-- ==========================================================================
+             VIEW: DETALHES DA PASTA / PEDIDO (GRADE DE PRODUTOS)
+             ========================================================================== -->
+        <main id="view-pasta-detalhe" class="view-section">
+            <button class="back-nav-btn" onclick="switchView('pedidos')">
+                ← Voltar às pastas
+            </button>
+
+            <div class="order-detail-header">
+                <div>
+                    <div class="module-meta" id="folder-detail-code">PASTA • PED-2041</div>
+                    <h2 class="module-title" id="folder-detail-name">Grupo Meridiano</h2>
+                </div>
+
+                <div class="order-actions-row">
+                    <button class="btn-outline" onclick="simularImportarExcel()">
+                        ↑ Importar Excel
+                    </button>
+                    <button class="btn-outline" onclick="simularExportarExcel()">
+                        ↓ Exportar Excel
+                    </button>
+                    <button class="btn-primary-action" onclick="openModal('modal-produto')">
+                        + Produto
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabela de Produtos da Pasta -->
+            <div class="table-card">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Qtd</th>
+                            <th>Vlr. Unit.</th>
+                            <th>Total</th>
+                            <th>Compra</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="folder-products-tbody">
+                        <!-- Itens renderizados dinamicamente via JS -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-total-row">
+                            <td colspan="3">TOTAL DO PEDIDO</td>
+                            <td colspan="4" id="folder-grand-total">R$ 2.577,60</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- ==========================================================================
+         MODAIS DE CADASTRO
+         ========================================================================== -->
+
+    <!-- Modal: Nova Tarefa -->
+    <div class="modal-overlay" id="modal-tarefa">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova tarefa da agenda</h3>
+                <button class="modal-close-btn" onclick="closeModal('modal-tarefa')">✕</button>
+            </div>
+            <form onsubmit="salvarNovaTarefa(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Título da Tarefa</label>
+                        <input type="text" id="task-input-titulo" class="form-input" placeholder="Ex.: Manutenção preventiva na esteira 04" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Descrição / Observações</label>
+                        <textarea id="task-input-desc" class="form-textarea" placeholder="Detalhes operacionais sobre o que precisa ser feito..."></textarea>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Data</label>
+                            <input type="date" id="task-input-data" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Horário</label>
+                            <input type="time" id="task-input-hora" class="form-input" value="09:00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Prioridade</label>
+                            <select id="task-input-prioridade" class="form-select">
+                                <option value="Crítica">Crítica</option>
+                                <option value="Alta" selected>Alta</option>
+                                <option value="Média">Média</option>
+                                <option value="Baixa">Baixa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Urgência</label>
+                            <select id="task-input-urgencia" class="form-select">
+                                <option value="Imediata">Imediata</option>
+                                <option value="Ainda hoje" selected>Ainda hoje</option>
+                                <option value="Esta semana">Esta semana</option>
+                                <option value="Baixa urgência">Baixa urgência</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Setor</label>
+                            <select id="task-input-setor" class="form-select">
+                                <option value="Produção">Produção</option>
+                                <option value="Logística" selected>Logística</option>
+                                <option value="Comercial">Comercial</option>
+                                <option value="Manutenção">Manutenção</option>
+                                <option value="Financeiro">Financeiro</option>
+                                <option value="Qualidade">Qualidade</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Profissional Responsável</label>
+                            <input type="text" id="task-input-profissional" class="form-input" placeholder="Ex.: Patrícia Alencar" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status Inicial</label>
+                        <select id="task-input-status" class="form-select">
+                            <option value="Pendente" selected>Pendente</option>
+                            <option value="Em andamento">Em andamento</option>
+                            <option value="Concluída">Concluída</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-tarefa')">Cancelar</button>
+                    <button type="submit" class="btn-primary-action">Salvar tarefa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Nova Pasta -->
+    <div class="modal-overlay" id="modal-pasta">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova pasta de cliente</h3>
+                <button class="modal-close-btn" onclick="closeModal('modal-pasta')">✕</button>
+            </div>
+            <form onsubmit="salvarNovaPasta(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Código da Pasta</label>
+                        <input type="text" id="folder-input-code" class="form-input" value="PED-2055" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nome do Cliente / Empresa</label>
+                        <input type="text" id="folder-input-name" class="form-input" placeholder="Ex.: Indústria Alvorada S.A." required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-pasta')">Cancelar</button>
+                    <button type="submit" class="btn-primary-action">Criar pasta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Adicionar Produto -->
+    <div class="modal-overlay" id="modal-produto">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3 class="modal-title">Adicionar produto ao pedido</h3>
+                <button class="modal-close-btn" onclick="closeModal('modal-produto')">✕</button>
+            </div>
+            <form onsubmit="salvarNovoProduto(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Produto / Descrição</label>
+                        <input type="text" id="prod-input-name" class="form-input" placeholder="Ex.: Bobina de Papel Kraft" required>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Quantidade</label>
+                            <input type="number" id="prod-input-qtd" class="form-input" min="1" value="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Valor Unitário (R$)</label>
+                            <input type="number" step="0.01" id="prod-input-valor" class="form-input" min="0.01" value="25.50" required>
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Data da Compra</label>
+                            <input type="date" id="prod-input-data" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status do Item</label>
+                            <select id="prod-input-status" class="form-select">
+                                <option value="Aguardando" selected>Aguardando</option>
+                                <option value="Separado">Separado / Pronto</option>
+                                <option value="Enviado">Enviado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-produto')">Cancelar</button>
+                    <button type="submit" class="btn-primary-action">Adicionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Feedback Toast -->
+    <div class="toast-notification" id="toast">
+        <span id="toast-message">Operação realizada com sucesso!</span>
+    </div>
+
+    <!-- ==========================================================================
+         JAVASCRIPT DO MOCKUP (INTERATIVO, DADOS E LÓGICA)
+         ========================================================================== -->
+    <script>
+        // ==========================================
+        // DADOS DO MOCKUP
+        // ==========================================
+        let TAREFAS_MOCK = [
+            {
+                id: 1,
+                data: "2026-09-05",
+                dataDisplay: "Sábado, 05 De Setembro",
+                hora: "09:00",
+                titulo: "Revisar lote de embalagens defeituosas",
+                descricao: "Checagem de controle de qualidade no lote 4410",
+                prioridade: "Crítica",
+                urgencia: "Imediata",
+                setor: "Qualidade",
+                profissional: "Patrícia Alencar",
+                status: "Concluída"
+            },
+            {
+                id: 2,
+                data: "2026-09-05",
+                dataDisplay: "Sábado, 05 De Setembro",
+                hora: "14:30",
+                titulo: "Montar pedido Grupo Meridiano",
+                descricao: "Separar caixas reforçadas e fitas industriais",
+                prioridade: "Alta",
+                urgencia: "Ainda hoje",
+                setor: "Logística",
+                profissional: "João Peixoto",
+                status: "Pendente"
+            },
+            {
+                id: 3,
+                data: "2026-09-06",
+                dataDisplay: "Domingo, 06 De Setembro",
+                hora: "08:00",
+                titulo: "Calibrar prensa hidráulica 02",
+                descricao: "Manutenção preventiva programada de sensores",
+                prioridade: "Média",
+                urgencia: "Esta semana",
+                setor: "Manutenção",
+                profissional: "Marcos Vinicius",
+                status: "Pendente"
+            },
+            {
+                id: 4,
+                data: "2026-09-07",
+                dataDisplay: "Segunda-Feira, 07 De Setembro",
+                hora: "11:00",
+                titulo: "Fechar proposta comercial Norte Têxtil",
+                descricao: "Revisão dos preços e prazos de entrega",
+                prioridade: "Alta",
+                urgencia: "Esta semana",
+                setor: "Comercial",
+                profissional: "Fernanda Lopes",
+                status: "Pendente"
+            },
+            {
+                id: 5,
+                data: "2026-09-09",
+                dataDisplay: "Quarta-Feira, 09 De Setembro",
+                hora: "16:00",
+                titulo: "Conciliar notas fiscais de entrada",
+                descricao: "Conferência do fechamento contábil",
+                prioridade: "Média",
+                urgencia: "Esta semana",
+                setor: "Financeiro",
+                profissional: "Carlos Mendes",
+                status: "Pendente"
+            }
+        ];
+
+        let PASTAS_MOCK = [
+            {
+                id: "ped-2041",
+                codigo: "PED-2041",
+                cliente: "Grupo Meridiano",
+                produtos: [
+                    { id: 101, nome: "Caixa reforçada 40×30", qtd: 120, valorUnit: 8.50, dataCompra: "2026-09-02", status: "Separado" },
+                    { id: 102, nome: "Fita industrial 48mm", qtd: 60, valorUnit: 12.00, dataCompra: "2026-09-02", status: "Aguardando" },
+                    { id: 103, nome: "Filme stretch 500mm", qtd: 24, valorUnit: 34.90, dataCompra: "2026-09-03", status: "Aguardando" }
+                ]
+            },
+            {
+                id: "ped-2039",
+                codigo: "PED-2039",
+                cliente: "Norte Têxtil",
+                produtos: [
+                    { id: 201, nome: "Bobina Plástica Termoencolhível", qtd: 10, valorUnit: 98.50, dataCompra: "2026-09-01", status: "Separado" },
+                    { id: 202, nome: "Etiquetas Adesivas Térmicas", qtd: 20, valorUnit: 24.00, dataCompra: "2026-09-02", status: "Aguardando" }
+                ]
+            },
+            {
+                id: "ped-2050",
+                codigo: "PED-2050",
+                cliente: "Oficina do Sabor",
+                produtos: [
+                    { id: 301, nome: "Embalagem Kraft delivery", qtd: 200, valorUnit: 3.20, dataCompra: "2026-09-04", status: "Separado" },
+                    { id: 302, nome: "Lacre de Segurança inviolável", qtd: 300, valorUnit: 1.29, dataCompra: "2026-09-04", status: "Separado" }
+                ]
+            }
+        ];
+
+        let pastaAtivaId = "ped-2041";
+
+        const activeFilters = {
+            setor: 'all',
+            status: 'all',
+            prioridade: 'all'
+        };
+
+        // ==========================================
+        // NAVEGAÇÃO ENTRE ABAS
+        // ==========================================
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            closeAllPopovers();
+
+            if (viewName === 'overview') {
+                document.getElementById('view-overview').classList.add('active');
+                document.getElementById('tab-overview').classList.add('active');
+            } else if (viewName === 'agenda') {
+                document.getElementById('view-agenda').classList.add('active');
+                document.getElementById('tab-agenda').classList.add('active');
+                renderTimeline();
+            } else if (viewName === 'pedidos') {
+                document.getElementById('view-pedidos').classList.add('active');
+                document.getElementById('tab-pedidos').classList.add('active');
+                renderPastas();
+            } else if (viewName === 'pasta-detalhe') {
+                document.getElementById('view-pasta-detalhe').classList.add('active');
+                document.getElementById('tab-pedidos').classList.add('active');
+                renderDetalhePasta(pastaAtivaId);
+            }
+
+            atualizarContadores();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // ATUALIZAR CONTADORES DO DASHBOARD
+        // ==========================================
+        function atualizarContadores() {
+            const abertas = TAREFAS_MOCK.filter(t => t.status !== 'Concluída').length;
+            const criticas = TAREFAS_MOCK.filter(t => t.prioridade === 'Crítica' && t.status !== 'Concluída').length;
+            
+            let totalItens = 0;
+            PASTAS_MOCK.forEach(p => totalItens += p.produtos.length);
+
+            document.getElementById('count-tarefas').textContent = abertas.toString().padStart(2, '0');
+            document.getElementById('count-criticas').textContent = criticas.toString().padStart(2, '0');
+            document.getElementById('count-pedidos').textContent = totalItens.toString().padStart(2, '0');
+        }
+
+        // ==========================================
+        // CONTROLE DOS POPOVERS FLUTUANTES (FILTROS)
+        // ==========================================
+        function togglePopover(popoverId, triggerElem) {
+            const popover = document.getElementById(popoverId);
+            const isOpen = popover.classList.contains('open');
+
+            closeAllPopovers();
+
+            if (!isOpen) {
+                popover.classList.add('open');
+                triggerElem.classList.add('active');
+            }
+        }
+
+        function closeAllPopovers() {
+            document.querySelectorAll('.dark-popover-menu').forEach(p => p.classList.remove('open'));
+            document.querySelectorAll('.custom-select-trigger').forEach(t => t.classList.remove('active'));
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.filter-group')) {
+                closeAllPopovers();
+            }
+        });
+
+        function selectFilter(filterType, val, displayText) {
+            activeFilters[filterType] = val;
+            
+            if (filterType === 'setor') document.getElementById('selected-setor-text').textContent = displayText;
+            if (filterType === 'status') document.getElementById('selected-status-text').textContent = displayText;
+            if (filterType === 'prioridade') document.getElementById('selected-prioridade-text').textContent = displayText;
+
+            const popover = document.getElementById(`popover-${filterType}`);
+            popover.querySelectorAll('.popover-item').forEach(item => {
+                const isMatch = item.textContent.trim().includes(displayText);
+                item.classList.toggle('selected', isMatch);
+                item.querySelector('.item-check').textContent = isMatch ? '✓' : '';
+            });
+
+            closeAllPopovers();
+            renderTimeline();
+        }
+
+        // ==========================================
+        // RENDERIZAÇÃO DA TIMELINE DA AGENDA
+        // ==========================================
+        function renderTimeline() {
+            const container = document.getElementById('timeline-task-list');
+            container.innerHTML = '';
+
+            const filteredTasks = TAREFAS_MOCK.filter(task => {
+                if (activeFilters.setor !== 'all' && task.setor !== activeFilters.setor) return false;
+                if (activeFilters.status !== 'all' && task.status !== activeFilters.status) return false;
+                if (activeFilters.prioridade !== 'all' && task.prioridade !== activeFilters.prioridade) return false;
+                return true;
+            });
+
+            if (filteredTasks.length === 0) {
+                container.innerHTML = `
+                    <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:40px; text-align:center; color:var(--text-muted); border-radius:8px;">
+                        <p style="font-family:var(--font-mono); font-size:14px;">Nenhuma tarefa encontrada com os filtros selecionados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const groupsByDate = {};
+            filteredTasks.forEach(task => {
+                if (!groupsByDate[task.dataDisplay]) {
+                    groupsByDate[task.dataDisplay] = [];
+                }
+                groupsByDate[task.dataDisplay].push(task);
+            });
+
+            for (const [dateTitle, tasks] of Object.entries(groupsByDate)) {
+                const dayGroup = document.createElement('div');
+                dayGroup.className = 'day-group';
+
+                dayGroup.innerHTML = `
+                    <div class="day-header">
+                        <span class="day-title">${dateTitle}</span>
+                        <span class="day-count">${tasks.length} tarefa(s)</span>
+                    </div>
+                `;
+
+                tasks.forEach(task => {
+                    const taskCard = document.createElement('div');
+                    let borderClass = 'border-medium';
+                    let priorityClass = 'medium';
+
+                    if (task.prioridade === 'Crítica') { borderClass = 'border-critical'; priorityClass = 'critical'; }
+                    else if (task.prioridade === 'Alta') { borderClass = 'border-high'; priorityClass = 'high'; }
+                    else if (task.prioridade === 'Baixa') { borderClass = 'border-low'; priorityClass = 'low'; }
+
+                    const statusClass = task.status === 'Concluída' ? 'concluida' : '';
+
+                    taskCard.className = `task-card ${borderClass}`;
+                    taskCard.innerHTML = `
+                        <div class="task-time">${task.hora}</div>
+                        <div class="task-body">
+                            <h4 class="task-title">${task.titulo}</h4>
+                            <div class="task-badges-row">
+                                <span class="badge-priority ${priorityClass}">${task.prioridade}</span>
+                                <span class="badge-status ${statusClass}">${task.status}</span>
+                            </div>
+                            <div class="task-metadata-list">
+                                <div class="metadata-row">
+                                    <span class="meta-icon">◆</span>
+                                    <span>Setor: ${task.setor}</span>
+                                </div>
+                                <div class="metadata-row">
+                                    <span class="meta-icon">◇</span>
+                                    <span>Profissional: ${task.profissional}</span>
+                                </div>
+                                <div class="metadata-row">
+                                    <span class="meta-icon">!</span>
+                                    <span>Urgência: ${task.urgencia}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn-icon-action" title="Alternar status" onclick="toggleTaskStatus(${task.id})">✓</button>
+                            <button class="btn-icon-action" title="Excluir" onclick="deletarTarefa(${task.id})">🗑</button>
+                        </div>
+                    `;
+                    dayGroup.appendChild(taskCard);
+                });
+
+                container.appendChild(dayGroup);
+            }
+        }
+
+        function toggleTaskStatus(id) {
+            const task = TAREFAS_MOCK.find(t => t.id === id);
+            if (task) {
+                task.status = task.status === 'Concluída' ? 'Pendente' : 'Concluída';
+                renderTimeline();
+                atualizarContadores();
+                showToast(`Status de "${task.titulo}" atualizado para ${task.status}!`);
+            }
+        }
+
+        function deletarTarefa(id) {
+            if (confirm("Deseja remover esta tarefa da agenda?")) {
+                TAREFAS_MOCK = TAREFAS_MOCK.filter(t => t.id !== id);
+                renderTimeline();
+                atualizarContadores();
+                showToast("Tarefa removida com sucesso!");
+            }
+        }
+
+        // ==========================================
+        // RENDERIZAÇÃO DE PASTAS DE PEDIDOS
+        // ==========================================
+        function renderPastas() {
+            const container = document.getElementById('folders-container');
+            container.innerHTML = '';
+
+            PASTAS_MOCK.forEach(pasta => {
+                let valorTotal = 0;
+                pasta.produtos.forEach(p => valorTotal += (p.qtd * p.valorUnit));
+
+                const card = document.createElement('div');
+                card.className = 'folder-card';
+                card.onclick = () => abrirPastaDetalhe(pasta.id);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="folder-card-top">
+                            <div class="folder-icon-box">📁</div>
+                            <span class="folder-code">${pasta.codigo}</span>
+                        </div>
+                        <h3 class="folder-client-name">${pasta.cliente}</h3>
+                    </div>
+                    <div class="folder-card-bottom">
+                        <span class="folder-items-count">${pasta.produtos.length} item(ns)</span>
+                        <span class="folder-total-val">${formatarMoeda(valorTotal)}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function abrirPastaDetalhe(pastaId) {
+            pastaAtivaId = pastaId;
+            switchView('pasta-detalhe');
+        }
+
+        function renderDetalhePasta(pastaId) {
+            const pasta = PASTAS_MOCK.find(p => p.id === pastaId);
+            if (!pasta) return;
+
+            document.getElementById('folder-detail-code').textContent = `PASTA • ${pasta.codigo}`;
+            document.getElementById('folder-detail-name').textContent = pasta.cliente;
+
+            const tbody = document.getElementById('folder-products-tbody');
+            tbody.innerHTML = '';
+
+            let grandTotal = 0;
+
+            pasta.produtos.forEach(item => {
+                const totalItem = item.qtd * item.valorUnit;
+                grandTotal += totalItem;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="td-product">${item.nome}</td>
+                    <td class="td-mono">${item.qtd}</td>
+                    <td class="td-mono">${formatarMoeda(item.valorUnit)}</td>
+                    <td class="td-mono" style="font-weight:600; color:var(--color-primary);">${formatarMoeda(totalItem)}</td>
+                    <td class="td-mono" style="color:var(--text-muted);">${item.dataCompra}</td>
+                    <td>
+                        <span class="badge-status ${item.status === 'Separado' ? 'concluida' : ''}">${item.status}</span>
+                    </td>
+                    <td>
+                        <button class="btn-icon-action" title="Excluir produto" onclick="deletarProduto(${item.id})">🗑</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('folder-grand-total').textContent = formatarMoeda(grandTotal);
+        }
+
+        function deletarProduto(prodId) {
+            const pasta = PASTAS_MOCK.find(p => p.id === pastaAtivaId);
+            if (pasta && confirm("Deseja remover este produto do pedido?")) {
+                pasta.produtos = pasta.produtos.filter(p => p.id !== prodId);
+                renderDetalhePasta(pastaAtivaId);
+                atualizarContadores();
+                showToast("Produto removido do pedido!");
+            }
+        }
+
+        // ==========================================
+        // MODAIS & SALVAMENTO
+        // ==========================================
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                const dateInputs = modal.querySelectorAll('input[type="date"]');
+                dateInputs.forEach(input => {
+                    if (!input.value) input.value = "2026-09-05";
+                });
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('active');
+        }
+
+        function salvarNovaTarefa(event) {
+            event.preventDefault();
+
+            const titulo = document.getElementById('task-input-titulo').value.trim();
+            const desc = document.getElementById('task-input-desc').value.trim();
+            const data = document.getElementById('task-input-data').value;
+            const hora = document.getElementById('task-input-hora').value;
+            const prioridade = document.getElementById('task-input-prioridade').value;
+            const urgencia = document.getElementById('task-input-urgencia').value;
+            const setor = document.getElementById('task-input-setor').value;
+            const profissional = document.getElementById('task-input-profissional').value.trim();
+            const status = document.getElementById('task-input-status').value;
+
+            const dataObj = new Date(data + 'T12:00:00');
+            const opcoes = { weekday: 'long', day: '2-digit', month: 'long' };
+            let dataFormatada = dataObj.toLocaleDateString('pt-BR', opcoes);
+            dataFormatada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+
+            const novaTarefa = {
+                id: Date.now(),
+                data: data,
+                dataDisplay: dataFormatada,
+                hora: hora,
+                titulo: titulo,
+                descricao: desc,
+                prioridade: prioridade,
+                urgencia: urgencia,
+                setor: setor,
+                profissional: profissional,
+                status: status
+            };
+
+            TAREFAS_MOCK.unshift(novaTarefa);
+            closeModal('modal-tarefa');
+            event.target.reset();
+            
+            renderTimeline();
+            atualizarContadores();
+            showToast("Nova tarefa agendada com sucesso!");
+        }
+
+        function salvarNovaPasta(event) {
+            event.preventDefault();
+            const codigo = document.getElementById('folder-input-code').value.trim();
+            const nome = document.getElementById('folder-input-name').value.trim();
+
+            const novaPasta = {
+                id: 'ped-' + Date.now(),
+                codigo: codigo,
+                cliente: nome,
+                produtos: []
+            };
+
+            PASTAS_MOCK.push(novaPasta);
+            closeModal('modal-pasta');
+            event.target.reset();
+
+            renderPastas();
+            atualizarContadores();
+            showToast(`Pasta "${nome}" criada com sucesso!`);
+        }
+
+        function salvarNovoProduto(event) {
+            event.preventDefault();
+            const pasta = PASTAS_MOCK.find(p => p.id === pastaAtivaId);
+            if (!pasta) return;
+
+            const nome = document.getElementById('prod-input-name').value.trim();
+            const qtd = parseInt(document.getElementById('prod-input-qtd').value);
+            const valor = parseFloat(document.getElementById('prod-input-valor').value);
+            const dataCompra = document.getElementById('prod-input-data').value;
+            const status = document.getElementById('prod-input-status').value;
+
+            const novoProduto = {
+                id: Date.now(),
+                nome: nome,
+                qtd: qtd,
+                valorUnit: valor,
+                dataCompra: dataCompra,
+                status: status
+            };
+
+            pasta.produtos.push(novoProduto);
+            closeModal('modal-produto');
+            event.target.reset();
+
+            renderDetalhePasta(pastaAtivaId);
+            atualizarContadores();
+            showToast(`Produto "${nome}" adicionado ao pedido!`);
+        }
+
+        function simularImportarExcel() {
+            showToast("Simulação: Importando planilha Excel com produtos...");
+        }
+
+        function simularExportarExcel() {
+            showToast("Simulação: Planilha Excel exportada com sucesso!");
+        }
+
+        function formatarMoeda(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarContadores();
+            renderTimeline();
+            renderPastas();
+        });
+    </script>
+</body>
+</html>
