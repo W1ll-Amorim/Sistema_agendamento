@@ -82,7 +82,7 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 ![Diagrama](static/img/banco01.jpg)
 ![Diagrama](static/img/banco02.jpg)
 
-## 👨‍💻 Autor Principal
+## 👨‍💻 Desenvolvedor Principal
 <div align="center">
   <a href="https://github.com/W1ll-Amorim">
     <img src="https://github.com/W1ll-Amorim.png" width="150" alt="Foto de Wiliam de Amorim"/><br>
@@ -96,10 +96,42 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
   </a>
 </div>
 
----
-
 ## 🤝 Contribuidores
 
-| [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) | [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) |
-| :--- | :--- | :--- |
-| <sub>*Vaga aberta para sua PR!*</sub> |
+<div align="center">
+  <table width="100%">
+    <tr>
+      <td align="center" width="50%">
+        <a href="https://github.com/LilNavaHoods">
+          <img src="https://github.com/LilNavaHoods.png" width="100" alt="Foto de Lohan da Silva"/><br>
+          <sub><b>Lohan da Silva</b></sub>
+        </a>
+        <br>
+        <i>Desenvolvedor back-end</i>
+        <br><br>
+        <a href="https://www.linkedin.com/in/lohan-da-silva" target="_blank">
+          <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+        </a>
+      </td>
+      <td align="center" width="50%">
+        <a href="https://github.com/Victoroliveira07">
+          <img src="https://github.com/Victoroliveira07.png" width="100" alt="Foto de João Cavalcante"/><br>
+          <sub><b>João Cavalcante</b></sub>
+        </a>
+        <br>
+        <i>Desenvolvedor front-end</i>
+        <br><br>
+        <a href="https://www.linkedin.com/in/joão-victor-oliveira-cavalcante-720331209" target="_blank">
+          <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## Participantes
+
+| [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) | [<img src="https://github.com/MrFelps.png" width=115><br><sub>Felipe Gabriel</sub>](https://github.com/MrFelps) |  |
+| :---: | :---: | :---: |
