@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Agenda & Pedidos - Mockup</title>
-    <!-- Google Fonts: Orbitron, Exo 2, Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================================================
-           PALETA DE CORES ORIGINAIS DO PROJETO (CYBER DARK / NEON CYAN & PURPLE)
-           ========================================================================== */
         :root {
             --bg-main: #0b0e14;
             --bg-card: #161922;
@@ -25,26 +21,22 @@
             --border-hover: #00E5FF;
             --border-dark: #00E5FF;
             
-            /* Acentos Neon */
             --color-primary: #00E5FF;
             --color-secondary: #7000FF;
             --grad-primary: linear-gradient(90deg, #00E5FF 0%, #7000FF 100%);
             --grad-glow: 0px 4px 15px rgba(0, 229, 255, 0.35);
             
-            /* Prioridades & Status */
             --color-critical: #FF4757;
             --color-high: #FFA502;
             --color-medium: #00E5FF;
             --color-low: #747D8C;
             --color-success: #2ED573;
             
-            /* Tipografia */
             --font-sans: 'Inter', sans-serif;
             --font-brand: 'Orbitron', sans-serif;
             --font-tech: 'Exo 2', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             
-            /* Efeitos */
             --shadow-popover: 0 12px 30px rgba(0, 0, 0, 0.7);
             --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.8);
             --transition: all 0.2s ease-in-out;
@@ -76,9 +68,6 @@
             flex: 1;
         }
 
-        /* ==========================================================================
-           TOP BAR NAVIGATION
-           ========================================================================== */
         .top-nav {
             display: flex;
             align-items: center;
@@ -153,9 +142,6 @@
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
         }
 
-        /* ==========================================================================
-           VIEW: VISÃO GERAL (HERO / DASHBOARD)
-           ========================================================================== */
         .view-section {
             display: none;
             animation: fadeIn 0.3s ease;
@@ -193,7 +179,6 @@
             margin-bottom: 48px;
         }
 
-        /* Metrics Bar */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -232,7 +217,6 @@
             color: var(--text-muted);
         }
 
-        /* Overview Action Cards */
         .overview-cards-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -296,9 +280,6 @@
             line-height: 1.5;
         }
 
-        /* ==========================================================================
-           VIEW: AGENDA DE TAREFAS
-           ========================================================================== */
         .module-header {
             display: flex;
             align-items: flex-end;
@@ -347,7 +328,6 @@
             filter: brightness(1.1);
         }
 
-        /* Filter Panel */
         .filter-panel {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -407,7 +387,6 @@
             transform: rotate(180deg);
         }
 
-        /* Dark Floating Popover Menu */
         .dark-popover-menu {
             position: absolute;
             top: calc(100% + 6px);
@@ -465,7 +444,6 @@
             display: inline-block;
         }
 
-        /* Timeline / Grouped Days */
         .timeline-container {
             display: flex;
             flex-direction: column;
@@ -498,7 +476,6 @@
             color: var(--color-primary);
         }
 
-        /* Task Cards */
         .task-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -649,9 +626,6 @@
             background-color: rgba(0, 229, 255, 0.15);
         }
 
-        /* ==========================================================================
-           VIEW: PEDIDOS (PASTAS & ITENS)
-           ========================================================================== */
         .folders-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -727,7 +701,6 @@
             color: #FFFFFF;
         }
 
-        /* Order Details Screen (Inside Folder) */
         .back-nav-btn {
             background: none;
             border: none;
@@ -785,7 +758,6 @@
             background-color: rgba(0, 229, 255, 0.1);
         }
 
-        /* Products Table */
         .table-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -838,9 +810,6 @@
             color: #FFFFFF;
         }
 
-        /* ==========================================================================
-           MODALS
-           ========================================================================== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -966,7 +935,6 @@
             gap: 12px;
         }
 
-        /* Toast feedback notification */
         .toast-notification {
             position: fixed;
             bottom: 28px;
@@ -993,9 +961,6 @@
             opacity: 1;
         }
 
-        /* ==========================================================================
-           RESPONSIVIDADE (MOBILE & TABLETS)
-           ========================================================================== */
         @media (max-width: 860px) {
             .hero-title { font-size: 38px; }
             .overview-cards-grid { grid-template-columns: 1fr; }
@@ -1015,9 +980,6 @@
 
     <div class="app-container">
         
-        <!-- ==========================================================================
-             TOP NAVIGATION BAR
-             ========================================================================== -->
         <header class="top-nav">
             <div class="brand-section" onclick="switchView('overview')">
                 <span class="brand-logo-box"></span>
@@ -1033,9 +995,6 @@
             </div>
         </header>
 
-        <!-- ==========================================================================
-             VIEW: VISÃO GERAL (HERO & MÉTRICAS)
-             ========================================================================== -->
         <main id="view-overview" class="view-section active">
             <h1 class="hero-title">Central de<br>Agenda & <span class="highlight">Pedidos</span></h1>
             
@@ -1043,7 +1002,6 @@
                 Planeje tarefas por prioridade e urgência, atribua setor e profissional, e mantenha os pedidos dos clientes organizados em pastas — com exportação direta para Excel.
             </p>
 
-            <!-- Métricas Principais -->
             <div class="metrics-grid">
                 <div class="metric-item">
                     <span class="metric-value" id="count-tarefas">04</span>
@@ -1059,7 +1017,6 @@
                 </div>
             </div>
 
-            <!-- Cartões de Ação Rápida -->
             <div class="overview-cards-grid">
                 <div class="action-card" onclick="switchView('agenda')">
                     <span class="card-num">01</span>
@@ -1085,9 +1042,6 @@
             </div>
         </main>
 
-        <!-- ==========================================================================
-             VIEW: MÓDULO 01 - AGENDA DE TAREFAS
-             ========================================================================== -->
         <main id="view-agenda" class="view-section">
             <div class="module-header">
                 <div>
@@ -1099,9 +1053,7 @@
                 </button>
             </div>
 
-            <!-- Painel de Filtros com Menus Dark Popover -->
             <div class="filter-panel">
-                <!-- Filtro Setor -->
                 <div class="filter-group">
                     <label class="filter-label">Setor</label>
                     <div class="custom-select-trigger" onclick="togglePopover('popover-setor', this)">
@@ -1119,7 +1071,6 @@
                     </div>
                 </div>
 
-                <!-- Filtro Status -->
                 <div class="filter-group">
                     <label class="filter-label">Status</label>
                     <div class="custom-select-trigger" onclick="togglePopover('popover-status', this)">
@@ -1134,7 +1085,6 @@
                     </div>
                 </div>
 
-                <!-- Filtro Prioridade -->
                 <div class="filter-group">
                     <label class="filter-label">Prioridade</label>
                     <div class="custom-select-trigger" onclick="togglePopover('popover-prioridade', this)">
@@ -1151,15 +1101,9 @@
                 </div>
             </div>
 
-            <!-- Timeline de Tarefas Agrupadas por Dia -->
-            <div class="timeline-container" id="timeline-task-list">
-                <!-- Renderizado dinamicamente via JS -->
-            </div>
+            <div class="timeline-container" id="timeline-task-list"></div>
         </main>
 
-        <!-- ==========================================================================
-             VIEW: MÓDULO 02 - PEDIDOS (LISTA DE PASTAS)
-             ========================================================================== -->
         <main id="view-pedidos" class="view-section">
             <div class="module-header">
                 <div>
@@ -1171,14 +1115,9 @@
                 </button>
             </div>
 
-            <div class="folders-grid" id="folders-container">
-                <!-- Pastas renderizadas dinamicamente via JS -->
-            </div>
+            <div class="folders-grid" id="folders-container"></div>
         </main>
 
-        <!-- ==========================================================================
-             VIEW: DETALHES DA PASTA / PEDIDO (GRADE DE PRODUTOS)
-             ========================================================================== -->
         <main id="view-pasta-detalhe" class="view-section">
             <button class="back-nav-btn" onclick="switchView('pedidos')">
                 ← Voltar às pastas
@@ -1203,7 +1142,6 @@
                 </div>
             </div>
 
-            <!-- Tabela de Produtos da Pasta -->
             <div class="table-card">
                 <table class="products-table">
                     <thead>
@@ -1217,9 +1155,7 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="folder-products-tbody">
-                        <!-- Itens renderizados dinamicamente via JS -->
-                    </tbody>
+                    <tbody id="folder-products-tbody"></tbody>
                     <tfoot>
                         <tr class="table-total-row">
                             <td colspan="3">TOTAL DO PEDIDO</td>
@@ -1232,11 +1168,6 @@
 
     </div>
 
-    <!-- ==========================================================================
-         MODAIS DE CADASTRO
-         ========================================================================== -->
-
-    <!-- Modal: Nova Tarefa -->
     <div class="modal-overlay" id="modal-tarefa">
         <div class="modal-window">
             <div class="modal-header">
@@ -1323,7 +1254,6 @@
         </div>
     </div>
 
-    <!-- Modal: Nova Pasta -->
     <div class="modal-overlay" id="modal-pasta">
         <div class="modal-window">
             <div class="modal-header">
@@ -1349,7 +1279,6 @@
         </div>
     </div>
 
-    <!-- Modal: Adicionar Produto -->
     <div class="modal-overlay" id="modal-produto">
         <div class="modal-window">
             <div class="modal-header">
@@ -1395,18 +1324,11 @@
         </div>
     </div>
 
-    <!-- Feedback Toast -->
     <div class="toast-notification" id="toast">
         <span id="toast-message">Operação realizada com sucesso!</span>
     </div>
 
-    <!-- ==========================================================================
-         JAVASCRIPT DO MOCKUP (INTERATIVO, DADOS E LÓGICA)
-         ========================================================================== -->
     <script>
-        // ==========================================
-        // DADOS DO MOCKUP
-        // ==========================================
         let TAREFAS_MOCK = [
             {
                 id: 1,
@@ -1514,9 +1436,6 @@
             prioridade: 'all'
         };
 
-        // ==========================================
-        // NAVEGAÇÃO ENTRE ABAS
-        // ==========================================
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1544,9 +1463,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ==========================================
-        // ATUALIZAR CONTADORES DO DASHBOARD
-        // ==========================================
         function atualizarContadores() {
             const abertas = TAREFAS_MOCK.filter(t => t.status !== 'Concluída').length;
             const criticas = TAREFAS_MOCK.filter(t => t.prioridade === 'Crítica' && t.status !== 'Concluída').length;
@@ -1559,9 +1475,6 @@
             document.getElementById('count-pedidos').textContent = totalItens.toString().padStart(2, '0');
         }
 
-        // ==========================================
-        // CONTROLE DOS POPOVERS FLUTUANTES (FILTROS)
-        // ==========================================
         function togglePopover(popoverId, triggerElem) {
             const popover = document.getElementById(popoverId);
             const isOpen = popover.classList.contains('open');
@@ -1603,9 +1516,6 @@
             renderTimeline();
         }
 
-        // ==========================================
-        // RENDERIZAÇÃO DA TIMELINE DA AGENDA
-        // ==========================================
         function renderTimeline() {
             const container = document.getElementById('timeline-task-list');
             container.innerHTML = '';
@@ -1711,9 +1621,6 @@
             }
         }
 
-        // ==========================================
-        // RENDERIZAÇÃO DE PASTAS DE PEDIDOS
-        // ==========================================
         function renderPastas() {
             const container = document.getElementById('folders-container');
             container.innerHTML = '';
@@ -1794,9 +1701,6 @@
             }
         }
 
-        // ==========================================
-        // MODAIS & SALVAMENTO
-        // ==========================================
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
