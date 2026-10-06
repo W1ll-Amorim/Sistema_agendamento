@@ -82,7 +82,7 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 ![Diagrama](static/img/banco01.jpg)
 ![Diagrama](static/img/banco02.jpg)
 
-## 👨‍💻 Desenvolvedor Principal
+## 👨‍💻 Desenvolvedor Fullstack
 <div align="center">
   <a href="https://github.com/W1ll-Amorim">
     <img src="https://github.com/W1ll-Amorim.png" width="150" alt="Foto de Wiliam de Amorim"/><br>
