@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Agenda & Pedidos - Mockup</title>
+    <title>Central de Agenda & Pedidos - Stellare Kitchens</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
@@ -140,6 +140,38 @@
             background: var(--grad-primary);
             color: #FFFFFF;
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-surface);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: var(--grad-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--color-critical);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .view-section {
@@ -626,6 +658,55 @@
             background-color: rgba(0, 229, 255, 0.15);
         }
 
+        /* Comentários na Agenda */
+        .comments-drawer {
+            margin-top: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            display: none;
+        }
+        .comments-list {
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .comment-item {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .comment-author {
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+        .comment-input-area {
+            display: flex;
+            gap: 6px;
+        }
+        .comment-input {
+            flex: 1;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+        }
+        .comment-submit {
+            background: var(--color-primary);
+            border: none;
+            color: #0b0e14;
+            padding: 0 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         .folders-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -978,12 +1059,35 @@
 </head>
 <body>
 
+    <!-- Verificação de autenticação ao carregar a página -->
+    <script>
+        (function() {
+            const token = localStorage.getItem('token');
+            const idUsuario = localStorage.getItem('id_usuario');
+            if (!token || !idUsuario) {
+                // Descomente em produção caso tenha página de login configurada:
+                // window.location.href = '/index';
+            }
+        })();
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                const token = localStorage.getItem('token');
+                const idUsuario = localStorage.getItem('id_usuario');
+                if (!token || !idUsuario) {
+                    // Descomente em produção:
+                    // window.location.href = '/index';
+                }
+            }
+        });
+    </script>
+
     <div class="app-container">
         
         <header class="top-nav">
             <div class="brand-section" onclick="switchView('overview')">
                 <span class="brand-logo-box"></span>
-                <span class="brand-label">Operações / Núcleo</span>
+                <span class="brand-label">Stellare Kitchens</span>
             </div>
 
             <div class="nav-right-actions">
@@ -992,19 +1096,25 @@
                     <button class="tab-btn" id="tab-agenda" onclick="switchView('agenda')">Agenda</button>
                     <button class="tab-btn" id="tab-pedidos" onclick="switchView('pedidos')">Pedidos</button>
                 </nav>
+                <div class="user-profile-badge">
+                    <span class="user-avatar" id="user-avatar">?</span>
+                    <span id="user-name">Carregando...</span>
+                    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+                </div>
             </div>
         </header>
 
+        <!-- VISÃO GERAL -->
         <main id="view-overview" class="view-section active">
             <h1 class="hero-title">Central de<br>Agenda & <span class="highlight">Pedidos</span></h1>
             
             <p class="hero-description">
-                Planeje tarefas por prioridade e urgência, atribua setor e profissional, e mantenha os pedidos dos clientes organizados em pastas — com exportação direta para Excel.
+                Planeje tarefas por prioridade e urgência, atribua setor e profissional, e mantenha os pedidos dos clientes organizados em pastas — com rotas integradas via API.
             </p>
 
             <div class="metrics-grid">
                 <div class="metric-item">
-                    <span class="metric-value" id="count-tarefas">04</span>
+                    <span class="metric-value" id="count-tarefas">00</span>
                     <span class="metric-label">Tarefas Abertas</span>
                 </div>
                 <div class="metric-item">
@@ -1012,7 +1122,7 @@
                     <span class="metric-label">Críticas</span>
                 </div>
                 <div class="metric-item">
-                    <span class="metric-value" id="count-pedidos">07</span>
+                    <span class="metric-value" id="count-pedidos">00</span>
                     <span class="metric-label">Itens em Pedidos</span>
                 </div>
             </div>
@@ -1042,6 +1152,7 @@
             </div>
         </main>
 
+        <!-- VISÃO AGENDA -->
         <main id="view-agenda" class="view-section">
             <div class="module-header">
                 <div>
@@ -1080,8 +1191,8 @@
                     <div class="dark-popover-menu" id="popover-status">
                         <div class="popover-item selected" onclick="selectFilter('status', 'all', 'Todos')"><span class="item-check">✓</span> Todos</div>
                         <div class="popover-item" onclick="selectFilter('status', 'Pendente', 'Pendente')"><span class="item-check"></span> Pendente</div>
-                        <div class="popover-item" onclick="selectFilter('status', 'Em andamento', 'Em andamento')"><span class="item-check"></span> Em andamento</div>
-                        <div class="popover-item" onclick="selectFilter('status', 'Concluída', 'Concluída')"><span class="item-check"></span> Concluída</div>
+                        <div class="popover-item" onclick="selectFilter('status', 'Em Progresso', 'Em Progresso')"><span class="item-check"></span> Em Progresso</div>
+                        <div class="popover-item" onclick="selectFilter('status', 'Concluído', 'Concluído')"><span class="item-check"></span> Concluído</div>
                     </div>
                 </div>
 
@@ -1104,6 +1215,7 @@
             <div class="timeline-container" id="timeline-task-list"></div>
         </main>
 
+        <!-- VISÃO PEDIDOS -->
         <main id="view-pedidos" class="view-section">
             <div class="module-header">
                 <div>
@@ -1118,6 +1230,7 @@
             <div class="folders-grid" id="folders-container"></div>
         </main>
 
+        <!-- VISÃO DETALHE DA PASTA -->
         <main id="view-pasta-detalhe" class="view-section">
             <button class="back-nav-btn" onclick="switchView('pedidos')">
                 ← Voltar às pastas
@@ -1130,15 +1243,9 @@
                 </div>
 
                 <div class="order-actions-row">
-                    <button class="btn-outline" onclick="simularImportarExcel()">
-                        ↑ Importar Excel
-                    </button>
-                    <button class="btn-outline" onclick="simularExportarExcel()">
-                        ↓ Exportar Excel
-                    </button>
-                    <button class="btn-primary-action" onclick="openModal('modal-produto')">
-                        + Produto
-                    </button>
+                    <button class="btn-outline" onclick="simularImportarExcel()">↑ Importar Excel</button>
+                    <button class="btn-outline" onclick="simularExportarExcel()">↓ Exportar Excel</button>
+                    <button class="btn-primary-action" onclick="openModal('modal-produto')">+ Produto</button>
                 </div>
             </div>
 
@@ -1159,15 +1266,15 @@
                     <tfoot>
                         <tr class="table-total-row">
                             <td colspan="3">TOTAL DO PEDIDO</td>
-                            <td colspan="4" id="folder-grand-total">R$ 2.577,60</td>
+                            <td colspan="4" id="folder-grand-total">R$ 0,00</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
         </main>
-
     </div>
 
+    <!-- MODAL NOVA TAREFA -->
     <div class="modal-overlay" id="modal-tarefa">
         <div class="modal-window">
             <div class="modal-header">
@@ -1182,8 +1289,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Descrição / Observações</label>
-                        <textarea id="task-input-desc" class="form-textarea" placeholder="Detalhes operacionais sobre o que precisa ser feito..."></textarea>
+                        <label class="form-label">Nome do Ativo / Máquina</label>
+                        <input type="text" id="task-input-ativo" class="form-input" placeholder="Ex.: Esteira 04" required>
                     </div>
 
                     <div class="form-row-2">
@@ -1199,7 +1306,7 @@
 
                     <div class="form-row-2">
                         <div class="form-group">
-                            <label class="form-label">Prioridade</label>
+                            <label class="form-label">Prioridade / Criticidade</label>
                             <select id="task-input-prioridade" class="form-select">
                                 <option value="Crítica">Crítica</option>
                                 <option value="Alta" selected>Alta</option>
@@ -1240,8 +1347,8 @@
                         <label class="form-label">Status Inicial</label>
                         <select id="task-input-status" class="form-select">
                             <option value="Pendente" selected>Pendente</option>
-                            <option value="Em andamento">Em andamento</option>
-                            <option value="Concluída">Concluída</option>
+                            <option value="Em Progresso">Em Progresso</option>
+                            <option value="Concluído">Concluído</option>
                         </select>
                     </div>
                 </div>
@@ -1254,6 +1361,7 @@
         </div>
     </div>
 
+    <!-- MODAL NOVA PASTA -->
     <div class="modal-overlay" id="modal-pasta">
         <div class="modal-window">
             <div class="modal-header">
@@ -1279,6 +1387,7 @@
         </div>
     </div>
 
+    <!-- MODAL NOVO PRODUTO -->
     <div class="modal-overlay" id="modal-produto">
         <div class="modal-window">
             <div class="modal-header">
@@ -1328,75 +1437,11 @@
         <span id="toast-message">Operação realizada com sucesso!</span>
     </div>
 
+    <!-- ========================================== -->
+    <!-- SCRIPTS DE INTEGRAÇÃO COM ROTAS DE BACKEND -->
+    <!-- ========================================== -->
     <script>
-        let TAREFAS_MOCK = [
-            {
-                id: 1,
-                data: "2026-09-05",
-                dataDisplay: "Sábado, 05 De Setembro",
-                hora: "09:00",
-                titulo: "Revisar lote de embalagens defeituosas",
-                descricao: "Checagem de controle de qualidade no lote 4410",
-                prioridade: "Crítica",
-                urgencia: "Imediata",
-                setor: "Qualidade",
-                profissional: "Patrícia Alencar",
-                status: "Concluída"
-            },
-            {
-                id: 2,
-                data: "2026-09-05",
-                dataDisplay: "Sábado, 05 De Setembro",
-                hora: "14:30",
-                titulo: "Montar pedido Grupo Meridiano",
-                descricao: "Separar caixas reforçadas e fitas industriais",
-                prioridade: "Alta",
-                urgencia: "Ainda hoje",
-                setor: "Logística",
-                profissional: "João Peixoto",
-                status: "Pendente"
-            },
-            {
-                id: 3,
-                data: "2026-09-06",
-                dataDisplay: "Domingo, 06 De Setembro",
-                hora: "08:00",
-                titulo: "Calibrar prensa hidráulica 02",
-                descricao: "Manutenção preventiva programada de sensores",
-                prioridade: "Média",
-                urgencia: "Esta semana",
-                setor: "Manutenção",
-                profissional: "Marcos Vinicius",
-                status: "Pendente"
-            },
-            {
-                id: 4,
-                data: "2026-09-07",
-                dataDisplay: "Segunda-Feira, 07 De Setembro",
-                hora: "11:00",
-                titulo: "Fechar proposta comercial Norte Têxtil",
-                descricao: "Revisão dos preços e prazos de entrega",
-                prioridade: "Alta",
-                urgencia: "Esta semana",
-                setor: "Comercial",
-                profissional: "Fernanda Lopes",
-                status: "Pendente"
-            },
-            {
-                id: 5,
-                data: "2026-09-09",
-                dataDisplay: "Quarta-Feira, 09 De Setembro",
-                hora: "16:00",
-                titulo: "Conciliar notas fiscais de entrada",
-                descricao: "Conferência do fechamento contábil",
-                prioridade: "Média",
-                urgencia: "Esta semana",
-                setor: "Financeiro",
-                profissional: "Carlos Mendes",
-                status: "Pendente"
-            }
-        ];
-
+        let TAREFAS_BACKEND = [];
         let PASTAS_MOCK = [
             {
                 id: "ped-2041",
@@ -1405,29 +1450,9 @@
                 produtos: [
                     { id: 101, nome: "Caixa reforçada 40×30", qtd: 120, valorUnit: 8.50, dataCompra: "2026-09-02", status: "Separado" },
                     { id: 102, nome: "Fita industrial 48mm", qtd: 60, valorUnit: 12.00, dataCompra: "2026-09-02", status: "Aguardando" },
-                    { id: 103, nome: "Filme stretch 500mm", qtd: 24, valorUnit: 34.90, dataCompra: "2026-09-03", status: "Aguardando" }
-                ]
-            },
-            {
-                id: "ped-2039",
-                codigo: "PED-2039",
-                cliente: "Norte Têxtil",
-                produtos: [
-                    { id: 201, nome: "Bobina Plástica Termoencolhível", qtd: 10, valorUnit: 98.50, dataCompra: "2026-09-01", status: "Separado" },
-                    { id: 202, nome: "Etiquetas Adesivas Térmicas", qtd: 20, valorUnit: 24.00, dataCompra: "2026-09-02", status: "Aguardando" }
-                ]
-            },
-            {
-                id: "ped-2050",
-                codigo: "PED-2050",
-                cliente: "Oficina do Sabor",
-                produtos: [
-                    { id: 301, nome: "Embalagem Kraft delivery", qtd: 200, valorUnit: 3.20, dataCompra: "2026-09-04", status: "Separado" },
-                    { id: 302, nome: "Lacre de Segurança inviolável", qtd: 300, valorUnit: 1.29, dataCompra: "2026-09-04", status: "Separado" }
                 ]
             }
         ];
-
         let pastaAtivaId = "ped-2041";
 
         const activeFilters = {
@@ -1436,11 +1461,293 @@
             prioridade: 'all'
         };
 
+        // ==========================================
+        // FUNÇÃO CRUCIAL: CARREGAR DADOS DO USUÁRIO LOGADO
+        // ==========================================
+        async function carregarUsuario() {
+            const token = localStorage.getItem("token");
+            if (!token) return; // Se em ambiente local mockado, remova este return para não travar
+            
+            try {
+                const resp = await fetch("/usuario_empresa/me", {
+                    headers: { "Authorization": "Bearer " + token }
+                });
+                if (!resp.ok) {
+                    // fazerLogout();
+                    return;
+                }
+                const dados = await resp.json();
+                document.getElementById("user-name").textContent = dados.nome || "Usuário Local";
+                document.getElementById("user-avatar").textContent = (dados.nome ? dados.nome.charAt(0).toUpperCase() : "U");
+                localStorage.setItem('nome_usuario', dados.nome || "Usuário Local");
+            } catch (e) {
+                console.warn('Rodando em modo local sem backend conectado.');
+            }
+        }
+
+        // ==========================================
+        // FUNÇÃO CRUCIAL: CARREGAR AGENDAMENTOS DO BACKEND
+        // ==========================================
+        async function carregarAgendamentos() {
+            const token = localStorage.getItem('token');
+            const idUsuario = localStorage.getItem('id_usuario');
+            if (!token || !idUsuario) {
+                // Mock local caso não exista backend para fins de visualização do HTML
+                TAREFAS_BACKEND = [
+                    {
+                        id: 999, idOrdemServico: null, dataDisplay: 'Sábado, 05 De Setembro', hora: '09:00',
+                        titulo: 'Manutenção preventiva Teste (Mock)', descricao: 'Mock Local', nomeAtivo: 'Esteira 04', 
+                        prioridade: 'Alta', urgencia: 'Imediata', setor: 'Logística', profissional: 'N/A', status: 'Pendente'
+                    }
+                ];
+                renderTimeline();
+                atualizarContadores();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/agendamentos/?id_usuario=${idUsuario}`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.agendamentos) {
+                        TAREFAS_BACKEND = result.agendamentos.map(ag => ({
+                            id: ag.id_agendamento,
+                            idOrdemServico: ag.id_ordem_servico,
+                            data: ag.data_agendamento ? ag.data_agendamento.split('T')[0] : '',
+                            dataDisplay: ag.data_agendamento ? new Date(ag.data_agendamento).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }) : 'Data Indefinida',
+                            hora: "09:00", // Adapte se a API devolver hora
+                            titulo: ag.titulo,
+                            descricao: ag.descricao,
+                            nomeAtivo: ag.nome_ativo || 'Geral',
+                            prioridade: ag.criticidade || 'Alta',
+                            urgencia: 'Ainda hoje',
+                            setor: ag.descricao_servico || 'Logística',
+                            profissional: 'Responsável',
+                            status: ag.status || 'Pendente'
+                        }));
+                        renderTimeline();
+                        atualizarContadores();
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar agendamentos:', error);
+            }
+        }
+
+        // ==========================================
+        // FUNÇÃO CRUCIAL: SALVAR NOVA TAREFA VIA API (POST /agendamentos/)
+        // ==========================================
+        async function salvarNovaTarefa(event) {
+            event.preventDefault();
+
+            const titulo = document.getElementById('task-input-titulo').value.trim();
+            const nomeAtivo = document.getElementById('task-input-ativo').value.trim();
+            const data = document.getElementById('task-input-data').value;
+            const hora = document.getElementById('task-input-hora').value;
+            const prioridade = document.getElementById('task-input-prioridade').value;
+            const urgencia = document.getElementById('task-input-urgencia').value;
+            const setor = document.getElementById('task-input-setor').value;
+            const profissional = document.getElementById('task-input-profissional').value.trim();
+            const status = document.getElementById('task-input-status').value;
+
+            const token = localStorage.getItem('token');
+            const idUsuario = localStorage.getItem('id_usuario');
+
+            // Fallback para mock local
+            if (!token) {
+                const dataObj = new Date(data + 'T12:00:00');
+                const opcoes = { weekday: 'long', day: '2-digit', month: 'long' };
+                let dataFormatada = dataObj.toLocaleDateString('pt-BR', opcoes);
+                
+                TAREFAS_BACKEND.unshift({
+                    id: Date.now(), idOrdemServico: null, dataDisplay: dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1), 
+                    hora: hora, titulo: titulo, descricao: titulo, nomeAtivo: nomeAtivo, 
+                    prioridade: prioridade, urgencia: urgencia, setor: setor, profissional: profissional, status: status
+                });
+                closeModal('modal-tarefa');
+                event.target.reset();
+                showToast("Tarefa simulada localmente!");
+                renderTimeline();
+                atualizarContadores();
+                return;
+            }
+
+            const agendamentoData = {
+                titulo: titulo,
+                descricao: titulo,
+                nome_ativo: nomeAtivo,
+                tipo_ativo: 'Equipamento',
+                nome_servico: 'Manutenção',
+                descricao_servico: setor,
+                data_agendamento: new Date(data + 'T' + hora).toISOString(),
+                id_usuario: parseInt(idUsuario),
+                status: status,
+                criticidade: prioridade
+            };
+
+            try {
+                const response = await fetch('/agendamentos/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(agendamentoData)
+                });
+
+                if (response.ok) {
+                    closeModal('modal-tarefa');
+                    event.target.reset();
+                    showToast("Nova tarefa salva no servidor!");
+                    await carregarAgendamentos();
+                } else {
+                    alert('Erro ao salvar tarefa no servidor.');
+                }
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+            }
+        }
+
+        // ==========================================
+        // FUNÇÃO CRUCIAL: ATUALIZAR STATUS DO AGENDAMENTO (PUT)
+        // ==========================================
+        async function atualizarStatusAgendamento(idAgendamento, novoStatus) {
+            const token = localStorage.getItem('token');
+            if(!token) {
+                // Mock Local
+                let t = TAREFAS_BACKEND.find(x => x.id === idAgendamento);
+                if(t) { t.status = novoStatus; renderTimeline(); atualizarContadores(); }
+                return;
+            }
+
+            try {
+                const response = await fetch(`/agendamentos/${idAgendamento}/status?novo_status=${encodeURIComponent(novoStatus)}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    await carregarAgendamentos();
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar status:', error);
+            }
+        }
+
+        // ==========================================
+        // FUNÇÃO CRUCIAL: DELETAR TAREFA DO BACKEND (DELETE)
+        // ==========================================
+        async function deletarTarefa(idAgendamento) {
+            if (confirm("Deseja remover esta tarefa do sistema?")) {
+                const token = localStorage.getItem('token');
+                
+                if(!token) {
+                    // Mock local
+                    TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t => t.id !== idAgendamento);
+                    renderTimeline(); atualizarContadores(); showToast("Removido localmente!");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/agendamentos/${idAgendamento}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        showToast("Tarefa removida com sucesso!");
+                        await carregarAgendamentos();
+                    } else {
+                        alert('Erro ao deletar agendamento.');
+                    }
+                } catch (error) {
+                    console.error('Erro de conexão ao deletar:', error);
+                }
+            }
+        }
+
+        // ==========================================
+        // FUNÇÃO CRUCIAL: CARREGAR E ADICIONAR COMENTÁRIOS (HISTÓRICO)
+        // ==========================================
+        async function carregarHistoricoComentarios(idOrdem, containerLista, contadorSpan) {
+            if (!idOrdem || idOrdem === 'null') return;
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            try {
+                const resp = await fetch(`/historico/?id_ordem_servico=${idOrdem}`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await resp.json();
+                if (resp.ok && data.historicos) {
+                    containerLista.innerHTML = '';
+                    data.historicos.forEach(h => {
+                        const item = document.createElement('div');
+                        item.className = 'comment-item';
+                        item.innerHTML = `<span class="comment-author">${h.nome_usuario || 'Usuário'}:</span> <span class="comment-text">${h.observacao}</span>`;
+                        containerLista.appendChild(item);
+                    });
+                    contadorSpan.innerText = data.historicos.length;
+                }
+            } catch (e) {
+                console.error('Erro ao carregar comentários:', e);
+            }
+        }
+
+        async function adicionarComentario(btn, idOrdem) {
+            const card = btn.closest('.task-card');
+            const input = card.querySelector('.comment-input');
+            const texto = input.value.trim();
+            const idUsuario = localStorage.getItem('id_usuario');
+            const token = localStorage.getItem('token');
+
+            if (texto && idOrdem && idOrdem !== 'null' && token) {
+                try {
+                    const resp = await fetch('/historico/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: texto, id_usuario: idUsuario })
+                    });
+                    if (resp.ok) {
+                        input.value = '';
+                        const lista = card.querySelector('.comments-list');
+                        const contador = card.querySelector('.comment-count');
+                        await carregarHistoricoComentarios(idOrdem, lista, contador);
+                    }
+                } catch (e) {
+                    console.error('Erro ao enviar comentário:', e);
+                }
+            } else if (texto) {
+                // Mock feedback para usuário local
+                const lista = card.querySelector('.comments-list');
+                const novoComentario = document.createElement('div');
+                novoComentario.className = 'comment-item';
+                novoComentario.innerHTML = `<span class="comment-author">Local:</span> <span class="comment-text">${texto}</span>`;
+                lista.appendChild(novoComentario);
+                input.value = '';
+                const contador = card.querySelector('.comment-count');
+                contador.innerText = parseInt(contador.innerText) + 1;
+            }
+        }
+
+        function abrirComentarios(btn) {
+            const card = btn.closest('.task-card');
+            const drawer = card.querySelector('.comments-drawer');
+            drawer.style.display = (drawer.style.display === 'none' || drawer.style.display === '') ? 'block' : 'none';
+        }
+
+        // ==========================================
+        // GERENCIAMENTO DE INTERFACE E NAVEGAÇÃO
+        // ==========================================
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            closeAllPopovers();
 
             if (viewName === 'overview') {
                 document.getElementById('view-overview').classList.add('active');
@@ -1464,8 +1771,8 @@
         }
 
         function atualizarContadores() {
-            const abertas = TAREFAS_MOCK.filter(t => t.status !== 'Concluída').length;
-            const criticas = TAREFAS_MOCK.filter(t => t.prioridade === 'Crítica' && t.status !== 'Concluída').length;
+            const abertas = TAREFAS_BACKEND.filter(t => t.status !== 'Concluído').length;
+            const criticas = TAREFAS_BACKEND.filter(t => t.prioridade === 'Crítica' && t.status !== 'Concluído').length;
             
             let totalItens = 0;
             PASTAS_MOCK.forEach(p => totalItens += p.produtos.length);
@@ -1478,9 +1785,7 @@
         function togglePopover(popoverId, triggerElem) {
             const popover = document.getElementById(popoverId);
             const isOpen = popover.classList.contains('open');
-
             closeAllPopovers();
-
             if (!isOpen) {
                 popover.classList.add('open');
                 triggerElem.classList.add('active');
@@ -1500,7 +1805,6 @@
 
         function selectFilter(filterType, val, displayText) {
             activeFilters[filterType] = val;
-            
             if (filterType === 'setor') document.getElementById('selected-setor-text').textContent = displayText;
             if (filterType === 'status') document.getElementById('selected-status-text').textContent = displayText;
             if (filterType === 'prioridade') document.getElementById('selected-prioridade-text').textContent = displayText;
@@ -1520,8 +1824,7 @@
             const container = document.getElementById('timeline-task-list');
             container.innerHTML = '';
 
-            const filteredTasks = TAREFAS_MOCK.filter(task => {
-                if (activeFilters.setor !== 'all' && task.setor !== activeFilters.setor) return false;
+            const filteredTasks = TAREFAS_BACKEND.filter(task => {
                 if (activeFilters.status !== 'all' && task.status !== activeFilters.status) return false;
                 if (activeFilters.prioridade !== 'all' && task.prioridade !== activeFilters.prioridade) return false;
                 return true;
@@ -1538,10 +1841,9 @@
 
             const groupsByDate = {};
             filteredTasks.forEach(task => {
-                if (!groupsByDate[task.dataDisplay]) {
-                    groupsByDate[task.dataDisplay] = [];
-                }
-                groupsByDate[task.dataDisplay].push(task);
+                const groupKey = task.dataDisplay || 'Geral';
+                if (!groupsByDate[groupKey]) groupsByDate[groupKey] = [];
+                groupsByDate[groupKey].push(task);
             });
 
             for (const [dateTitle, tasks] of Object.entries(groupsByDate)) {
@@ -1564,7 +1866,7 @@
                     else if (task.prioridade === 'Alta') { borderClass = 'border-high'; priorityClass = 'high'; }
                     else if (task.prioridade === 'Baixa') { borderClass = 'border-low'; priorityClass = 'low'; }
 
-                    const statusClass = task.status === 'Concluída' ? 'concluida' : '';
+                    const statusClass = task.status === 'Concluído' ? 'concluida' : '';
 
                     taskCard.className = `task-card ${borderClass}`;
                     taskCard.innerHTML = `
@@ -1578,46 +1880,39 @@
                             <div class="task-metadata-list">
                                 <div class="metadata-row">
                                     <span class="meta-icon">◆</span>
-                                    <span>Setor: ${task.setor}</span>
+                                    <span>Ativo: ${task.nomeAtivo}</span>
                                 </div>
                                 <div class="metadata-row">
                                     <span class="meta-icon">◇</span>
-                                    <span>Profissional: ${task.profissional}</span>
+                                    <span>Setor: ${task.setor}</span>
                                 </div>
-                                <div class="metadata-row">
-                                    <span class="meta-icon">!</span>
-                                    <span>Urgência: ${task.urgencia}</span>
+                            </div>
+                            <div class="comments-drawer">
+                                <div class="comments-list"></div>
+                                <div class="comment-input-area">
+                                    <input type="text" class="comment-input" placeholder="Escreva um comentário...">
+                                    <button class="comment-submit" onclick="adicionarComentario(this, '${task.idOrdemServico}')">+</button>
                                 </div>
                             </div>
                         </div>
                         <div class="task-actions">
-                            <button class="btn-icon-action" title="Alternar status" onclick="toggleTaskStatus(${task.id})">✓</button>
+                            <button class="btn-icon-action" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">💬 <span class="comment-count" style="margin-left:4px;">0</span></button>
+                            <button class="btn-icon-action" title="Alternar status Concluído" onclick="atualizarStatusAgendamento(${task.id}, '${task.status === 'Concluído' ? 'Pendente' : 'Concluído'}')">✓</button>
                             <button class="btn-icon-action" title="Excluir" onclick="deletarTarefa(${task.id})">🗑</button>
                         </div>
                     `;
+
+                    // Carrega o histórico de comentários vinculado à ordem de serviço
+                    if (task.idOrdemServico && task.idOrdemServico !== 'null') {
+                        const listaComentarios = taskCard.querySelector('.comments-list');
+                        const spanContador = taskCard.querySelector('.comment-count');
+                        carregarHistoricoComentarios(task.idOrdemServico, listaComentarios, spanContador);
+                    }
+
                     dayGroup.appendChild(taskCard);
                 });
 
                 container.appendChild(dayGroup);
-            }
-        }
-
-        function toggleTaskStatus(id) {
-            const task = TAREFAS_MOCK.find(t => t.id === id);
-            if (task) {
-                task.status = task.status === 'Concluída' ? 'Pendente' : 'Concluída';
-                renderTimeline();
-                atualizarContadores();
-                showToast(`Status de "${task.titulo}" atualizado para ${task.status}!`);
-            }
-        }
-
-        function deletarTarefa(id) {
-            if (confirm("Deseja remover esta tarefa da agenda?")) {
-                TAREFAS_MOCK = TAREFAS_MOCK.filter(t => t.id !== id);
-                renderTimeline();
-                atualizarContadores();
-                showToast("Tarefa removida com sucesso!");
             }
         }
 
@@ -1666,7 +1961,6 @@
             tbody.innerHTML = '';
 
             let grandTotal = 0;
-
             pasta.produtos.forEach(item => {
                 const totalItem = item.qtd * item.valorUnit;
                 grandTotal += totalItem;
@@ -1678,12 +1972,8 @@
                     <td class="td-mono">${formatarMoeda(item.valorUnit)}</td>
                     <td class="td-mono" style="font-weight:600; color:var(--color-primary);">${formatarMoeda(totalItem)}</td>
                     <td class="td-mono" style="color:var(--text-muted);">${item.dataCompra}</td>
-                    <td>
-                        <span class="badge-status ${item.status === 'Separado' ? 'concluida' : ''}">${item.status}</span>
-                    </td>
-                    <td>
-                        <button class="btn-icon-action" title="Excluir produto" onclick="deletarProduto(${item.id})">🗑</button>
-                    </td>
+                    <td><span class="badge-status ${item.status === 'Separado' ? 'concluida' : ''}">${item.status}</span></td>
+                    <td><button class="btn-icon-action" title="Excluir produto" onclick="deletarProduto(${item.id})">🗑</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1707,7 +1997,7 @@
                 modal.classList.add('active');
                 const dateInputs = modal.querySelectorAll('input[type="date"]');
                 dateInputs.forEach(input => {
-                    if (!input.value) input.value = "2026-09-05";
+                    if (!input.value) input.value = new Date().toISOString().split('T')[0];
                 });
             }
         }
@@ -1715,47 +2005,6 @@
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.classList.remove('active');
-        }
-
-        function salvarNovaTarefa(event) {
-            event.preventDefault();
-
-            const titulo = document.getElementById('task-input-titulo').value.trim();
-            const desc = document.getElementById('task-input-desc').value.trim();
-            const data = document.getElementById('task-input-data').value;
-            const hora = document.getElementById('task-input-hora').value;
-            const prioridade = document.getElementById('task-input-prioridade').value;
-            const urgencia = document.getElementById('task-input-urgencia').value;
-            const setor = document.getElementById('task-input-setor').value;
-            const profissional = document.getElementById('task-input-profissional').value.trim();
-            const status = document.getElementById('task-input-status').value;
-
-            const dataObj = new Date(data + 'T12:00:00');
-            const opcoes = { weekday: 'long', day: '2-digit', month: 'long' };
-            let dataFormatada = dataObj.toLocaleDateString('pt-BR', opcoes);
-            dataFormatada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
-
-            const novaTarefa = {
-                id: Date.now(),
-                data: data,
-                dataDisplay: dataFormatada,
-                hora: hora,
-                titulo: titulo,
-                descricao: desc,
-                prioridade: prioridade,
-                urgencia: urgencia,
-                setor: setor,
-                profissional: profissional,
-                status: status
-            };
-
-            TAREFAS_MOCK.unshift(novaTarefa);
-            closeModal('modal-tarefa');
-            event.target.reset();
-            
-            renderTimeline();
-            atualizarContadores();
-            showToast("Nova tarefa agendada com sucesso!");
         }
 
         function salvarNovaPasta(event) {
@@ -1808,6 +2057,13 @@
             showToast(`Produto "${nome}" adicionado ao pedido!`);
         }
 
+        function fazerLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('id_usuario');
+            localStorage.removeItem('email');
+            window.location.href = '/index';
+        }
+
         function simularImportarExcel() {
             showToast("Simulação: Importando planilha Excel com produtos...");
         }
@@ -1829,9 +2085,10 @@
             }, 3000);
         }
 
+        // Inicialização ao carregar a página
         document.addEventListener('DOMContentLoaded', () => {
-            atualizarContadores();
-            renderTimeline();
+            carregarUsuario();
+            carregarAgendamentos();
             renderPastas();
         });
     </script>
