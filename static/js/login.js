@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("token", data.access_token);
                 localStorage.setItem("id_usuario", data.id_usuario);
                 localStorage.setItem("nome_usuario", data.nome);
+                if (data.email) localStorage.setItem("email", data.email);
+                if (data.tipo) localStorage.setItem("tipo", String(data.tipo).toUpperCase());
 
                 // Redireciona para o painel principal
                 window.location.href = "/telainicial";

@@ -47,17 +47,47 @@ def ensure_migrations():
 
     conn = engine.connect()
     try:
+        # ordem_servico.prioridade
         try:
             res = conn.execute(text("PRAGMA table_info('ordem_servico')"))
             cols = [row[1] for row in res.fetchall()]
         except Exception:
             cols = []
 
-        if 'prioridade' not in cols:
+        if "prioridade" not in cols:
             try:
                 conn.execute(text("ALTER TABLE ordem_servico ADD COLUMN prioridade TEXT"))
                 print("Migration: coluna 'prioridade' adicionada em ordem_servico")
             except Exception as e:
                 print("Falha ao aplicar migration 'prioridade':", e)
+
+        # usuario_empresa.tipo (controle de acesso)
+        try:
+            res = conn.execute(text("PRAGMA table_info('usuario_empresa')"))
+            cols_u = [row[1] for row in res.fetchall()]
+        except Exception:
+            cols_u = []
+
+        if "tipo" not in cols_u:
+            try:
+                conn.execute(
+                    text(
+                        "ALTER TABLE usuario_empresa ADD COLUMN tipo TEXT NOT NULL DEFAULT 'comum'"
+                    )
+                )
+                print("Migration: coluna 'tipo' adicionada em usuario_empresa")
+            except Exception as e:
+                print("Falha ao aplicar migration 'tipo':", e)
+        else:
+            try:
+                conn.execute(
+                    text(
+                        "UPDATE usuario_empresa SET tipo = 'comum' WHERE tipo IS NULL OR tipo = ''"
+                    )
+                )
+            except Exception:
+                pass
+
+        conn.commit()
     finally:
         conn.close()

@@ -1,21 +1,34 @@
-from fastapi import APIRouter, Depends, HTTPException, Form, Header
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
-from app.core.database import get_db
-from app.schemas.usuario_schema import UsuarioCreate, UsuarioResponse
-from app.models.models import UsuarioEmpresa
-from app.core.security import hash_senha
-from app.core.security import verificar_senha, criar_token, verificar_token
-from app.schemas.usuario_schema import LoginSchema
+from pydantic import BaseModel
 from typing import Optional
+
+from app.core.database import get_db
+from app.schemas.usuario_schema import UsuarioCreate, UsuarioResponse, LoginSchema
+from app.models.models import UsuarioEmpresa, TipoUsuario
+from app.core.security import hash_senha, verificar_senha, criar_token, verificar_token
+from app.core.deps import get_current_user, verificar_admin
+
 
 router = APIRouter(prefix="/usuario_empresa", tags=["Usuario_Empresa"])
 
+
+def _tipo_str(usuario: UsuarioEmpresa) -> str:
+    """Normaliza o tipo do usuário para string maiúscula (COMUM/TECNICO/ADMIN)."""
+    tipo = getattr(usuario, "tipo", None)
+    if tipo is None:
+        return "COMUM"
+    if isinstance(tipo, TipoUsuario):
+        return tipo.name  # COMUM, TECNICO, ADMIN
+    return str(tipo).upper()
+
+
+class AlterarTipoBody(BaseModel):
+    tipo: str
+
+
 @router.post("/cadastro")
-def cadastro(
-    usuario: UsuarioCreate,
-    db: Session = Depends(get_db)
-):  
-    # Validação adicional no back-end (vinda da sua máquina local)
+def cadastro(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     if usuario.senha != usuario.confirmar_senha:
         raise HTTPException(status_code=400, detail="As senhas não coincidem")
 
@@ -32,28 +45,47 @@ def cadastro(
     novo_usuario = UsuarioEmpresa(
         nome=usuario.nome,
         email=usuario.email,
-        senha_hash=hash_senha(usuario.senha)
+        senha_hash=hash_senha(usuario.senha),
+        tipo=TipoUsuario.COMUM,
     )
 
     db.add(novo_usuario)
     db.commit()
     db.refresh(novo_usuario)
 
-    return {"msg": "Usuário criado com sucesso", "usuario": UsuarioResponse.from_orm(novo_usuario)}
+    return {
+        "msg": "Usuário criado com sucesso",
+        "usuario": {
+            "id_usuario": novo_usuario.id_usuario,
+            "nome": novo_usuario.nome,
+            "email": novo_usuario.email,
+            "tipo": _tipo_str(novo_usuario),
+        },
+    }
 
-@router.get("/usuarios", response_model=list[UsuarioResponse])
+
+@router.get("/usuarios")
 def listar_usuarios(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: UsuarioEmpresa = Depends(verificar_admin),
 ):
-    usuarios = db.query(UsuarioEmpresa).all()  
-
+    usuarios = db.query(UsuarioEmpresa).all()
     if not usuarios:
         raise HTTPException(status_code=404, detail="Nenhum usuário encontrado")
-    return usuarios
+
+    return [
+        {
+            "id_usuario": u.id_usuario,
+            "nome": u.nome,
+            "email": u.email,
+            "tipo": _tipo_str(u),
+        }
+        for u in usuarios
+    ]
+
 
 @router.post("/login")
 def login(dados: LoginSchema, db: Session = Depends(get_db)):
-
     usuario = db.query(UsuarioEmpresa).filter(
         UsuarioEmpresa.email == dados.email
     ).first()
@@ -71,18 +103,20 @@ def login(dados: LoginSchema, db: Session = Depends(get_db)):
         "token_type": "bearer",
         "id_usuario": usuario.id_usuario,
         "nome": usuario.nome,
-        "email": usuario.email
+        "email": usuario.email,
+        "tipo": _tipo_str(usuario),
     }
+
 
 @router.get("/me")
 def dados_usuario_logado(
     authorization: Optional[str] = Header(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Token não fornecido")
 
-    token = authorization.split(" ")[1]
+    token = authorization.split(" ", 1)[1]
     payload = verificar_token(token)
 
     if not payload:
@@ -94,4 +128,71 @@ def dados_usuario_logado(
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-    return {"nome": usuario.nome, "email": usuario.email}
+    return {
+        "id_usuario": usuario.id_usuario,
+        "nome": usuario.nome,
+        "email": usuario.email,
+        "tipo": _tipo_str(usuario),
+    }
+
+
+@router.put("/usuarios/{id_usuario}/tipo")
+def alterar_tipo_usuario(
+    id_usuario: str,
+    body: AlterarTipoBody,
+    db: Session = Depends(get_db),
+    _admin: UsuarioEmpresa = Depends(verificar_admin),
+):
+    """ADMIN promove/rebaixa usuário entre COMUM e TECNICO."""
+    novo = (body.tipo or "").strip().upper()
+    mapa = {
+        "COMUM": TipoUsuario.COMUM,
+        "TECNICO": TipoUsuario.TECNICO,
+    }
+    if novo not in mapa:
+        raise HTTPException(
+            status_code=400,
+            detail="Tipo inválido. Use COMUM ou TECNICO.",
+        )
+
+    alvo = db.query(UsuarioEmpresa).filter(
+        UsuarioEmpresa.id_usuario == id_usuario
+    ).first()
+    if not alvo:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    if _tipo_str(alvo) == "ADMIN":
+        raise HTTPException(
+            status_code=400,
+            detail="Não é permitido alterar o tipo de um administrador por esta rota.",
+        )
+
+    try:
+        alvo.tipo = mapa[novo]
+        db.commit()
+        db.refresh(alvo)
+    except Exception as e:
+        db.rollback()
+        # Fallback SQLite TEXT / enum incompatível
+        try:
+            from sqlalchemy import text
+            db.execute(
+                text("UPDATE usuario_empresa SET tipo = :t WHERE id_usuario = :id"),
+                {"t": mapa[novo].value, "id": id_usuario},
+            )
+            db.commit()
+            alvo = db.query(UsuarioEmpresa).filter(
+                UsuarioEmpresa.id_usuario == id_usuario
+            ).first()
+        except Exception as e2:
+            db.rollback()
+            raise HTTPException(
+                status_code=400,
+                detail=f"Erro ao alterar tipo: {e} | fallback: {e2}",
+            )
+
+    return {
+        "msg": f"Tipo atualizado para {novo}",
+        "id_usuario": alvo.id_usuario,
+        "tipo": _tipo_str(alvo),
+    }
