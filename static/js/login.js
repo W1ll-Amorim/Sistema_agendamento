@@ -26,9 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 // 🔐 Salva as credenciais e estados essenciais no navegador
-                localStorage.setItem("token", data.access_token);
-                localStorage.setItem("id_usuario", data.id_usuario);
-                localStorage.setItem("nome_usuario", data.nome);
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('id_usuario', data.id_usuario);
+                localStorage.setItem('email', data.email || '');
+                localStorage.setItem('nome_usuario', data.nome || '');
+                localStorage.setItem('tipo', data.tipo || 'COMUM');
 
                 // Redireciona para o painel principal
                 window.location.href = "/telainicial";

@@ -1,23 +1,26 @@
-# 1. Usa uma imagem oficial e enxuta do Python
-FROM python:3.10-slim
+FROM python:3.12-slim-bookworm
 
-# 2. Define onde o código vai ficar dentro do container
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
 WORKDIR /app
 
-# 3. Copia os requerimentos primeiro (isso otimiza o tempo de build)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpq5 \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --create-home --uid 10001 appuser
+
 COPY requirements.txt .
 
-# 4. Instala as dependências do sistema
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copia todo o resto do seu código para dentro do container
-COPY . .
+COPY --chown=appuser:appuser . .
 
-# 6. Libera a porta 8000 para acesso
+COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+USER appuser
+
 EXPOSE 8000
 
-# 7. Comando para rodar a aplicação (Ajustado para FastAPI)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-# NOTA: Se você estiver usando Flask em vez de FastAPI/Uvicorn, troque a linha acima por:
-# CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

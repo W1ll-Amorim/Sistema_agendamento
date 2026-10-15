@@ -1065,8 +1065,7 @@
             const token = localStorage.getItem('token');
             const idUsuario = localStorage.getItem('id_usuario');
             if (!token || !idUsuario) {
-                // Descomente em produção caso tenha página de login configurada:
-                // window.location.href = '/index';
+                window.location.href = '/';
             }
         })();
 
@@ -1075,8 +1074,7 @@
                 const token = localStorage.getItem('token');
                 const idUsuario = localStorage.getItem('id_usuario');
                 if (!token || !idUsuario) {
-                    // Descomente em produção:
-                    // window.location.href = '/index';
+                    window.location.href = '/';
                 }
             }
         });
@@ -1229,7 +1227,35 @@
 
             <div class="folders-grid" id="folders-container"></div>
         </main>
+        <!-- VISÃO DE GERENCIAMENTO DE USUÁRIOS -->
 
+        <main id="view-usuarios" class="view-section">
+
+            <div class="module-header">
+                <div>
+                    <div class="module-meta">Administração</div>
+                    <h2 class="module-title">Gerenciar Usuários</h2>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table class="products-table">
+
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Tipo Atual</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="usuarios-tbody"></tbody>
+
+                </table>
+            </div>
+
+        </main>
         <!-- VISÃO DETALHE DA PASTA -->
         <main id="view-pasta-detalhe" class="view-section">
             <button class="back-nav-btn" onclick="switchView('pedidos')">
@@ -1442,18 +1468,71 @@
     <!-- ========================================== -->
     <script>
         let TAREFAS_BACKEND = [];
-        let PASTAS_MOCK = [
-            {
-                id: "ped-2041",
-                codigo: "PED-2041",
-                cliente: "Grupo Meridiano",
-                produtos: [
-                    { id: 101, nome: "Caixa reforçada 40×30", qtd: 120, valorUnit: 8.50, dataCompra: "2026-09-02", status: "Separado" },
-                    { id: 102, nome: "Fita industrial 48mm", qtd: 60, valorUnit: 12.00, dataCompra: "2026-09-02", status: "Aguardando" },
-                ]
+        let PASTAS_MOCK = [];
+        let pastaAtivaId = null;
+
+        function chavePastasUsuario() {
+            const id = localStorage.getItem('id_usuario') || 'anon';
+            return 'pastas_' + id;
+        }
+
+        function carregarPastasDoUsuario() {
+            try {
+                const tipo = String(TIPO_USUARIO || localStorage.getItem('tipo') || 'COMUM').toUpperCase();
+                if (tipo === 'COMUM') {
+                    // COMUM: so as proprias pastas
+                    const raw = localStorage.getItem(chavePastasUsuario());
+                    PASTAS_MOCK = raw ? JSON.parse(raw) : [];
+                } else {
+                    // TECNICO e ADMIN: todas as pastas de todos os usuarios
+                    const todas = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (k && k.startsWith('pastas_')) {
+                            try {
+                                const lista = JSON.parse(localStorage.getItem(k) || '[]');
+                                if (Array.isArray(lista)) {
+                                    lista.forEach(p => {
+                                        if (!p.id_usuario) {
+                                            p.id_usuario = k.replace('pastas_', '');
+                                        }
+                                        todas.push(p);
+                                    });
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                    PASTAS_MOCK = todas;
+                }
+            } catch (e) {
+                PASTAS_MOCK = [];
             }
-        ];
-        let pastaAtivaId = "ped-2041";
+            if (!Array.isArray(PASTAS_MOCK)) PASTAS_MOCK = [];
+        }
+
+        function salvarPastasDoUsuario() {
+            // Sempre grava apenas as pastas do usuario logado na chave dele
+            try {
+                const meuId = String(localStorage.getItem('id_usuario') || 'anon');
+                const minhas = PASTAS_MOCK.filter(p =>
+                    !p.id_usuario || String(p.id_usuario) === meuId
+                );
+                // Se for COMUM, PASTAS_MOCK ja e so dele
+                const tipo = String(TIPO_USUARIO || 'COMUM').toUpperCase();
+                if (tipo === 'COMUM') {
+                    localStorage.setItem(chavePastasUsuario(), JSON.stringify(PASTAS_MOCK));
+                } else {
+                    // Admin/tecnico ao editar: atualiza a chave do dono de cada pasta alterada
+                    // e tambem a propria chave se criou pasta nova
+                    localStorage.setItem(chavePastasUsuario(), JSON.stringify(
+                        PASTAS_MOCK.filter(p => String(p.id_usuario || meuId) === meuId)
+                    ));
+                }
+            } catch (e) {
+                console.warn('Nao foi possivel salvar pastas localmente', e);
+            }
+        }
+        let TIPO_USUARIO = 'COMUM';
 
         const activeFilters = {
             setor: 'all',
@@ -1462,87 +1541,427 @@
         };
 
         // ==========================================
-        // FUNÇÃO CRUCIAL: CARREGAR DADOS DO USUÁRIO LOGADO
+        // CARREGAR DADOS DO USUÁRIO LOGADO
         // ==========================================
         async function carregarUsuario() {
-            const token = localStorage.getItem("token");
-            if (!token) return; // Se em ambiente local mockado, remova este return para não travar
-            
-            try {
-                const resp = await fetch("/usuario_empresa/me", {
-                    headers: { "Authorization": "Bearer " + token }
-                });
-                if (!resp.ok) {
-                    // fazerLogout();
-                    return;
-                }
-                const dados = await resp.json();
-                document.getElementById("user-name").textContent = dados.nome || "Usuário Local";
-                document.getElementById("user-avatar").textContent = (dados.nome ? dados.nome.charAt(0).toUpperCase() : "U");
-                localStorage.setItem('nome_usuario', dados.nome || "Usuário Local");
-            } catch (e) {
-                console.warn('Rodando em modo local sem backend conectado.');
-            }
-        }
-
-        // ==========================================
-        // FUNÇÃO CRUCIAL: CARREGAR AGENDAMENTOS DO BACKEND
-        // ==========================================
-        async function carregarAgendamentos() {
             const token = localStorage.getItem('token');
-            const idUsuario = localStorage.getItem('id_usuario');
-            if (!token || !idUsuario) {
-                // Mock local caso não exista backend para fins de visualização do HTML
-                TAREFAS_BACKEND = [
-                    {
-                        id: 999, idOrdemServico: null, dataDisplay: 'Sábado, 05 De Setembro', hora: '09:00',
-                        titulo: 'Manutenção preventiva Teste (Mock)', descricao: 'Mock Local', nomeAtivo: 'Esteira 04', 
-                        prioridade: 'Alta', urgencia: 'Imediata', setor: 'Logística', profissional: 'N/A', status: 'Pendente'
-                    }
-                ];
-                renderTimeline();
-                atualizarContadores();
-                return;
+
+            if (!token) {
+                window.location.href = '/';
+                return false;
             }
 
             try {
-                const response = await fetch(`/agendamentos/?id_usuario=${idUsuario}`, {
+                const resp = await fetch('/usuario_empresa/me', {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.agendamentos) {
-                        TAREFAS_BACKEND = result.agendamentos.map(ag => ({
-                            id: ag.id_agendamento,
-                            idOrdemServico: ag.id_ordem_servico,
-                            data: ag.data_agendamento ? ag.data_agendamento.split('T')[0] : '',
-                            dataDisplay: ag.data_agendamento ? new Date(ag.data_agendamento).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }) : 'Data Indefinida',
-                            hora: "09:00", // Adapte se a API devolver hora
-                            titulo: ag.titulo,
-                            descricao: ag.descricao,
-                            nomeAtivo: ag.nome_ativo || 'Geral',
-                            prioridade: ag.criticidade || 'Alta',
-                            urgencia: 'Ainda hoje',
-                            setor: ag.descricao_servico || 'Logística',
-                            profissional: 'Responsável',
-                            status: ag.status || 'Pendente'
-                        }));
-                        renderTimeline();
-                        atualizarContadores();
-                    }
+                if (resp.status === 401) {
+                    fazerLogout();
+                    return false;
                 }
+
+                if (!resp.ok) {
+                    throw new Error('Erro ao consultar usuário.');
+                }
+
+                const dados = await resp.json();
+
+                const userName = document.getElementById('user-name');
+                if (userName) {
+                    userName.textContent = dados.nome || 'Usuário';
+                }
+
+                const userAvatar = document.getElementById('user-avatar');
+                if (userAvatar) {
+                    userAvatar.textContent = dados.nome ? dados.nome.charAt(0).toUpperCase() : 'U';
+                }
+
+                // Prioriza o tipo vindo do backend; fallback para localStorage
+                const tipoBackend = dados.tipo || localStorage.getItem('tipo') || 'COMUM';
+                TIPO_USUARIO = String(tipoBackend).toUpperCase();
+                localStorage.setItem('tipo', TIPO_USUARIO);
+
+                if (dados.id_usuario) {
+                    localStorage.setItem('id_usuario', dados.id_usuario);
+                }
+                if (dados.nome) {
+                    localStorage.setItem('nome_usuario', dados.nome);
+                }
+
+                aplicarPermissoes();
+                return true;
+
+            } catch (erro) {
+                console.error('Erro ao carregar usuário:', erro);
+                localStorage.removeItem('token');
+                localStorage.removeItem('id_usuario');
+                localStorage.removeItem('email');
+                localStorage.removeItem('tipo');
+                localStorage.removeItem('nome_usuario');
+                window.location.href = '/';
+                return false;
+            }
+        }
+
+        // ==========================================
+        // APLICAR PERMISSÕES VISUAIS
+        // ==========================================
+        function aplicarPermissoes() {
+            const tipo = TIPO_USUARIO;
+
+            // 1. Botão Nova Tarefa: COMUM e ADMIN podem criar. TÉCNICO NÃO.
+            const btnNovaTarefa = document.querySelector('#view-agenda .btn-primary-action');
+            if (btnNovaTarefa) {
+                btnNovaTarefa.style.display = (tipo === 'TECNICO') ? 'none' : 'inline-flex';
+            }
+
+            // 2. Aba Usuários: somente ADMIN
+            let tabUsuarios = document.getElementById('tab-usuarios');
+            if (!tabUsuarios && tipo === 'ADMIN') {
+                const navTabs = document.querySelector('.nav-tabs');
+                if (navTabs) {
+                    tabUsuarios = document.createElement('button');
+                    tabUsuarios.type = 'button';
+                    tabUsuarios.className = 'tab-btn';
+                    tabUsuarios.id = 'tab-usuarios';
+                    tabUsuarios.textContent = 'Usuários';
+                    tabUsuarios.onclick = () => switchView('usuarios');
+                    navTabs.appendChild(tabUsuarios);
+                }
+            }
+            if (tabUsuarios) {
+                tabUsuarios.style.display = (tipo === 'ADMIN') ? 'inline-block' : 'none';
+            }
+
+            // 3. Badge de perfil
+            const badge = document.querySelector('.user-profile-badge');
+            if (badge) {
+                const existing = badge.querySelector('.role-badge');
+                if (existing) existing.remove();
+
+                const roleBadge = document.createElement('span');
+                roleBadge.className = 'role-badge';
+                roleBadge.style.cssText = 'font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;';
+
+                if (tipo === 'ADMIN') {
+                    roleBadge.textContent = 'ADMIN';
+                    roleBadge.style.background = 'rgba(112,0,255,0.2)';
+                    roleBadge.style.color = '#c084fc';
+                } else if (tipo === 'TECNICO') {
+                    roleBadge.textContent = 'TÉCNICO';
+                    roleBadge.style.background = 'rgba(0,229,255,0.15)';
+                    roleBadge.style.color = '#00E5FF';
+                } else {
+                    roleBadge.textContent = 'COMUM';
+                    roleBadge.style.background = 'rgba(116,125,140,0.2)';
+                    roleBadge.style.color = '#9ba1b0';
+                }
+
+                const btnLogout = badge.querySelector('.btn-logout');
+                if (btnLogout) {
+                    badge.insertBefore(roleBadge, btnLogout);
+                } else {
+                    badge.appendChild(roleBadge);
+                }
+            }
+        }
+
+        // ==========================================
+        // LISTAR USUÁRIOS (somente ADMIN)
+        // ==========================================
+        async function carregarUsuarios() {
+            if (TIPO_USUARIO !== 'ADMIN') return;
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            const tbody = document.getElementById('usuarios-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Carregando...</td></tr>';
+
+            try {
+                // Rota alinhada com o backend: prefix /usuario_empresa
+                const resp = await fetch('/usuario_empresa/usuarios', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (resp.status === 401) {
+                    fazerLogout();
+                    return;
+                }
+
+                if (resp.status === 403) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--color-critical);">Acesso negado. Apenas administradores podem gerenciar usuários.</td></tr>';
+                    return;
+                }
+
+                if (!resp.ok) {
+                    throw new Error('Erro ao listar usuários');
+                }
+
+                const data = await resp.json();
+                // Backend retorna lista direta (response_model=list) ou {usuarios: [...]}
+                const lista = Array.isArray(data) ? data : (data.usuarios || []);
+
+                tbody.innerHTML = '';
+
+                if (lista.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Nenhum usuário encontrado.</td></tr>';
+                    return;
+                }
+
+                lista.forEach(u => {
+                    const id = u.id_usuario || u.id;
+                    const nome = u.nome || '—';
+                    const email = u.email || '—';
+                    // tipo pode vir como string ou como enum .value
+                    const tipo = String(u.tipo || 'COMUM').toUpperCase();
+
+                    const tr = document.createElement('tr');
+                    // Admin só promove para COMUM ou TECNICO; pode excluir não-admins
+                    const nomeSafe = String(nome).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+                    const nomeAttr = String(nome).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+                    let acoesHtml;
+                    if (tipo === 'ADMIN') {
+                        acoesHtml = '<span style="color:var(--text-muted);">—</span>';
+                    } else {
+                        acoesHtml = `
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                                <select class="form-select" style="width:140px;"
+                                    onchange="promoverUsuario(${id}, this.value)">
+                                    <option value="COMUM" ${tipo === 'COMUM' ? 'selected' : ''}>COMUM</option>
+                                    <option value="TECNICO" ${tipo === 'TECNICO' ? 'selected' : ''}>TECNICO</option>
+                                </select>
+                                <button type="button" class="btn-icon-action" title="Excluir usuário"
+                                    onclick="excluirUsuario(${id}, '${nomeAttr}')">
+                                    🗑
+                                </button>
+                            </div>
+                        `;
+                    }
+
+                    tr.innerHTML = `
+                        <td>${nomeSafe}</td>
+                        <td>${email}</td>
+                        <td><span class="badge-status">${tipo}</span></td>
+                        <td>${acoesHtml}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (erro) {
+                console.error('Erro ao carregar usuários:', erro);
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--color-critical);">Erro ao carregar usuários. Verifique se a rota /usuario_empresa/usuarios existe no backend.</td></tr>';
+            }
+        }
+
+        // ==========================================
+        // PROMOVER / ALTERAR TIPO DE USUÁRIO
+        // ==========================================
+        async function promoverUsuario(idUsuario, novoTipo) {
+            if (TIPO_USUARIO !== 'ADMIN') {
+                alert('Você não tem permissão para alterar usuários.');
+                return;
+            }
+
+            const tiposPermitidos = ['COMUM', 'TECNICO'];  // Admin não promove a ADMIN
+            if (!tiposPermitidos.includes(novoTipo)) {
+                alert('Tipo de usuário inválido.');
+                await carregarUsuarios();
+                return;
+            }
+
+            if (!confirm(`Deseja alterar o tipo deste usuário para ${novoTipo}?`)) {
+                await carregarUsuarios();
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                // Rota alinhada com o backend: PUT /usuario_empresa/{id}/tipo
+                const resp = await fetch(`/usuario_empresa/${idUsuario}/tipo`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ tipo: novoTipo })
+                });
+
+                if (resp.status === 401) {
+                    fazerLogout();
+                    return;
+                }
+
+                if (resp.status === 403) {
+                    alert('Acesso negado. Apenas administradores podem alterar perfis.');
+                    await carregarUsuarios();
+                    return;
+                }
+
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    let msg = 'Erro ao alterar o tipo do usuário.';
+                    if (err.detail) {
+                        msg = typeof err.detail === 'string' ? err.detail
+                            : (Array.isArray(err.detail) ? err.detail.map(e => e.msg || JSON.stringify(e)).join('\n') : JSON.stringify(err.detail));
+                    }
+                    throw new Error(msg);
+                }
+
+                showToast(`Usuário atualizado para ${novoTipo}.`);
+                await carregarUsuarios();
+
+            } catch (erro) {
+                console.error('Erro ao alterar usuário:', erro);
+                alert(erro.message || 'Não foi possível alterar o tipo do usuário.');
+                await carregarUsuarios();
+            }
+        }
+
+        // ==========================================
+        // EXCLUIR USUÁRIO (somente ADMIN)
+        // ==========================================
+        async function excluirUsuario(idUsuario, nomeUsuario) {
+            if (TIPO_USUARIO !== 'ADMIN') {
+                alert('Você não tem permissão para excluir usuários.');
+                return;
+            }
+
+            if (!confirm(`Deseja excluir permanentemente o usuário "${nomeUsuario || idUsuario}"?\nEsta ação não pode ser desfeita.`)) {
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const resp = await fetch(`/usuario_empresa/${idUsuario}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (resp.status === 401) {
+                    fazerLogout();
+                    return;
+                }
+
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.detail || 'Erro ao excluir usuário.');
+                }
+
+                showToast('Usuário excluído com sucesso.');
+                await carregarUsuarios();
+
+            } catch (erro) {
+                console.error('Erro ao excluir usuário:', erro);
+                alert(erro.message || 'Não foi possível excluir o usuário.');
+            }
+        }
+
+        // ==========================================
+        // CARREGAR AGENDAMENTOS
+        // ==========================================
+        async function carregarAgendamentos() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                // Backend deve filtrar por perfil:
+                // - COMUM: só os próprios
+                // - TECNICO / ADMIN: todos
+                const response = await fetch('/agendamentos/', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) {
+                    fazerLogout();
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar agendamentos: HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                const agendamentos = Array.isArray(result) ? result : (result.agendamentos || []);
+
+                if (!Array.isArray(agendamentos)) {
+                    throw new Error('Formato de resposta inválido.');
+                }
+
+                TAREFAS_BACKEND = agendamentos.map(ag => ({
+                    id: ag.id_agendamento,
+                    idOrdemServico: ag.id_ordem_servico,
+                    data: ag.data_agendamento ? String(ag.data_agendamento).split('T')[0] : '',
+                    dataDisplay: ag.data_agendamento
+                        ? new Date(ag.data_agendamento).toLocaleDateString('pt-BR', {
+                            weekday: 'long', day: '2-digit', month: 'long'
+                          })
+                        : 'Data Indefinida',
+                    hora: ag.hora || '09:00',
+                    titulo: ag.titulo,
+                    descricao: ag.descricao,
+                    nomeAtivo: ag.nome_ativo || 'Geral',
+                    // criticidade / prioridade vindos do backend
+                    prioridade: ag.criticidade || ag.prioridade || 'Alta',
+                    urgencia: 'Ainda hoje',
+                    // setor = descricao_servico ou nome_servico
+                    setor: ag.descricao_servico || ag.nome_servico || 'Geral',
+                    profissional: ag.profissional || 'Responsável',
+                    status: ag.status || 'Pendente',
+                    id_usuario: ag.id_usuario
+                }));
+
+                // Fallback client-side: se for COMUM, mostra só as próprias
+                // (caso o backend ainda não filtre)
+                if (TIPO_USUARIO === 'COMUM') {
+                    const meuId = String(localStorage.getItem('id_usuario') || '');
+                    TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t =>
+                        String(t.id_usuario) === meuId
+                    );
+                }
+
+                renderTimeline();
+                atualizarContadores();
+
             } catch (error) {
                 console.error('Erro ao carregar agendamentos:', error);
             }
         }
 
         // ==========================================
-        // FUNÇÃO CRUCIAL: SALVAR NOVA TAREFA VIA API (POST /agendamentos/)
+        // SALVAR NOVA TAREFA
         // ==========================================
         async function salvarNovaTarefa(event) {
             event.preventDefault();
+
+            // Técnico não pode criar
+            if (TIPO_USUARIO === 'TECNICO') {
+                alert('Técnicos não podem criar novas tarefas.');
+                return;
+            }
 
             const titulo = document.getElementById('task-input-titulo').value.trim();
             const nomeAtivo = document.getElementById('task-input-ativo').value.trim();
@@ -1557,20 +1976,30 @@
             const token = localStorage.getItem('token');
             const idUsuario = localStorage.getItem('id_usuario');
 
-            // Fallback para mock local
             if (!token) {
+                // Mock local
                 const dataObj = new Date(data + 'T12:00:00');
                 const opcoes = { weekday: 'long', day: '2-digit', month: 'long' };
                 let dataFormatada = dataObj.toLocaleDateString('pt-BR', opcoes);
-                
+
                 TAREFAS_BACKEND.unshift({
-                    id: Date.now(), idOrdemServico: null, dataDisplay: dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1), 
-                    hora: hora, titulo: titulo, descricao: titulo, nomeAtivo: nomeAtivo, 
-                    prioridade: prioridade, urgencia: urgencia, setor: setor, profissional: profissional, status: status
+                    id: Date.now(),
+                    idOrdemServico: null,
+                    dataDisplay: dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1),
+                    hora: hora,
+                    titulo: titulo,
+                    descricao: titulo,
+                    nomeAtivo: nomeAtivo,
+                    prioridade: prioridade,
+                    urgencia: urgencia,
+                    setor: setor,
+                    profissional: profissional,
+                    status: status,
+                    id_usuario: idUsuario
                 });
                 closeModal('modal-tarefa');
                 event.target.reset();
-                showToast("Tarefa simulada localmente!");
+                showToast('Tarefa simulada localmente!');
                 renderTimeline();
                 atualizarContadores();
                 return;
@@ -1581,10 +2010,11 @@
                 descricao: titulo,
                 nome_ativo: nomeAtivo,
                 tipo_ativo: 'Equipamento',
-                nome_servico: 'Manutenção',
+                // nome_servico = setor para o filtro funcionar no backend
+                nome_servico: setor,
                 descricao_servico: setor,
                 data_agendamento: new Date(data + 'T' + hora).toISOString(),
-                id_usuario: parseInt(idUsuario),
+                id_usuario: String(idUsuario),
                 status: status,
                 criticidade: prioridade
             };
@@ -1599,38 +2029,74 @@
                     body: JSON.stringify(agendamentoData)
                 });
 
+                if (response.status === 401) {
+                    fazerLogout();
+                    return;
+                }
+
                 if (response.ok) {
                     closeModal('modal-tarefa');
                     event.target.reset();
-                    showToast("Nova tarefa salva no servidor!");
+                    showToast('Nova tarefa salva no servidor!');
                     await carregarAgendamentos();
                 } else {
-                    alert('Erro ao salvar tarefa no servidor.');
+                    const err = await response.json().catch(() => ({}));
+                    let msg = 'Erro ao salvar tarefa no servidor.';
+                    if (err.detail) {
+                        if (typeof err.detail === 'string') {
+                            msg = err.detail;
+                        } else if (Array.isArray(err.detail)) {
+                            // Pydantic validation errors
+                            msg = err.detail.map(e => (e.msg || JSON.stringify(e))).join('\n');
+                        } else {
+                            msg = JSON.stringify(err.detail);
+                        }
+                    }
+                    alert(msg);
                 }
             } catch (error) {
                 console.error('Erro de conexão:', error);
+                alert('Erro de conexão ao salvar tarefa.');
             }
         }
 
         // ==========================================
-        // FUNÇÃO CRUCIAL: ATUALIZAR STATUS DO AGENDAMENTO (PUT)
+        // ATUALIZAR STATUS
         // ==========================================
         async function atualizarStatusAgendamento(idAgendamento, novoStatus) {
             const token = localStorage.getItem('token');
-            if(!token) {
-                // Mock Local
+
+            if (!token) {
                 let t = TAREFAS_BACKEND.find(x => x.id === idAgendamento);
-                if(t) { t.status = novoStatus; renderTimeline(); atualizarContadores(); }
+                if (t) {
+                    t.status = novoStatus;
+                    renderTimeline();
+                    atualizarContadores();
+                }
                 return;
             }
 
             try {
-                const response = await fetch(`/agendamentos/${idAgendamento}/status?novo_status=${encodeURIComponent(novoStatus)}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-                });
+                const response = await fetch(
+                    `/agendamentos/${idAgendamento}/status?novo_status=${encodeURIComponent(novoStatus)}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.status === 401) {
+                    fazerLogout();
+                    return;
+                }
+
                 if (response.ok) {
                     await carregarAgendamentos();
+                } else {
+                    alert('Erro ao atualizar status.');
                 }
             } catch (error) {
                 console.error('Erro ao atualizar status:', error);
@@ -1638,38 +2104,45 @@
         }
 
         // ==========================================
-        // FUNÇÃO CRUCIAL: DELETAR TAREFA DO BACKEND (DELETE)
+        // DELETAR TAREFA
         // ==========================================
         async function deletarTarefa(idAgendamento) {
-            if (confirm("Deseja remover esta tarefa do sistema?")) {
-                const token = localStorage.getItem('token');
-                
-                if(!token) {
-                    // Mock local
-                    TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t => t.id !== idAgendamento);
-                    renderTimeline(); atualizarContadores(); showToast("Removido localmente!");
+            if (!confirm('Deseja remover esta tarefa do sistema?')) return;
+
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t => t.id !== idAgendamento);
+                renderTimeline();
+                atualizarContadores();
+                showToast('Removido localmente!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/agendamentos/${idAgendamento}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) {
+                    fazerLogout();
                     return;
                 }
 
-                try {
-                    const response = await fetch(`/agendamentos/${idAgendamento}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    if (response.ok) {
-                        showToast("Tarefa removida com sucesso!");
-                        await carregarAgendamentos();
-                    } else {
-                        alert('Erro ao deletar agendamento.');
-                    }
-                } catch (error) {
-                    console.error('Erro de conexão ao deletar:', error);
+                if (response.ok) {
+                    showToast('Tarefa removida com sucesso!');
+                    await carregarAgendamentos();
+                } else {
+                    alert('Erro ao deletar agendamento.');
                 }
+            } catch (error) {
+                console.error('Erro de conexão ao deletar:', error);
             }
         }
 
         // ==========================================
-        // FUNÇÃO CRUCIAL: CARREGAR E ADICIONAR COMENTÁRIOS (HISTÓRICO)
+        // COMENTÁRIOS / HISTÓRICO
         // ==========================================
         async function carregarHistoricoComentarios(idOrdem, containerLista, contadorSpan) {
             if (!idOrdem || idOrdem === 'null') return;
@@ -1712,7 +2185,11 @@
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                         },
-                        body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: texto, id_usuario: idUsuario })
+                        body: JSON.stringify({
+                            id_ordem_servico: idOrdem,
+                            observacao: texto,
+                            id_usuario: idUsuario
+                        })
                     });
                     if (resp.ok) {
                         input.value = '';
@@ -1724,7 +2201,6 @@
                     console.error('Erro ao enviar comentário:', e);
                 }
             } else if (texto) {
-                // Mock feedback para usuário local
                 const lista = card.querySelector('.comments-list');
                 const novoComentario = document.createElement('div');
                 novoComentario.className = 'comment-item';
@@ -1732,7 +2208,7 @@
                 lista.appendChild(novoComentario);
                 input.value = '';
                 const contador = card.querySelector('.comment-count');
-                contador.innerText = parseInt(contador.innerText) + 1;
+                contador.innerText = parseInt(contador.innerText || '0') + 1;
             }
         }
 
@@ -1743,7 +2219,7 @@
         }
 
         // ==========================================
-        // GERENCIAMENTO DE INTERFACE E NAVEGAÇÃO
+        // NAVEGAÇÃO
         // ==========================================
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
@@ -1764,6 +2240,11 @@
                 document.getElementById('view-pasta-detalhe').classList.add('active');
                 document.getElementById('tab-pedidos').classList.add('active');
                 renderDetalhePasta(pastaAtivaId);
+            } else if (viewName === 'usuarios') {
+                if (TIPO_USUARIO !== 'ADMIN') return;
+                document.getElementById('view-usuarios')?.classList.add('active');
+                document.getElementById('tab-usuarios')?.classList.add('active');
+                carregarUsuarios();
             }
 
             atualizarContadores();
@@ -1773,13 +2254,17 @@
         function atualizarContadores() {
             const abertas = TAREFAS_BACKEND.filter(t => t.status !== 'Concluído').length;
             const criticas = TAREFAS_BACKEND.filter(t => t.prioridade === 'Crítica' && t.status !== 'Concluído').length;
-            
+
             let totalItens = 0;
             PASTAS_MOCK.forEach(p => totalItens += p.produtos.length);
 
-            document.getElementById('count-tarefas').textContent = abertas.toString().padStart(2, '0');
-            document.getElementById('count-criticas').textContent = criticas.toString().padStart(2, '0');
-            document.getElementById('count-pedidos').textContent = totalItens.toString().padStart(2, '0');
+            const elTarefas = document.getElementById('count-tarefas');
+            const elCriticas = document.getElementById('count-criticas');
+            const elPedidos = document.getElementById('count-pedidos');
+
+            if (elTarefas) elTarefas.textContent = abertas.toString().padStart(2, '0');
+            if (elCriticas) elCriticas.textContent = criticas.toString().padStart(2, '0');
+            if (elPedidos) elPedidos.textContent = totalItens.toString().padStart(2, '0');
         }
 
         function togglePopover(popoverId, triggerElem) {
@@ -1797,7 +2282,7 @@
             document.querySelectorAll('.custom-select-trigger').forEach(t => t.classList.remove('active'));
         }
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!e.target.closest('.filter-group')) {
                 closeAllPopovers();
             }
@@ -1810,23 +2295,40 @@
             if (filterType === 'prioridade') document.getElementById('selected-prioridade-text').textContent = displayText;
 
             const popover = document.getElementById(`popover-${filterType}`);
-            popover.querySelectorAll('.popover-item').forEach(item => {
-                const isMatch = item.textContent.trim().includes(displayText);
-                item.classList.toggle('selected', isMatch);
-                item.querySelector('.item-check').textContent = isMatch ? '✓' : '';
-            });
+            if (popover) {
+                popover.querySelectorAll('.popover-item').forEach(item => {
+                    const isMatch = item.textContent.trim().includes(displayText);
+                    item.classList.toggle('selected', isMatch);
+                    const check = item.querySelector('.item-check');
+                    if (check) check.textContent = isMatch ? '✓' : '';
+                });
+            }
 
             closeAllPopovers();
             renderTimeline();
         }
 
+        // ==========================================
+        // RENDER TIMELINE (com permissões corretas)
+        // ==========================================
         function renderTimeline() {
             const container = document.getElementById('timeline-task-list');
+            if (!container) return;
             container.innerHTML = '';
 
+            const meuId = String(localStorage.getItem('id_usuario') || '');
+            const tipo = String(TIPO_USUARIO || 'COMUM').toUpperCase();
+
+            const norm = (s) => String(s || '').trim().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
             const filteredTasks = TAREFAS_BACKEND.filter(task => {
-                if (activeFilters.status !== 'all' && task.status !== activeFilters.status) return false;
-                if (activeFilters.prioridade !== 'all' && task.prioridade !== activeFilters.prioridade) return false;
+                if (activeFilters.status !== 'all' &&
+                    norm(task.status) !== norm(activeFilters.status)) return false;
+                if (activeFilters.prioridade !== 'all' &&
+                    norm(task.prioridade) !== norm(activeFilters.prioridade)) return false;
+                if (activeFilters.setor !== 'all' &&
+                    norm(task.setor) !== norm(activeFilters.setor)) return false;
                 return true;
             });
 
@@ -1849,7 +2351,6 @@
             for (const [dateTitle, tasks] of Object.entries(groupsByDate)) {
                 const dayGroup = document.createElement('div');
                 dayGroup.className = 'day-group';
-
                 dayGroup.innerHTML = `
                     <div class="day-header">
                         <span class="day-title">${dateTitle}</span>
@@ -1859,14 +2360,55 @@
 
                 tasks.forEach(task => {
                     const taskCard = document.createElement('div');
+
                     let borderClass = 'border-medium';
                     let priorityClass = 'medium';
 
-                    if (task.prioridade === 'Crítica') { borderClass = 'border-critical'; priorityClass = 'critical'; }
-                    else if (task.prioridade === 'Alta') { borderClass = 'border-high'; priorityClass = 'high'; }
-                    else if (task.prioridade === 'Baixa') { borderClass = 'border-low'; priorityClass = 'low'; }
+                    if (task.prioridade === 'Crítica') {
+                        borderClass = 'border-critical';
+                        priorityClass = 'critical';
+                    } else if (task.prioridade === 'Alta') {
+                        borderClass = 'border-high';
+                        priorityClass = 'high';
+                    } else if (task.prioridade === 'Baixa') {
+                        borderClass = 'border-low';
+                        priorityClass = 'low';
+                    }
 
                     const statusClass = task.status === 'Concluído' ? 'concluida' : '';
+                    const isDono = String(task.id_usuario) === meuId;
+
+                    // Regras de permissão:
+                    // - COMUM: pode alterar/excluir só as próprias
+                    // - TECNICO: pode alterar status e excluir qualquer
+                    // - ADMIN: pode tudo
+                    const podeAlterarStatus =
+                        tipo === 'TECNICO' ||
+                        tipo === 'ADMIN' ||
+                        (tipo === 'COMUM' && isDono);
+
+                    const podeExcluir =
+                        tipo === 'TECNICO' ||
+                        tipo === 'ADMIN' ||
+                        (tipo === 'COMUM' && isDono);
+
+                    const botoesAcoes = `
+                        <button class="btn-icon-action" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">
+                            💬 <span class="comment-count" style="margin-left:4px;">0</span>
+                        </button>
+                        ${podeAlterarStatus ? `
+                            <button class="btn-icon-action" title="Alternar status"
+                                onclick="atualizarStatusAgendamento(${JSON.stringify(task.id)}, '${task.status === 'Concluído' ? 'Pendente' : 'Concluído'}')">
+                                ✓
+                            </button>
+                        ` : ''}
+                        ${podeExcluir ? `
+                            <button class="btn-icon-action" title="Excluir"
+                                onclick="deletarTarefa(${JSON.stringify(task.id)})">
+                                🗑
+                            </button>
+                        ` : ''}
+                    `;
 
                     taskCard.className = `task-card ${borderClass}`;
                     taskCard.innerHTML = `
@@ -1896,13 +2438,10 @@
                             </div>
                         </div>
                         <div class="task-actions">
-                            <button class="btn-icon-action" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">💬 <span class="comment-count" style="margin-left:4px;">0</span></button>
-                            <button class="btn-icon-action" title="Alternar status Concluído" onclick="atualizarStatusAgendamento(${task.id}, '${task.status === 'Concluído' ? 'Pendente' : 'Concluído'}')">✓</button>
-                            <button class="btn-icon-action" title="Excluir" onclick="deletarTarefa(${task.id})">🗑</button>
+                            ${botoesAcoes}
                         </div>
                     `;
 
-                    // Carrega o histórico de comentários vinculado à ordem de serviço
                     if (task.idOrdemServico && task.idOrdemServico !== 'null') {
                         const listaComentarios = taskCard.querySelector('.comments-list');
                         const spanContador = taskCard.querySelector('.comment-count');
@@ -1916,8 +2455,12 @@
             }
         }
 
+        // ==========================================
+        // PASTAS / PEDIDOS
+        // ==========================================
         function renderPastas() {
             const container = document.getElementById('folders-container');
+            if (!container) return;
             container.innerHTML = '';
 
             PASTAS_MOCK.forEach(pasta => {
@@ -1983,11 +2526,12 @@
 
         function deletarProduto(prodId) {
             const pasta = PASTAS_MOCK.find(p => p.id === pastaAtivaId);
-            if (pasta && confirm("Deseja remover este produto do pedido?")) {
+            if (pasta && confirm('Deseja remover este produto do pedido?')) {
                 pasta.produtos = pasta.produtos.filter(p => p.id !== prodId);
+                salvarPastasDoUsuario();
                 renderDetalhePasta(pastaAtivaId);
                 atualizarContadores();
-                showToast("Produto removido do pedido!");
+                showToast('Produto removido do pedido!');
             }
         }
 
@@ -2016,13 +2560,14 @@
                 id: 'ped-' + Date.now(),
                 codigo: codigo,
                 cliente: nome,
-                produtos: []
+                produtos: [],
+                id_usuario: String(localStorage.getItem('id_usuario') || '')
             };
 
             PASTAS_MOCK.push(novaPasta);
+            salvarPastasDoUsuario();
             closeModal('modal-pasta');
             event.target.reset();
-
             renderPastas();
             atualizarContadores();
             showToast(`Pasta "${nome}" criada com sucesso!`);
@@ -2039,19 +2584,18 @@
             const dataCompra = document.getElementById('prod-input-data').value;
             const status = document.getElementById('prod-input-status').value;
 
-            const novoProduto = {
+            pasta.produtos.push({
                 id: Date.now(),
                 nome: nome,
                 qtd: qtd,
                 valorUnit: valor,
                 dataCompra: dataCompra,
                 status: status
-            };
+            });
 
-            pasta.produtos.push(novoProduto);
+            salvarPastasDoUsuario();
             closeModal('modal-produto');
             event.target.reset();
-
             renderDetalhePasta(pastaAtivaId);
             atualizarContadores();
             showToast(`Produto "${nome}" adicionado ao pedido!`);
@@ -2061,15 +2605,17 @@
             localStorage.removeItem('token');
             localStorage.removeItem('id_usuario');
             localStorage.removeItem('email');
-            window.location.href = '/index';
+            localStorage.removeItem('tipo');
+            localStorage.removeItem('nome_usuario');
+            window.location.href = '/';
         }
 
         function simularImportarExcel() {
-            showToast("Simulação: Importando planilha Excel com produtos...");
+            showToast('Simulação: Importando planilha Excel com produtos...');
         }
 
         function simularExportarExcel() {
-            showToast("Simulação: Planilha Excel exportada com sucesso!");
+            showToast('Simulação: Planilha Excel exportada com sucesso!');
         }
 
         function formatarMoeda(val) {
@@ -2080,17 +2626,21 @@
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Inicialização ao carregar a página
-        document.addEventListener('DOMContentLoaded', () => {
-            carregarUsuario();
-            carregarAgendamentos();
+        // ==========================================
+        // INICIALIZAÇÃO ÚNICA (sem duplicação)
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            const usuarioCarregado = await carregarUsuario();
+            if (!usuarioCarregado) return;
+
+            carregarPastasDoUsuario();
+            await carregarAgendamentos();
             renderPastas();
         });
     </script>
+
 </body>
 </html>
