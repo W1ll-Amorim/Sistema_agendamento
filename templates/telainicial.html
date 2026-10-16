@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Agenda & Pedidos - Stellare Kitchens</title>
+    <title>Central de Agenda & Pedidos - nexus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
@@ -1065,7 +1065,8 @@
             const token = localStorage.getItem('token');
             const idUsuario = localStorage.getItem('id_usuario');
             if (!token || !idUsuario) {
-                window.location.href = '/';
+                // Descomente em produção caso tenha página de login configurada:
+                // window.location.href = '/index';
             }
         })();
 
@@ -1074,7 +1075,8 @@
                 const token = localStorage.getItem('token');
                 const idUsuario = localStorage.getItem('id_usuario');
                 if (!token || !idUsuario) {
-                    window.location.href = '/';
+                    // Descomente em produção:
+                    // window.location.href = '/index';
                 }
             }
         });
@@ -1085,7 +1087,7 @@
         <header class="top-nav">
             <div class="brand-section" onclick="switchView('overview')">
                 <span class="brand-logo-box"></span>
-                <span class="brand-label">Stellare Kitchens</span>
+                <span class="brand-label">Nexus</span>
             </div>
 
             <div class="nav-right-actions">
@@ -1165,47 +1167,47 @@
             <div class="filter-panel">
                 <div class="filter-group">
                     <label class="filter-label">Setor</label>
-                    <div class="custom-select-trigger" onclick="togglePopover('popover-setor', this)">
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-setor', this, event)">
                         <span id="selected-setor-text">Todos os setores</span>
                         <span class="select-chevron">▼</span>
                     </div>
                     <div class="dark-popover-menu" id="popover-setor">
-                        <div class="popover-item selected" onclick="selectFilter('setor', 'all', 'Todos os setores')"><span class="item-check">✓</span> Todos os setores</div>
-                        <div class="popover-item" onclick="selectFilter('setor', 'Produção', 'Produção')"><span class="item-check"></span> Produção</div>
-                        <div class="popover-item" onclick="selectFilter('setor', 'Logística', 'Logística')"><span class="item-check"></span> Logística</div>
-                        <div class="popover-item" onclick="selectFilter('setor', 'Comercial', 'Comercial')"><span class="item-check"></span> Comercial</div>
-                        <div class="popover-item" onclick="selectFilter('setor', 'Manutenção', 'Manutenção')"><span class="item-check"></span> Manutenção</div>
-                        <div class="popover-item" onclick="selectFilter('setor', 'Financeiro', 'Financeiro')"><span class="item-check"></span> Financeiro</div>
-                        <div class="popover-item" onclick="selectFilter('setor', 'Qualidade', 'Qualidade')"><span class="item-check"></span> Qualidade</div>
+                        <div class="popover-item selected" data-value="all" onclick="selectFilter('setor', 'all', 'Todos os setores', event)"><span class="item-check">✓</span> Todos os setores</div>
+                        <div class="popover-item" data-value="Produção" onclick="selectFilter('setor', 'Produção', 'Produção', event)"><span class="item-check"></span> Produção</div>
+                        <div class="popover-item" data-value="Logística" onclick="selectFilter('setor', 'Logística', 'Logística', event)"><span class="item-check"></span> Logística</div>
+                        <div class="popover-item" data-value="Comercial" onclick="selectFilter('setor', 'Comercial', 'Comercial', event)"><span class="item-check"></span> Comercial</div>
+                        <div class="popover-item" data-value="Manutenção" onclick="selectFilter('setor', 'Manutenção', 'Manutenção', event)"><span class="item-check"></span> Manutenção</div>
+                        <div class="popover-item" data-value="Financeiro" onclick="selectFilter('setor', 'Financeiro', 'Financeiro', event)"><span class="item-check"></span> Financeiro</div>
+                        <div class="popover-item" data-value="Qualidade" onclick="selectFilter('setor', 'Qualidade', 'Qualidade', event)"><span class="item-check"></span> Qualidade</div>
                     </div>
                 </div>
 
                 <div class="filter-group">
                     <label class="filter-label">Status</label>
-                    <div class="custom-select-trigger" onclick="togglePopover('popover-status', this)">
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-status', this, event)">
                         <span id="selected-status-text">Todos</span>
                         <span class="select-chevron">▼</span>
                     </div>
                     <div class="dark-popover-menu" id="popover-status">
-                        <div class="popover-item selected" onclick="selectFilter('status', 'all', 'Todos')"><span class="item-check">✓</span> Todos</div>
-                        <div class="popover-item" onclick="selectFilter('status', 'Pendente', 'Pendente')"><span class="item-check"></span> Pendente</div>
-                        <div class="popover-item" onclick="selectFilter('status', 'Em Progresso', 'Em Progresso')"><span class="item-check"></span> Em Progresso</div>
-                        <div class="popover-item" onclick="selectFilter('status', 'Concluído', 'Concluído')"><span class="item-check"></span> Concluído</div>
+                        <div class="popover-item selected" data-value="all" onclick="selectFilter('status', 'all', 'Todos', event)"><span class="item-check">✓</span> Todos</div>
+                        <div class="popover-item" data-value="Pendente" onclick="selectFilter('status', 'Pendente', 'Pendente', event)"><span class="item-check"></span> Pendente</div>
+                        <div class="popover-item" data-value="Em Progresso" onclick="selectFilter('status', 'Em Progresso', 'Em Progresso', event)"><span class="item-check"></span> Em Progresso</div>
+                        <div class="popover-item" data-value="Concluído" onclick="selectFilter('status', 'Concluído', 'Concluído', event)"><span class="item-check"></span> Concluído</div>
                     </div>
                 </div>
 
                 <div class="filter-group">
                     <label class="filter-label">Prioridade</label>
-                    <div class="custom-select-trigger" onclick="togglePopover('popover-prioridade', this)">
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-prioridade', this, event)">
                         <span id="selected-prioridade-text">Todas</span>
                         <span class="select-chevron">▼</span>
                     </div>
                     <div class="dark-popover-menu" id="popover-prioridade">
-                        <div class="popover-item selected" onclick="selectFilter('prioridade', 'all', 'Todas')"><span class="item-check">✓</span> Todas</div>
-                        <div class="popover-item" onclick="selectFilter('prioridade', 'Crítica', 'Crítica')"><span class="item-check"></span> Crítica</div>
-                        <div class="popover-item" onclick="selectFilter('prioridade', 'Alta', 'Alta')"><span class="item-check"></span> Alta</div>
-                        <div class="popover-item" onclick="selectFilter('prioridade', 'Média', 'Média')"><span class="item-check"></span> Média</div>
-                        <div class="popover-item" onclick="selectFilter('prioridade', 'Baixa', 'Baixa')"><span class="item-check"></span> Baixa</div>
+                        <div class="popover-item selected" data-value="all" onclick="selectFilter('prioridade', 'all', 'Todas', event)"><span class="item-check">✓</span> Todas</div>
+                        <div class="popover-item" data-value="Crítica" onclick="selectFilter('prioridade', 'Crítica', 'Crítica', event)"><span class="item-check"></span> Crítica</div>
+                        <div class="popover-item" data-value="Alta" onclick="selectFilter('prioridade', 'Alta', 'Alta', event)"><span class="item-check"></span> Alta</div>
+                        <div class="popover-item" data-value="Média" onclick="selectFilter('prioridade', 'Média', 'Média', event)"><span class="item-check"></span> Média</div>
+                        <div class="popover-item" data-value="Baixa" onclick="selectFilter('prioridade', 'Baixa', 'Baixa', event)"><span class="item-check"></span> Baixa</div>
                     </div>
                 </div>
             </div>
@@ -1463,163 +1465,198 @@
         <span id="toast-message">Operação realizada com sucesso!</span>
     </div>
 
-    <!-- ========================================== -->
+        <!-- ========================================== -->
     <!-- SCRIPTS DE INTEGRAÇÃO COM ROTAS DE BACKEND -->
     <!-- ========================================== -->
     <script>
         let TAREFAS_BACKEND = [];
-        let PASTAS_MOCK = [];
-        let pastaAtivaId = null;
-
-        function chavePastasUsuario() {
-            const id = localStorage.getItem('id_usuario') || 'anon';
-            return 'pastas_' + id;
-        }
-
-        function carregarPastasDoUsuario() {
-            try {
-                const tipo = String(TIPO_USUARIO || localStorage.getItem('tipo') || 'COMUM').toUpperCase();
-                if (tipo === 'COMUM') {
-                    // COMUM: so as proprias pastas
-                    const raw = localStorage.getItem(chavePastasUsuario());
-                    PASTAS_MOCK = raw ? JSON.parse(raw) : [];
-                } else {
-                    // TECNICO e ADMIN: todas as pastas de todos os usuarios
-                    const todas = [];
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const k = localStorage.key(i);
-                        if (k && k.startsWith('pastas_')) {
-                            try {
-                                const lista = JSON.parse(localStorage.getItem(k) || '[]');
-                                if (Array.isArray(lista)) {
-                                    lista.forEach(p => {
-                                        if (!p.id_usuario) {
-                                            p.id_usuario = k.replace('pastas_', '');
-                                        }
-                                        todas.push(p);
-                                    });
-                                }
-                            } catch (e) {}
-                        }
-                    }
-                    PASTAS_MOCK = todas;
-                }
-            } catch (e) {
-                PASTAS_MOCK = [];
+        let PASTAS_MOCK = [
+            {
+                id: "ped-2041",
+                codigo: "PED-2041",
+                cliente: "Grupo Meridiano",
+                produtos: [
+                    { id: 101, nome: "Caixa reforçada 40×30", qtd: 120, valorUnit: 8.50, dataCompra: "2026-09-02", status: "Separado" },
+                    { id: 102, nome: "Fita industrial 48mm", qtd: 60, valorUnit: 12.00, dataCompra: "2026-09-02", status: "Aguardando" }
+                ]
             }
-            if (!Array.isArray(PASTAS_MOCK)) PASTAS_MOCK = [];
-        }
-
-        function salvarPastasDoUsuario() {
-            // Sempre grava apenas as pastas do usuario logado na chave dele
-            try {
-                const meuId = String(localStorage.getItem('id_usuario') || 'anon');
-                const minhas = PASTAS_MOCK.filter(p =>
-                    !p.id_usuario || String(p.id_usuario) === meuId
-                );
-                // Se for COMUM, PASTAS_MOCK ja e so dele
-                const tipo = String(TIPO_USUARIO || 'COMUM').toUpperCase();
-                if (tipo === 'COMUM') {
-                    localStorage.setItem(chavePastasUsuario(), JSON.stringify(PASTAS_MOCK));
-                } else {
-                    // Admin/tecnico ao editar: atualiza a chave do dono de cada pasta alterada
-                    // e tambem a propria chave se criou pasta nova
-                    localStorage.setItem(chavePastasUsuario(), JSON.stringify(
-                        PASTAS_MOCK.filter(p => String(p.id_usuario || meuId) === meuId)
-                    ));
-                }
-            } catch (e) {
-                console.warn('Nao foi possivel salvar pastas localmente', e);
-            }
-        }
+        ];
+        let pastaAtivaId = "ped-2041";
         let TIPO_USUARIO = 'COMUM';
+        let ID_USUARIO_LOGADO = null;
 
-        const activeFilters = {
-            setor: 'all',
-            status: 'all',
-            prioridade: 'all'
-        };
+        const activeFilters = { setor: 'all', status: 'all', prioridade: 'all' };
 
-        // ==========================================
-        // CARREGAR DADOS DO USUÁRIO LOGADO
-        // ==========================================
+        function isAdmin() { return TIPO_USUARIO === 'ADMIN'; }
+        function isTecnico() { return TIPO_USUARIO === 'TECNICO'; }
+        function isComum() { return TIPO_USUARIO === 'COMUM'; }
+        function podeCriarTarefa() { return isAdmin() || isComum(); }
+        function podeAlterarStatus() { return isAdmin() || isTecnico(); }
+        function podeExcluirTarefa(task) {
+            if (isAdmin() || isTecnico()) return true;
+            if (isComum() && task && String(task.id_usuario) === String(ID_USUARIO_LOGADO)) return true;
+            return false;
+        }
+        function podeVerTodasTarefas() { return isAdmin() || isTecnico(); }
+
+        function normalizarStatus(status) {
+            const s = String(status || 'Pendente').trim();
+            const map = {
+                'concluido': 'Concluído', 'concluído': 'Concluído',
+                'concluida': 'Concluído', 'concluída': 'Concluído',
+                'em progresso': 'Em Progresso', 'em andamento': 'Em Progresso',
+                'pendente': 'Pendente', 'tarefas': 'Pendente', 'agendado': 'Pendente'
+            };
+            return map[s.toLowerCase()] || s;
+        }
+
+        function normalizarPrioridade(p) {
+            const s = String(p || 'Alta').trim();
+            const map = {
+                'critica': 'Crítica', 'crítica': 'Crítica',
+                'alta': 'Alta', 'alto': 'Alta',
+                'media': 'Média', 'média': 'Média', 'medio': 'Média', 'médio': 'Média',
+                'baixa': 'Baixa', 'baixo': 'Baixa'
+            };
+            return map[s.toLowerCase()] || s;
+        }
+
         async function carregarUsuario() {
             const token = localStorage.getItem('token');
-
-            if (!token) {
-                window.location.href = '/';
-                return false;
-            }
-
+            if (!token) { window.location.href = '/'; return false; }
+            ID_USUARIO_LOGADO = localStorage.getItem('id_usuario');
             try {
                 const resp = await fetch('/usuario_empresa/me', {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
                 if (resp.status === 401) {
-                    fazerLogout();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('id_usuario');
+                    localStorage.removeItem('email');
+                    localStorage.removeItem('tipo');
+                    window.location.href = '/';
                     return false;
                 }
-
                 if (!resp.ok) {
-                    throw new Error('Erro ao consultar usuário.');
+                    TIPO_USUARIO = (localStorage.getItem('tipo') || 'COMUM').toUpperCase();
+                    aplicarPermissoes();
+                    return true;
                 }
-
                 const dados = await resp.json();
-
                 const userName = document.getElementById('user-name');
-                if (userName) {
-                    userName.textContent = dados.nome || 'Usuário';
-                }
-
+                if (userName) userName.textContent = dados.nome || 'Usuário';
                 const userAvatar = document.getElementById('user-avatar');
-                if (userAvatar) {
-                    userAvatar.textContent = dados.nome ? dados.nome.charAt(0).toUpperCase() : 'U';
+                if (userAvatar) userAvatar.textContent = (dados.nome && dados.nome.charAt(0).toUpperCase()) || 'U';
+                if (dados.id_usuario != null) {
+                    ID_USUARIO_LOGADO = String(dados.id_usuario);
+                    localStorage.setItem('id_usuario', ID_USUARIO_LOGADO);
                 }
-
-                // Prioriza o tipo vindo do backend; fallback para localStorage
-                const tipoBackend = dados.tipo || localStorage.getItem('tipo') || 'COMUM';
-                TIPO_USUARIO = String(tipoBackend).toUpperCase();
+                TIPO_USUARIO = String(dados.tipo || localStorage.getItem('tipo') || 'COMUM').toUpperCase();
                 localStorage.setItem('tipo', TIPO_USUARIO);
-
-                if (dados.id_usuario) {
-                    localStorage.setItem('id_usuario', dados.id_usuario);
-                }
-                if (dados.nome) {
-                    localStorage.setItem('nome_usuario', dados.nome);
-                }
-
                 aplicarPermissoes();
                 return true;
-
             } catch (erro) {
-                console.error('Erro ao carregar usuário:', erro);
-                localStorage.removeItem('token');
-                localStorage.removeItem('id_usuario');
-                localStorage.removeItem('email');
-                localStorage.removeItem('tipo');
-                localStorage.removeItem('nome_usuario');
-                window.location.href = '/';
-                return false;
+                console.error('Erro de rede ao carregar usuário:', erro);
+                TIPO_USUARIO = (localStorage.getItem('tipo') || 'COMUM').toUpperCase();
+                aplicarPermissoes();
+                return true;
             }
         }
 
-        // ==========================================
-        // APLICAR PERMISSÕES VISUAIS
-        // ==========================================
+        async function carregarUsuarios() {
+            if (!isAdmin()) return;
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/'; return; }
+            const tbody = document.getElementById('usuarios-tbody');
+            if (!tbody) return;
+            try {
+                const resp = await fetch('/usuario_empresa/usuarios', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!resp.ok) throw new Error('Erro ao listar usuários.');
+                const lista = await resp.json();
+                const usuarios = Array.isArray(lista) ? lista : (lista.usuarios || []);
+                tbody.innerHTML = '';
+                usuarios.forEach(u => {
+                    const id = u.id_usuario;
+                    const tipoAtual = String(u.tipo || 'COMUM').toUpperCase();
+                    const tr = document.createElement('tr');
+                    let acoesHtml = '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+                    if (tipoAtual === 'COMUM') {
+                        acoesHtml = `<select class="form-select" style="padding:6px 10px;font-size:13px;min-width:140px;"
+                            onchange="promoverUsuario('${id}', this.value)">
+                            <option value="">Alterar tipo…</option>
+                            <option value="TECNICO">Promover a Técnico</option>
+                        </select>`;
+                    } else if (tipoAtual === 'TECNICO') {
+                        acoesHtml = `<select class="form-select" style="padding:6px 10px;font-size:13px;min-width:140px;"
+                            onchange="promoverUsuario('${id}', this.value)">
+                            <option value="">Alterar tipo…</option>
+                            <option value="COMUM">Rebaixar a Comum</option>
+                        </select>`;
+                    }
+                    tr.innerHTML = `
+                        <td class="td-product">${u.nome || '—'}</td>
+                        <td>${u.email || '—'}</td>
+                        <td><span class="badge-status">${tipoAtual}</span></td>
+                        <td>${acoesHtml}</td>`;
+                    tbody.appendChild(tr);
+                });
+            } catch (erro) {
+                console.error('Erro ao carregar usuários:', erro);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">
+                    Não foi possível carregar a lista de usuários.</td></tr>`;
+            }
+        }
+
+        async function promoverUsuario(idUsuario, novoTipo) {
+            if (!novoTipo) return;
+            if (!isAdmin()) { alert('Você não tem permissão para alterar usuários.'); return; }
+            if (!['COMUM', 'TECNICO'].includes(novoTipo)) {
+                alert('Tipo de usuário inválido.');
+                await carregarUsuarios();
+                return;
+            }
+            if (!confirm(`Deseja alterar o tipo deste usuário para ${novoTipo}?`)) {
+                await carregarUsuarios();
+                return;
+            }
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/'; return; }
+            try {
+                const resp = await fetch(`/usuario_empresa/usuarios/${encodeURIComponent(idUsuario)}/tipo`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ tipo: novoTipo })
+                });
+                if (!resp.ok) {
+                    let detalhe = 'Erro ao alterar o tipo do usuário.';
+                    try { const err = await resp.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    alert(typeof detalhe === 'string' ? detalhe : JSON.stringify(detalhe));
+                    await carregarUsuarios();
+                    return;
+                }
+                showToast(`Usuário atualizado para ${novoTipo}.`);
+                await carregarUsuarios();
+            } catch (erro) {
+                console.error(erro);
+                alert('Não foi possível alterar o tipo do usuário (erro de rede).');
+                await carregarUsuarios();
+            }
+        }
+
         function aplicarPermissoes() {
             const tipo = TIPO_USUARIO;
-
-            // 1. Botão Nova Tarefa: COMUM e ADMIN podem criar. TÉCNICO NÃO.
             const btnNovaTarefa = document.querySelector('#view-agenda .btn-primary-action');
-            if (btnNovaTarefa) {
-                btnNovaTarefa.style.display = (tipo === 'TECNICO') ? 'none' : 'inline-flex';
-            }
+            if (btnNovaTarefa) btnNovaTarefa.style.display = podeCriarTarefa() ? 'inline-flex' : 'none';
 
-            // 2. Aba Usuários: somente ADMIN
             let tabUsuarios = document.getElementById('tab-usuarios');
-            if (!tabUsuarios && tipo === 'ADMIN') {
+            if (!tabUsuarios && isAdmin()) {
                 const navTabs = document.querySelector('.nav-tabs');
                 if (navTabs) {
                     tabUsuarios = document.createElement('button');
@@ -1631,20 +1668,15 @@
                     navTabs.appendChild(tabUsuarios);
                 }
             }
-            if (tabUsuarios) {
-                tabUsuarios.style.display = (tipo === 'ADMIN') ? 'inline-block' : 'none';
-            }
+            if (tabUsuarios) tabUsuarios.style.display = isAdmin() ? 'inline-block' : 'none';
 
-            // 3. Badge de perfil
             const badge = document.querySelector('.user-profile-badge');
             if (badge) {
                 const existing = badge.querySelector('.role-badge');
                 if (existing) existing.remove();
-
                 const roleBadge = document.createElement('span');
                 roleBadge.className = 'role-badge';
                 roleBadge.style.cssText = 'font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;';
-
                 if (tipo === 'ADMIN') {
                     roleBadge.textContent = 'ADMIN';
                     roleBadge.style.background = 'rgba(112,0,255,0.2)';
@@ -1658,311 +1690,103 @@
                     roleBadge.style.background = 'rgba(116,125,140,0.2)';
                     roleBadge.style.color = '#9ba1b0';
                 }
-
                 const btnLogout = badge.querySelector('.btn-logout');
-                if (btnLogout) {
-                    badge.insertBefore(roleBadge, btnLogout);
-                } else {
-                    badge.appendChild(roleBadge);
-                }
+                if (btnLogout) badge.insertBefore(roleBadge, btnLogout);
+                else badge.appendChild(roleBadge);
             }
         }
 
-        // ==========================================
-        // LISTAR USUÁRIOS (somente ADMIN)
-        // ==========================================
-        async function carregarUsuarios() {
-            if (TIPO_USUARIO !== 'ADMIN') return;
-
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/';
-                return;
-            }
-
-            const tbody = document.getElementById('usuarios-tbody');
-            if (!tbody) return;
-
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Carregando...</td></tr>';
-
-            try {
-                // Rota alinhada com o backend: prefix /usuario_empresa
-                const resp = await fetch('/usuario_empresa/usuarios', {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (resp.status === 401) {
-                    fazerLogout();
-                    return;
-                }
-
-                if (resp.status === 403) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--color-critical);">Acesso negado. Apenas administradores podem gerenciar usuários.</td></tr>';
-                    return;
-                }
-
-                if (!resp.ok) {
-                    throw new Error('Erro ao listar usuários');
-                }
-
-                const data = await resp.json();
-                // Backend retorna lista direta (response_model=list) ou {usuarios: [...]}
-                const lista = Array.isArray(data) ? data : (data.usuarios || []);
-
-                tbody.innerHTML = '';
-
-                if (lista.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Nenhum usuário encontrado.</td></tr>';
-                    return;
-                }
-
-                lista.forEach(u => {
-                    const id = u.id_usuario || u.id;
-                    const nome = u.nome || '—';
-                    const email = u.email || '—';
-                    // tipo pode vir como string ou como enum .value
-                    const tipo = String(u.tipo || 'COMUM').toUpperCase();
-
-                    const tr = document.createElement('tr');
-                    // Admin só promove para COMUM ou TECNICO; pode excluir não-admins
-                    const nomeSafe = String(nome).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-                    const nomeAttr = String(nome).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-
-                    let acoesHtml;
-                    if (tipo === 'ADMIN') {
-                        acoesHtml = '<span style="color:var(--text-muted);">—</span>';
-                    } else {
-                        acoesHtml = `
-                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                                <select class="form-select" style="width:140px;"
-                                    onchange="promoverUsuario(${id}, this.value)">
-                                    <option value="COMUM" ${tipo === 'COMUM' ? 'selected' : ''}>COMUM</option>
-                                    <option value="TECNICO" ${tipo === 'TECNICO' ? 'selected' : ''}>TECNICO</option>
-                                </select>
-                                <button type="button" class="btn-icon-action" title="Excluir usuário"
-                                    onclick="excluirUsuario(${id}, '${nomeAttr}')">
-                                    🗑
-                                </button>
-                            </div>
-                        `;
+        function aplicarListaAgendamentos(agendamentos, verTodas) {
+            TAREFAS_BACKEND = agendamentos.map(ag => {
+                const dataIso = ag.data_agendamento || '';
+                let dataDisplay = 'Data Indefinida';
+                let hora = '09:00';
+                if (dataIso) {
+                    const d = new Date(dataIso);
+                    if (!isNaN(d.getTime())) {
+                        dataDisplay = d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+                        hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
                     }
-
-                    tr.innerHTML = `
-                        <td>${nomeSafe}</td>
-                        <td>${email}</td>
-                        <td><span class="badge-status">${tipo}</span></td>
-                        <td>${acoesHtml}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-
-            } catch (erro) {
-                console.error('Erro ao carregar usuários:', erro);
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--color-critical);">Erro ao carregar usuários. Verifique se a rota /usuario_empresa/usuarios existe no backend.</td></tr>';
-            }
-        }
-
-        // ==========================================
-        // PROMOVER / ALTERAR TIPO DE USUÁRIO
-        // ==========================================
-        async function promoverUsuario(idUsuario, novoTipo) {
-            if (TIPO_USUARIO !== 'ADMIN') {
-                alert('Você não tem permissão para alterar usuários.');
-                return;
-            }
-
-            const tiposPermitidos = ['COMUM', 'TECNICO'];  // Admin não promove a ADMIN
-            if (!tiposPermitidos.includes(novoTipo)) {
-                alert('Tipo de usuário inválido.');
-                await carregarUsuarios();
-                return;
-            }
-
-            if (!confirm(`Deseja alterar o tipo deste usuário para ${novoTipo}?`)) {
-                await carregarUsuarios();
-                return;
-            }
-
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/';
-                return;
-            }
-
-            try {
-                // Rota alinhada com o backend: PUT /usuario_empresa/{id}/tipo
-                const resp = await fetch(`/usuario_empresa/${idUsuario}/tipo`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ tipo: novoTipo })
-                });
-
-                if (resp.status === 401) {
-                    fazerLogout();
-                    return;
                 }
-
-                if (resp.status === 403) {
-                    alert('Acesso negado. Apenas administradores podem alterar perfis.');
-                    await carregarUsuarios();
-                    return;
-                }
-
-                if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    let msg = 'Erro ao alterar o tipo do usuário.';
-                    if (err.detail) {
-                        msg = typeof err.detail === 'string' ? err.detail
-                            : (Array.isArray(err.detail) ? err.detail.map(e => e.msg || JSON.stringify(e)).join('\n') : JSON.stringify(err.detail));
-                    }
-                    throw new Error(msg);
-                }
-
-                showToast(`Usuário atualizado para ${novoTipo}.`);
-                await carregarUsuarios();
-
-            } catch (erro) {
-                console.error('Erro ao alterar usuário:', erro);
-                alert(erro.message || 'Não foi possível alterar o tipo do usuário.');
-                await carregarUsuarios();
-            }
-        }
-
-        // ==========================================
-        // EXCLUIR USUÁRIO (somente ADMIN)
-        // ==========================================
-        async function excluirUsuario(idUsuario, nomeUsuario) {
-            if (TIPO_USUARIO !== 'ADMIN') {
-                alert('Você não tem permissão para excluir usuários.');
-                return;
-            }
-
-            if (!confirm(`Deseja excluir permanentemente o usuário "${nomeUsuario || idUsuario}"?\nEsta ação não pode ser desfeita.`)) {
-                return;
-            }
-
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/';
-                return;
-            }
-
-            try {
-                const resp = await fetch(`/usuario_empresa/${idUsuario}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (resp.status === 401) {
-                    fazerLogout();
-                    return;
-                }
-
-                if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    throw new Error(err.detail || 'Erro ao excluir usuário.');
-                }
-
-                showToast('Usuário excluído com sucesso.');
-                await carregarUsuarios();
-
-            } catch (erro) {
-                console.error('Erro ao excluir usuário:', erro);
-                alert(erro.message || 'Não foi possível excluir o usuário.');
-            }
-        }
-
-        // ==========================================
-        // CARREGAR AGENDAMENTOS
-        // ==========================================
-        async function carregarAgendamentos() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/';
-                return;
-            }
-
-            try {
-                // Backend deve filtrar por perfil:
-                // - COMUM: só os próprios
-                // - TECNICO / ADMIN: todos
-                const response = await fetch('/agendamentos/', {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.status === 401) {
-                    fazerLogout();
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error(`Erro ao carregar agendamentos: HTTP ${response.status}`);
-                }
-
-                const result = await response.json();
-                const agendamentos = Array.isArray(result) ? result : (result.agendamentos || []);
-
-                if (!Array.isArray(agendamentos)) {
-                    throw new Error('Formato de resposta inválido.');
-                }
-
-                TAREFAS_BACKEND = agendamentos.map(ag => ({
+                return {
                     id: ag.id_agendamento,
                     idOrdemServico: ag.id_ordem_servico,
-                    data: ag.data_agendamento ? String(ag.data_agendamento).split('T')[0] : '',
-                    dataDisplay: ag.data_agendamento
-                        ? new Date(ag.data_agendamento).toLocaleDateString('pt-BR', {
-                            weekday: 'long', day: '2-digit', month: 'long'
-                          })
-                        : 'Data Indefinida',
-                    hora: ag.hora || '09:00',
-                    titulo: ag.titulo,
-                    descricao: ag.descricao,
+                    data: dataIso ? String(dataIso).split('T')[0] : '',
+                    dataDisplay,
+                    hora,
+                    titulo: ag.titulo || 'Sem título',
+                    descricao: ag.descricao || '',
                     nomeAtivo: ag.nome_ativo || 'Geral',
-                    // criticidade / prioridade vindos do backend
-                    prioridade: ag.criticidade || ag.prioridade || 'Alta',
+                    prioridade: normalizarPrioridade(ag.criticidade || ag.prioridade || 'Alta'),
                     urgencia: 'Ainda hoje',
-                    // setor = descricao_servico ou nome_servico
-                    setor: ag.descricao_servico || ag.nome_servico || 'Geral',
+                    setor: ag.descricao_servico || ag.nome_servico || 'Logística',
                     profissional: ag.profissional || 'Responsável',
-                    status: ag.status || 'Pendente',
-                    id_usuario: ag.id_usuario
-                }));
+                    status: normalizarStatus(ag.status || 'Pendente'),
+                    id_usuario: ag.id_usuario != null ? String(ag.id_usuario) : null
+                };
+            });
+            if (!verTodas && ID_USUARIO_LOGADO) {
+                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(
+                    t => !t.id_usuario || String(t.id_usuario) === String(ID_USUARIO_LOGADO)
+                );
+            }
+            renderTimeline();
+            atualizarContadores();
+        }
 
-                // Fallback client-side: se for COMUM, mostra só as próprias
-                // (caso o backend ainda não filtre)
-                if (TIPO_USUARIO === 'COMUM') {
-                    const meuId = String(localStorage.getItem('id_usuario') || '');
-                    TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t =>
-                        String(t.id_usuario) === meuId
-                    );
+        async function carregarAgendamentos() {
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/'; return; }
+
+            TIPO_USUARIO = (localStorage.getItem('tipo') || TIPO_USUARIO || 'COMUM').toUpperCase();
+            if (!ID_USUARIO_LOGADO) ID_USUARIO_LOGADO = localStorage.getItem('id_usuario');
+            const verTodas = (TIPO_USUARIO === 'ADMIN' || TIPO_USUARIO === 'TECNICO');
+
+            try {
+                let url = '/agendamentos/';
+                if (!verTodas && ID_USUARIO_LOGADO) {
+                    url += `?id_usuario=${encodeURIComponent(ID_USUARIO_LOGADO)}`;
                 }
-
-                renderTimeline();
-                atualizarContadores();
-
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    if (url.includes('?')) {
+                        const resp2 = await fetch('/agendamentos/', {
+                            method: 'GET',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (resp2.ok) {
+                            const result2 = await resp2.json();
+                            const lista2 = Array.isArray(result2) ? result2 : (result2.agendamentos || []);
+                            aplicarListaAgendamentos(lista2, verTodas);
+                            return;
+                        }
+                    }
+                    let detalhe = `HTTP ${response.status}`;
+                    try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    throw new Error(detalhe);
+                }
+                const result = await response.json();
+                const agendamentos = Array.isArray(result) ? result : (result.agendamentos || result.items || []);
+                if (!Array.isArray(agendamentos)) throw new Error('Formato de resposta inválido.');
+                aplicarListaAgendamentos(agendamentos, verTodas);
             } catch (error) {
                 console.error('Erro ao carregar agendamentos:', error);
+                TAREFAS_BACKEND = TAREFAS_BACKEND || [];
+                renderTimeline();
+                atualizarContadores();
+                showToast('Não foi possível carregar as tarefas.');
             }
         }
 
-        // ==========================================
-        // SALVAR NOVA TAREFA
-        // ==========================================
         async function salvarNovaTarefa(event) {
             event.preventDefault();
-
-            // Técnico não pode criar
-            if (TIPO_USUARIO === 'TECNICO') {
-                alert('Técnicos não podem criar novas tarefas.');
+            if (!podeCriarTarefa()) {
+                alert('Você não tem permissão para criar tarefas.');
                 return;
             }
-
             const titulo = document.getElementById('task-input-titulo').value.trim();
             const nomeAtivo = document.getElementById('task-input-ativo').value.trim();
             const data = document.getElementById('task-input-data').value;
@@ -1972,29 +1796,16 @@
             const setor = document.getElementById('task-input-setor').value;
             const profissional = document.getElementById('task-input-profissional').value.trim();
             const status = document.getElementById('task-input-status').value;
-
             const token = localStorage.getItem('token');
             const idUsuario = localStorage.getItem('id_usuario');
 
             if (!token) {
-                // Mock local
                 const dataObj = new Date(data + 'T12:00:00');
-                const opcoes = { weekday: 'long', day: '2-digit', month: 'long' };
-                let dataFormatada = dataObj.toLocaleDateString('pt-BR', opcoes);
-
+                let dataFormatada = dataObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
                 TAREFAS_BACKEND.unshift({
-                    id: Date.now(),
-                    idOrdemServico: null,
+                    id: Date.now(), idOrdemServico: null,
                     dataDisplay: dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1),
-                    hora: hora,
-                    titulo: titulo,
-                    descricao: titulo,
-                    nomeAtivo: nomeAtivo,
-                    prioridade: prioridade,
-                    urgencia: urgencia,
-                    setor: setor,
-                    profissional: profissional,
-                    status: status,
+                    hora, titulo, descricao: titulo, nomeAtivo, prioridade, urgencia, setor, profissional, status,
                     id_usuario: idUsuario
                 });
                 closeModal('modal-tarefa');
@@ -2004,132 +1815,95 @@
                 atualizarContadores();
                 return;
             }
-
+            if (!idUsuario) {
+                alert('Sessão inválida. Faça login novamente.');
+                return;
+            }
             const agendamentoData = {
-                titulo: titulo,
-                descricao: titulo,
-                nome_ativo: nomeAtivo,
-                tipo_ativo: 'Equipamento',
-                // nome_servico = setor para o filtro funcionar no backend
-                nome_servico: setor,
-                descricao_servico: setor,
+                titulo, descricao: titulo, nome_ativo: nomeAtivo, tipo_ativo: 'Equipamento',
+                nome_servico: 'Manutenção', descricao_servico: setor,
                 data_agendamento: new Date(data + 'T' + hora).toISOString(),
-                id_usuario: String(idUsuario),
-                status: status,
-                criticidade: prioridade
+                id_usuario: String(idUsuario), status, criticidade: prioridade
             };
-
             try {
                 const response = await fetch('/agendamentos/', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify(agendamentoData)
                 });
-
-                if (response.status === 401) {
-                    fazerLogout();
-                    return;
-                }
-
                 if (response.ok) {
                     closeModal('modal-tarefa');
                     event.target.reset();
                     showToast('Nova tarefa salva no servidor!');
                     await carregarAgendamentos();
                 } else {
-                    const err = await response.json().catch(() => ({}));
-                    let msg = 'Erro ao salvar tarefa no servidor.';
-                    if (err.detail) {
-                        if (typeof err.detail === 'string') {
-                            msg = err.detail;
-                        } else if (Array.isArray(err.detail)) {
-                            // Pydantic validation errors
-                            msg = err.detail.map(e => (e.msg || JSON.stringify(e))).join('\n');
-                        } else {
-                            msg = JSON.stringify(err.detail);
-                        }
-                    }
-                    alert(msg);
+                    let detalhe = 'Erro ao salvar tarefa no servidor.';
+                    try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    alert(typeof detalhe === 'string' ? detalhe : JSON.stringify(detalhe));
                 }
             } catch (error) {
-                console.error('Erro de conexão:', error);
-                alert('Erro de conexão ao salvar tarefa.');
+                console.error(error);
+                alert('Erro de conexão ao salvar a tarefa.');
             }
         }
 
-        // ==========================================
-        // ATUALIZAR STATUS
-        // ==========================================
         async function atualizarStatusAgendamento(idAgendamento, novoStatus) {
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                let t = TAREFAS_BACKEND.find(x => x.id === idAgendamento);
-                if (t) {
-                    t.status = novoStatus;
-                    renderTimeline();
-                    atualizarContadores();
-                }
+            if (!podeAlterarStatus()) {
+                alert('Você não tem permissão para alterar o status de tarefas.');
                 return;
             }
-
-            try {
-                const response = await fetch(
-                    `/agendamentos/${idAgendamento}/status?novo_status=${encodeURIComponent(novoStatus)}`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-
-                if (response.status === 401) {
-                    fazerLogout();
-                    return;
-                }
-
-                if (response.ok) {
-                    await carregarAgendamentos();
-                } else {
-                    alert('Erro ao atualizar status.');
-                }
-            } catch (error) {
-                console.error('Erro ao atualizar status:', error);
-            }
-        }
-
-        // ==========================================
-        // DELETAR TAREFA
-        // ==========================================
-        async function deletarTarefa(idAgendamento) {
-            if (!confirm('Deseja remover esta tarefa do sistema?')) return;
-
+            const id = String(idAgendamento);
             const token = localStorage.getItem('token');
-
-            if (!token) {
-                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t => t.id !== idAgendamento);
+            const t = TAREFAS_BACKEND.find(x => String(x.id) === id);
+            const statusAnterior = t ? t.status : null;
+            if (t) {
+                t.status = normalizarStatus(novoStatus);
                 renderTimeline();
                 atualizarContadores();
-                showToast('Removido localmente!');
+            }
+            if (!token) {
+                showToast('Status atualizado localmente.');
                 return;
             }
-
             try {
-                const response = await fetch(`/agendamentos/${idAgendamento}`, {
+                const response = await fetch(
+                    `/agendamentos/${encodeURIComponent(id)}/status?novo_status=${encodeURIComponent(novoStatus)}`,
+                    { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } }
+                );
+                if (response.ok) {
+                    showToast(novoStatus === 'Concluído' ? 'Tarefa concluída!' : 'Status atualizado.');
+                    await carregarAgendamentos();
+                } else {
+                    if (t && statusAnterior != null) { t.status = statusAnterior; renderTimeline(); atualizarContadores(); }
+                    let detalhe = 'Erro ao atualizar status.';
+                    try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    alert(typeof detalhe === 'string' ? detalhe : JSON.stringify(detalhe));
+                }
+            } catch (error) {
+                if (t && statusAnterior != null) { t.status = statusAnterior; renderTimeline(); atualizarContadores(); }
+                console.error(error);
+                alert('Erro de conexão ao atualizar status.');
+            }
+        }
+
+        async function deletarTarefa(idAgendamento) {
+            const task = TAREFAS_BACKEND.find(t => String(t.id) === String(idAgendamento));
+            if (!podeExcluirTarefa(task)) {
+                alert('Você só pode excluir os próprios registros.');
+                return;
+            }
+            if (!confirm('Deseja remover esta tarefa do sistema?')) return;
+            const token = localStorage.getItem('token');
+            if (!token) {
+                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t => String(t.id) !== String(idAgendamento));
+                renderTimeline(); atualizarContadores(); showToast('Removido localmente!');
+                return;
+            }
+            try {
+                const response = await fetch(`/agendamentos/${encodeURIComponent(idAgendamento)}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                if (response.status === 401) {
-                    fazerLogout();
-                    return;
-                }
-
                 if (response.ok) {
                     showToast('Tarefa removida com sucesso!');
                     await carregarAgendamentos();
@@ -2137,22 +1911,17 @@
                     alert('Erro ao deletar agendamento.');
                 }
             } catch (error) {
-                console.error('Erro de conexão ao deletar:', error);
+                console.error(error);
             }
         }
 
-        // ==========================================
-        // COMENTÁRIOS / HISTÓRICO
-        // ==========================================
         async function carregarHistoricoComentarios(idOrdem, containerLista, contadorSpan) {
             if (!idOrdem || idOrdem === 'null') return;
             const token = localStorage.getItem('token');
             if (!token) return;
-
             try {
                 const resp = await fetch(`/historico/?id_ordem_servico=${idOrdem}`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    method: 'GET', headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await resp.json();
                 if (resp.ok && data.historicos) {
@@ -2165,9 +1934,7 @@
                     });
                     contadorSpan.innerText = data.historicos.length;
                 }
-            } catch (e) {
-                console.error('Erro ao carregar comentários:', e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         async function adicionarComentario(btn, idOrdem) {
@@ -2176,55 +1943,38 @@
             const texto = input.value.trim();
             const idUsuario = localStorage.getItem('id_usuario');
             const token = localStorage.getItem('token');
-
             if (texto && idOrdem && idOrdem !== 'null' && token) {
                 try {
                     const resp = await fetch('/historico/', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                            id_ordem_servico: idOrdem,
-                            observacao: texto,
-                            id_usuario: idUsuario
-                        })
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: texto, id_usuario: idUsuario })
                     });
                     if (resp.ok) {
                         input.value = '';
-                        const lista = card.querySelector('.comments-list');
-                        const contador = card.querySelector('.comment-count');
-                        await carregarHistoricoComentarios(idOrdem, lista, contador);
+                        await carregarHistoricoComentarios(idOrdem, card.querySelector('.comments-list'), card.querySelector('.comment-count'));
                     }
-                } catch (e) {
-                    console.error('Erro ao enviar comentário:', e);
-                }
+                } catch (e) { console.error(e); }
             } else if (texto) {
                 const lista = card.querySelector('.comments-list');
-                const novoComentario = document.createElement('div');
-                novoComentario.className = 'comment-item';
-                novoComentario.innerHTML = `<span class="comment-author">Local:</span> <span class="comment-text">${texto}</span>`;
-                lista.appendChild(novoComentario);
+                const el = document.createElement('div');
+                el.className = 'comment-item';
+                el.innerHTML = `<span class="comment-author">Local:</span> <span class="comment-text">${texto}</span>`;
+                lista.appendChild(el);
                 input.value = '';
                 const contador = card.querySelector('.comment-count');
-                contador.innerText = parseInt(contador.innerText || '0') + 1;
+                contador.innerText = parseInt(contador.innerText, 10) + 1;
             }
         }
 
         function abrirComentarios(btn) {
-            const card = btn.closest('.task-card');
-            const drawer = card.querySelector('.comments-drawer');
+            const drawer = btn.closest('.task-card').querySelector('.comments-drawer');
             drawer.style.display = (drawer.style.display === 'none' || drawer.style.display === '') ? 'block' : 'none';
         }
 
-        // ==========================================
-        // NAVEGAÇÃO
-        // ==========================================
         function switchView(viewName) {
-            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             if (viewName === 'overview') {
                 document.getElementById('view-overview').classList.add('active');
                 document.getElementById('tab-overview').classList.add('active');
@@ -2241,39 +1991,34 @@
                 document.getElementById('tab-pedidos').classList.add('active');
                 renderDetalhePasta(pastaAtivaId);
             } else if (viewName === 'usuarios') {
-                if (TIPO_USUARIO !== 'ADMIN') return;
+                if (!isAdmin()) return;
                 document.getElementById('view-usuarios')?.classList.add('active');
                 document.getElementById('tab-usuarios')?.classList.add('active');
                 carregarUsuarios();
             }
-
             atualizarContadores();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function atualizarContadores() {
-            const abertas = TAREFAS_BACKEND.filter(t => t.status !== 'Concluído').length;
-            const criticas = TAREFAS_BACKEND.filter(t => t.prioridade === 'Crítica' && t.status !== 'Concluído').length;
-
+            const abertas = TAREFAS_BACKEND.filter(t => normalizarStatus(t.status) !== 'Concluído').length;
+            const criticas = TAREFAS_BACKEND.filter(t => normalizarPrioridade(t.prioridade) === 'Crítica' && normalizarStatus(t.status) !== 'Concluído').length;
             let totalItens = 0;
-            PASTAS_MOCK.forEach(p => totalItens += p.produtos.length);
-
-            const elTarefas = document.getElementById('count-tarefas');
-            const elCriticas = document.getElementById('count-criticas');
-            const elPedidos = document.getElementById('count-pedidos');
-
-            if (elTarefas) elTarefas.textContent = abertas.toString().padStart(2, '0');
-            if (elCriticas) elCriticas.textContent = criticas.toString().padStart(2, '0');
-            if (elPedidos) elPedidos.textContent = totalItens.toString().padStart(2, '0');
+            PASTAS_MOCK.forEach(p => { totalItens += p.produtos.length; });
+            document.getElementById('count-tarefas').textContent = abertas.toString().padStart(2, '0');
+            document.getElementById('count-criticas').textContent = criticas.toString().padStart(2, '0');
+            document.getElementById('count-pedidos').textContent = totalItens.toString().padStart(2, '0');
         }
 
-        function togglePopover(popoverId, triggerElem) {
+        function togglePopover(popoverId, triggerElem, event) {
+            if (event) { event.preventDefault(); event.stopPropagation(); }
             const popover = document.getElementById(popoverId);
+            if (!popover) return;
             const isOpen = popover.classList.contains('open');
             closeAllPopovers();
             if (!isOpen) {
                 popover.classList.add('open');
-                triggerElem.classList.add('active');
+                if (triggerElem) triggerElem.classList.add('active');
             }
         }
 
@@ -2283,61 +2028,63 @@
         }
 
         document.addEventListener('click', function (e) {
-            if (!e.target.closest('.filter-group')) {
-                closeAllPopovers();
-            }
+            if (!e.target.closest('.filter-group')) closeAllPopovers();
         });
 
-        function selectFilter(filterType, val, displayText) {
+        function selectFilter(filterType, val, displayText, event) {
+            if (event) { event.preventDefault(); event.stopPropagation(); }
             activeFilters[filterType] = val;
-            if (filterType === 'setor') document.getElementById('selected-setor-text').textContent = displayText;
-            if (filterType === 'status') document.getElementById('selected-status-text').textContent = displayText;
-            if (filterType === 'prioridade') document.getElementById('selected-prioridade-text').textContent = displayText;
-
+            if (filterType === 'setor') {
+                const el = document.getElementById('selected-setor-text');
+                if (el) el.textContent = displayText;
+            }
+            if (filterType === 'status') {
+                const el = document.getElementById('selected-status-text');
+                if (el) el.textContent = displayText;
+            }
+            if (filterType === 'prioridade') {
+                const el = document.getElementById('selected-prioridade-text');
+                if (el) el.textContent = displayText;
+            }
             const popover = document.getElementById(`popover-${filterType}`);
             if (popover) {
                 popover.querySelectorAll('.popover-item').forEach(item => {
-                    const isMatch = item.textContent.trim().includes(displayText);
+                    const itemVal = item.getAttribute('data-value');
+                    const isMatch = itemVal != null ? itemVal === String(val) : item.textContent.replace('✓', '').trim() === displayText;
                     item.classList.toggle('selected', isMatch);
                     const check = item.querySelector('.item-check');
                     if (check) check.textContent = isMatch ? '✓' : '';
                 });
             }
-
             closeAllPopovers();
             renderTimeline();
         }
 
-        // ==========================================
-        // RENDER TIMELINE (com permissões corretas)
-        // ==========================================
         function renderTimeline() {
             const container = document.getElementById('timeline-task-list');
             if (!container) return;
             container.innerHTML = '';
 
-            const meuId = String(localStorage.getItem('id_usuario') || '');
-            const tipo = String(TIPO_USUARIO || 'COMUM').toUpperCase();
-
-            const norm = (s) => String(s || '').trim().toLowerCase()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
             const filteredTasks = TAREFAS_BACKEND.filter(task => {
-                if (activeFilters.status !== 'all' &&
-                    norm(task.status) !== norm(activeFilters.status)) return false;
-                if (activeFilters.prioridade !== 'all' &&
-                    norm(task.prioridade) !== norm(activeFilters.prioridade)) return false;
-                if (activeFilters.setor !== 'all' &&
-                    norm(task.setor) !== norm(activeFilters.setor)) return false;
+                if (activeFilters.status !== 'all') {
+                    if (normalizarStatus(task.status) !== normalizarStatus(activeFilters.status)) return false;
+                }
+                if (activeFilters.prioridade !== 'all') {
+                    if (normalizarPrioridade(task.prioridade) !== normalizarPrioridade(activeFilters.prioridade)) return false;
+                }
+                if (activeFilters.setor !== 'all') {
+                    const setorTask = String(task.setor || '').trim().toLowerCase();
+                    const setorFiltro = String(activeFilters.setor || '').trim().toLowerCase();
+                    if (setorTask !== setorFiltro) return false;
+                }
                 return true;
             });
 
             if (filteredTasks.length === 0) {
                 container.innerHTML = `
-                    <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:40px; text-align:center; color:var(--text-muted); border-radius:8px;">
-                        <p style="font-family:var(--font-mono); font-size:14px;">Nenhuma tarefa encontrada com os filtros selecionados.</p>
-                    </div>
-                `;
+                    <div style="background:var(--bg-card);border:1px solid var(--border-color);padding:40px;text-align:center;color:var(--text-muted);border-radius:8px;">
+                        <p style="font-family:var(--font-mono);font-size:14px;">Nenhuma tarefa encontrada com os filtros selecionados.</p>
+                    </div>`;
                 return;
             }
 
@@ -2355,122 +2102,82 @@
                     <div class="day-header">
                         <span class="day-title">${dateTitle}</span>
                         <span class="day-count">${tasks.length} tarefa(s)</span>
-                    </div>
-                `;
+                    </div>`;
 
                 tasks.forEach(task => {
-                    const taskCard = document.createElement('div');
+                    let borderClass = 'border-medium', priorityClass = 'medium';
+                    const prio = normalizarPrioridade(task.prioridade);
+                    if (prio === 'Crítica') { borderClass = 'border-critical'; priorityClass = 'critical'; }
+                    else if (prio === 'Alta') { borderClass = 'border-high'; priorityClass = 'high'; }
+                    else if (prio === 'Baixa') { borderClass = 'border-low'; priorityClass = 'low'; }
 
-                    let borderClass = 'border-medium';
-                    let priorityClass = 'medium';
-
-                    if (task.prioridade === 'Crítica') {
-                        borderClass = 'border-critical';
-                        priorityClass = 'critical';
-                    } else if (task.prioridade === 'Alta') {
-                        borderClass = 'border-high';
-                        priorityClass = 'high';
-                    } else if (task.prioridade === 'Baixa') {
-                        borderClass = 'border-low';
-                        priorityClass = 'low';
-                    }
-
-                    const statusClass = task.status === 'Concluído' ? 'concluida' : '';
-                    const isDono = String(task.id_usuario) === meuId;
-
-                    // Regras de permissão:
-                    // - COMUM: pode alterar/excluir só as próprias
-                    // - TECNICO: pode alterar status e excluir qualquer
-                    // - ADMIN: pode tudo
-                    const podeAlterarStatus =
-                        tipo === 'TECNICO' ||
-                        tipo === 'ADMIN' ||
-                        (tipo === 'COMUM' && isDono);
-
-                    const podeExcluir =
-                        tipo === 'TECNICO' ||
-                        tipo === 'ADMIN' ||
-                        (tipo === 'COMUM' && isDono);
+                    const statusNorm = normalizarStatus(task.status);
+                    const statusClass = statusNorm === 'Concluído' ? 'concluida' : '';
+                    const podeStatus = podeAlterarStatus();
+                    const podeDel = podeExcluirTarefa(task);
+                    const idEsc = String(task.id).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                    const proximoStatus = statusNorm === 'Concluído' ? 'Pendente' : 'Concluído';
 
                     const botoesAcoes = `
-                        <button class="btn-icon-action" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">
+                        <button type="button" class="btn-icon-action" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">
                             💬 <span class="comment-count" style="margin-left:4px;">0</span>
                         </button>
-                        ${podeAlterarStatus ? `
-                            <button class="btn-icon-action" title="Alternar status"
-                                onclick="atualizarStatusAgendamento(${JSON.stringify(task.id)}, '${task.status === 'Concluído' ? 'Pendente' : 'Concluído'}')">
-                                ✓
-                            </button>
-                        ` : ''}
-                        ${podeExcluir ? `
-                            <button class="btn-icon-action" title="Excluir"
-                                onclick="deletarTarefa(${JSON.stringify(task.id)})">
-                                🗑
-                            </button>
-                        ` : ''}
+                        ${podeStatus ? `
+                            <button type="button" class="btn-icon-action" title="${statusNorm === 'Concluído' ? 'Reabrir tarefa' : 'Concluir tarefa'}"
+                                onclick="atualizarStatusAgendamento('${idEsc}', '${proximoStatus}')">✓</button>` : ''}
+                        ${podeDel ? `
+                            <button type="button" class="btn-icon-action" title="Excluir"
+                                onclick="deletarTarefa('${idEsc}')">🗑</button>` : ''}
                     `;
 
+                    const taskCard = document.createElement('div');
                     taskCard.className = `task-card ${borderClass}`;
                     taskCard.innerHTML = `
                         <div class="task-time">${task.hora}</div>
                         <div class="task-body">
                             <h4 class="task-title">${task.titulo}</h4>
                             <div class="task-badges-row">
-                                <span class="badge-priority ${priorityClass}">${task.prioridade}</span>
-                                <span class="badge-status ${statusClass}">${task.status}</span>
+                                <span class="badge-priority ${priorityClass}">${prio}</span>
+                                <span class="badge-status ${statusClass}">${statusNorm}</span>
                             </div>
                             <div class="task-metadata-list">
-                                <div class="metadata-row">
-                                    <span class="meta-icon">◆</span>
-                                    <span>Ativo: ${task.nomeAtivo}</span>
-                                </div>
-                                <div class="metadata-row">
-                                    <span class="meta-icon">◇</span>
-                                    <span>Setor: ${task.setor}</span>
-                                </div>
+                                <div class="metadata-row"><span class="meta-icon">◆</span><span>Ativo: ${task.nomeAtivo}</span></div>
+                                <div class="metadata-row"><span class="meta-icon">◇</span><span>Setor: ${task.setor}</span></div>
                             </div>
                             <div class="comments-drawer">
                                 <div class="comments-list"></div>
                                 <div class="comment-input-area">
                                     <input type="text" class="comment-input" placeholder="Escreva um comentário...">
-                                    <button class="comment-submit" onclick="adicionarComentario(this, '${task.idOrdemServico}')">+</button>
+                                    <button type="button" class="comment-submit" onclick="adicionarComentario(this, '${task.idOrdemServico}')">+</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="task-actions">
-                            ${botoesAcoes}
-                        </div>
+                        <div class="task-actions">${botoesAcoes}</div>
                     `;
 
                     if (task.idOrdemServico && task.idOrdemServico !== 'null') {
-                        const listaComentarios = taskCard.querySelector('.comments-list');
-                        const spanContador = taskCard.querySelector('.comment-count');
-                        carregarHistoricoComentarios(task.idOrdemServico, listaComentarios, spanContador);
+                        carregarHistoricoComentarios(
+                            task.idOrdemServico,
+                            taskCard.querySelector('.comments-list'),
+                            taskCard.querySelector('.comment-count')
+                        );
                     }
-
                     dayGroup.appendChild(taskCard);
                 });
-
                 container.appendChild(dayGroup);
             }
         }
 
-        // ==========================================
-        // PASTAS / PEDIDOS
-        // ==========================================
         function renderPastas() {
             const container = document.getElementById('folders-container');
             if (!container) return;
             container.innerHTML = '';
-
             PASTAS_MOCK.forEach(pasta => {
                 let valorTotal = 0;
-                pasta.produtos.forEach(p => valorTotal += (p.qtd * p.valorUnit));
-
+                pasta.produtos.forEach(p => { valorTotal += p.qtd * p.valorUnit; });
                 const card = document.createElement('div');
                 card.className = 'folder-card';
                 card.onclick = () => abrirPastaDetalhe(pasta.id);
-
                 card.innerHTML = `
                     <div>
                         <div class="folder-card-top">
@@ -2482,8 +2189,7 @@
                     <div class="folder-card-bottom">
                         <span class="folder-items-count">${pasta.produtos.length} item(ns)</span>
                         <span class="folder-total-val">${formatarMoeda(valorTotal)}</span>
-                    </div>
-                `;
+                    </div>`;
                 container.appendChild(card);
             });
         }
@@ -2496,31 +2202,25 @@
         function renderDetalhePasta(pastaId) {
             const pasta = PASTAS_MOCK.find(p => p.id === pastaId);
             if (!pasta) return;
-
             document.getElementById('folder-detail-code').textContent = `PASTA • ${pasta.codigo}`;
             document.getElementById('folder-detail-name').textContent = pasta.cliente;
-
             const tbody = document.getElementById('folder-products-tbody');
             tbody.innerHTML = '';
-
             let grandTotal = 0;
             pasta.produtos.forEach(item => {
                 const totalItem = item.qtd * item.valorUnit;
                 grandTotal += totalItem;
-
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="td-product">${item.nome}</td>
                     <td class="td-mono">${item.qtd}</td>
                     <td class="td-mono">${formatarMoeda(item.valorUnit)}</td>
-                    <td class="td-mono" style="font-weight:600; color:var(--color-primary);">${formatarMoeda(totalItem)}</td>
+                    <td class="td-mono" style="font-weight:600;color:var(--color-primary);">${formatarMoeda(totalItem)}</td>
                     <td class="td-mono" style="color:var(--text-muted);">${item.dataCompra}</td>
                     <td><span class="badge-status ${item.status === 'Separado' ? 'concluida' : ''}">${item.status}</span></td>
-                    <td><button class="btn-icon-action" title="Excluir produto" onclick="deletarProduto(${item.id})">🗑</button></td>
-                `;
+                    <td><button type="button" class="btn-icon-action" title="Excluir produto" onclick="deletarProduto(${item.id})">🗑</button></td>`;
                 tbody.appendChild(tr);
             });
-
             document.getElementById('folder-grand-total').textContent = formatarMoeda(grandTotal);
         }
 
@@ -2528,7 +2228,6 @@
             const pasta = PASTAS_MOCK.find(p => p.id === pastaAtivaId);
             if (pasta && confirm('Deseja remover este produto do pedido?')) {
                 pasta.produtos = pasta.produtos.filter(p => p.id !== prodId);
-                salvarPastasDoUsuario();
                 renderDetalhePasta(pastaAtivaId);
                 atualizarContadores();
                 showToast('Produto removido do pedido!');
@@ -2536,11 +2235,14 @@
         }
 
         function openModal(modalId) {
+            if (modalId === 'modal-tarefa' && !podeCriarTarefa()) {
+                alert('Você não tem permissão para criar tarefas.');
+                return;
+            }
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.add('active');
-                const dateInputs = modal.querySelectorAll('input[type="date"]');
-                dateInputs.forEach(input => {
+                modal.querySelectorAll('input[type="date"]').forEach(input => {
                     if (!input.value) input.value = new Date().toISOString().split('T')[0];
                 });
             }
@@ -2555,17 +2257,7 @@
             event.preventDefault();
             const codigo = document.getElementById('folder-input-code').value.trim();
             const nome = document.getElementById('folder-input-name').value.trim();
-
-            const novaPasta = {
-                id: 'ped-' + Date.now(),
-                codigo: codigo,
-                cliente: nome,
-                produtos: [],
-                id_usuario: String(localStorage.getItem('id_usuario') || '')
-            };
-
-            PASTAS_MOCK.push(novaPasta);
-            salvarPastasDoUsuario();
+            PASTAS_MOCK.push({ id: 'ped-' + Date.now(), codigo, cliente: nome, produtos: [] });
             closeModal('modal-pasta');
             event.target.reset();
             renderPastas();
@@ -2577,23 +2269,12 @@
             event.preventDefault();
             const pasta = PASTAS_MOCK.find(p => p.id === pastaAtivaId);
             if (!pasta) return;
-
             const nome = document.getElementById('prod-input-name').value.trim();
-            const qtd = parseInt(document.getElementById('prod-input-qtd').value);
+            const qtd = parseInt(document.getElementById('prod-input-qtd').value, 10);
             const valor = parseFloat(document.getElementById('prod-input-valor').value);
             const dataCompra = document.getElementById('prod-input-data').value;
             const status = document.getElementById('prod-input-status').value;
-
-            pasta.produtos.push({
-                id: Date.now(),
-                nome: nome,
-                qtd: qtd,
-                valorUnit: valor,
-                dataCompra: dataCompra,
-                status: status
-            });
-
-            salvarPastasDoUsuario();
+            pasta.produtos.push({ id: Date.now(), nome, qtd, valorUnit: valor, dataCompra, status });
             closeModal('modal-produto');
             event.target.reset();
             renderDetalhePasta(pastaAtivaId);
@@ -2606,22 +2287,12 @@
             localStorage.removeItem('id_usuario');
             localStorage.removeItem('email');
             localStorage.removeItem('tipo');
-            localStorage.removeItem('nome_usuario');
-            window.location.href = '/';
+            window.location.href = '/index';
         }
 
-        function simularImportarExcel() {
-            showToast('Simulação: Importando planilha Excel com produtos...');
-        }
-
-        function simularExportarExcel() {
-            showToast('Simulação: Planilha Excel exportada com sucesso!');
-        }
-
-        function formatarMoeda(val) {
-            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
+        function simularImportarExcel() { showToast('Simulação: Importando planilha Excel com produtos...'); }
+        function simularExportarExcel() { showToast('Simulação: Planilha Excel exportada com sucesso!'); }
+        function formatarMoeda(val) { return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
         function showToast(msg) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = msg;
@@ -2629,16 +2300,17 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ==========================================
-        // INICIALIZAÇÃO ÚNICA (sem duplicação)
-        // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
-            const usuarioCarregado = await carregarUsuario();
-            if (!usuarioCarregado) return;
-
-            carregarPastasDoUsuario();
-            await carregarAgendamentos();
-            renderPastas();
+            try {
+                const ok = await carregarUsuario();
+                if (!ok) return;
+                await carregarAgendamentos();
+                renderPastas();
+                atualizarContadores();
+            } catch (erro) {
+                console.error('Erro ao inicializar:', erro);
+                showToast('Não foi possível carregar os dados do sistema.');
+            }
         });
     </script>
 

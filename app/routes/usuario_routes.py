@@ -1,111 +1,30 @@
-from fastapi import APIRouter, Depends, HTTPException, Header, status, Body
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Header, status
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
+
 from app.core.database import get_db
 from app.schemas.usuario_schema import UsuarioCreate, UsuarioResponse, LoginSchema
 from app.models.models import UsuarioEmpresa, TipoUsuario
 from app.core.security import hash_senha, verificar_senha, criar_token, verificar_token
-from typing import Optional
-from pydantic import BaseModel
-
+from app.core.deps import get_current_user, verificar_admin
 
 router = APIRouter(prefix="/usuario_empresa", tags=["Usuario_Empresa"])
 
-
-# =====================================================================
-# SCHEMAS AUXILIARES
-# =====================================================================
-
-class AlterarTipoSchema(BaseModel):
-    tipo: str  # "COMUM" | "TECNICO" | "ADMIN"
-
-
-# =====================================================================
-# 1. DEPENDÊNCIAS DE AUTENTICAÇÃO E AUTORIZAÇÃO
-# =====================================================================
-
-def obter_usuario_logado(
-    authorization: Optional[str] = Header(None),
-    db: Session = Depends(get_db)
-) -> UsuarioEmpresa:
-    """Extrai o token do Header, valida e retorna o usuário atual do banco de dados."""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token não fornecido ou formato inválido"
-        )
-
-    token = authorization.split(" ")[1]
-    payload = verificar_token(token)
-
-    if not payload:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token inválido ou expirado"
-        )
-
-    email = payload.get("sub")
-    usuario = db.query(UsuarioEmpresa).filter(UsuarioEmpresa.email == email).first()
-
-    if not usuario:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuário não encontrado"
-        )
-
-    return usuario
-
-
-def _tipo_valor(tipo) -> str:
-    """Normaliza tipo para string maiuscula (aceita enum ou str)."""
+def _tipo_str(usuario: UsuarioEmpresa) -> str:
+    """Normaliza o tipo do usuário para string maiúscula (COMUM/TECNICO/ADMIN)."""
+    tipo = getattr(usuario, "tipo", None)
     if tipo is None:
-        return ""
-    if hasattr(tipo, "value"):
-        return str(tipo.value).upper()
-    if hasattr(tipo, "name"):
-        return str(tipo.name).upper()
+        return "COMUM"
+    if isinstance(tipo, TipoUsuario):
+        return tipo.name  # COMUM, TECNICO, ADMIN
     return str(tipo).upper()
 
+class AlterarTipoBody(BaseModel):
+    tipo: str
 
-def verificar_admin(usuario: UsuarioEmpresa = Depends(obter_usuario_logado)):
-    """Acesso restrito apenas a ADMIN."""
-    if _tipo_valor(usuario.tipo) != "ADMIN":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Acesso restrito. Privileges de administrador necessarios."
-        )
-    return usuario
-
-
-def verificar_tecnico_ou_admin(usuario: UsuarioEmpresa = Depends(obter_usuario_logado)):
-    """Acesso para TECNICO ou ADMIN."""
-    if _tipo_valor(usuario.tipo) not in ("TECNICO", "ADMIN"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Acesso restrito. Privileges de tecnico ou administrador necessarios."
-        )
-    return usuario
-
-
-def verificar_tecnico(usuario: UsuarioEmpresa = Depends(obter_usuario_logado)):
-    """TECNICO ou ADMIN."""
-    if _tipo_valor(usuario.tipo) not in ("TECNICO", "ADMIN"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Acesso restrito. Privileges de tecnico necessarios."
-        )
-    return usuario
-
-
-# =====================================================================
-# 2. ROTAS
-# =====================================================================
-
-@router.post("/cadastro", status_code=status.HTTP_201_CREATED)
-def cadastro(
-    usuario: UsuarioCreate,
-    db: Session = Depends(get_db)
-):
-    """Cria um novo usuário comum no sistema."""
+@router.post("/cadastro")
+def cadastro(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     if usuario.senha != usuario.confirmar_senha:
         raise HTTPException(status_code=400, detail="As senhas não coincidem")
 
@@ -123,7 +42,8 @@ def cadastro(
     novo_usuario = UsuarioEmpresa(
         nome=usuario.nome,
         email=usuario.email,
-        senha_hash=hash_senha(usuario.senha)
+        senha_hash=hash_senha(usuario.senha),
+        tipo=TipoUsuario.COMUM,
     )
 
     db.add(novo_usuario)
@@ -136,14 +56,31 @@ def cadastro(
             "id_usuario": novo_usuario.id_usuario,
             "nome": novo_usuario.nome,
             "email": novo_usuario.email,
-            "tipo": novo_usuario.tipo.value
-        }
+            "tipo": _tipo_str(novo_usuario),
+        },
     }
 
+@router.get("/usuarios")
+def listar_usuarios(
+    db: Session = Depends(get_db),
+    _admin: UsuarioEmpresa = Depends(verificar_admin),
+):
+    usuarios = db.query(UsuarioEmpresa).all()
+    if not usuarios:
+        raise HTTPException(status_code=404, detail="Nenhum usuário encontrado")
+
+    return [
+        {
+            "id_usuario": u.id_usuario,
+            "nome": u.nome,
+            "email": u.email,
+            "tipo": _tipo_str(u),
+        }
+        for u in usuarios
+    ]
 
 @router.post("/login")
 def login(dados: LoginSchema, db: Session = Depends(get_db)):
-    """Valida as credenciais e retorna o Token JWT junto com os dados de acesso."""
     usuario = db.query(UsuarioEmpresa).filter(
         UsuarioEmpresa.email == dados.email
     ).first()
@@ -162,27 +99,13 @@ def login(dados: LoginSchema, db: Session = Depends(get_db)):
         "id_usuario": str(usuario.id_usuario),
         "nome": usuario.nome,
         "email": usuario.email,
-        "tipo": _tipo_valor(usuario.tipo)
+        "tipo": _tipo_str(usuario),
     }
-
 
 @router.get("/me")
 def dados_usuario_logado(
-    usuario: UsuarioEmpresa = Depends(obter_usuario_logado)
-):
-    """Retorna os dados do próprio usuário que está logado usando o Token fornecido."""
-    return {
-        "id_usuario": str(usuario.id_usuario),
-        "nome": usuario.nome,
-        "email": usuario.email,
-        "tipo": _tipo_valor(usuario.tipo)
-    }
-
-
-@router.get("/usuarios")
-def listar_usuarios(
-    usuario_atual: UsuarioEmpresa = Depends(verificar_admin),
-    db: Session = Depends(get_db)
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db),
 ):
     """
     Lista todos os usuarios.
@@ -190,95 +113,22 @@ def listar_usuarios(
     Retorna lista plain dict para garantir o campo tipo.
     """
     usuarios = db.query(UsuarioEmpresa).all()
+    
+    if not authorization or " " not in authorization:
+        raise HTTPException(status_code=401, detail="Token ausente ou mal formatado")
 
-    if not usuarios:
-        raise HTTPException(status_code=404, detail="Nenhum usuario encontrado")
+    token = authorization.split(" ", 1)[1]
+    payload = verificar_token(token)
 
     return [
         {
             "id_usuario": str(u.id_usuario),
             "nome": u.nome,
             "email": u.email,
-            "tipo": _tipo_valor(u.tipo)
+            "tipo": _tipo_str(u)
         }
         for u in usuarios
     ]
-
-
-@router.put("/{id_usuario}/tipo")
-def alterar_tipo_usuario(
-    id_usuario: str,
-    dados: AlterarTipoSchema,
-    usuario_atual: UsuarioEmpresa = Depends(verificar_admin),
-    db: Session = Depends(get_db)
-):
-    """
-    Altera o tipo (perfil) de um usuário.
-    Apenas ADMIN. Tipos permitidos: COMUM ou TECNICO.
-    """
-    tipo_str = str(dados.tipo or "").strip().upper()
-
-    # Aceita COMUM/TECNICO e tambem valores em minusculo do enum
-    mapa = {
-        "COMUM": TipoUsuario.COMUM,
-        "TECNICO": TipoUsuario.TECNICO,
-        "COMUM".lower(): TipoUsuario.COMUM,
-        "TECNICO".lower(): TipoUsuario.TECNICO,
-    }
-    # normaliza chave
-    if tipo_str not in ("COMUM", "TECNICO"):
-        raise HTTPException(
-            status_code=400,
-            detail="Tipo invalido. O administrador so pode definir: COMUM ou TECNICO."
-        )
-
-    usuario = db.query(UsuarioEmpresa).filter(
-        UsuarioEmpresa.id_usuario == str(id_usuario)
-    ).first()
-
-    if not usuario:
-        raise HTTPException(status_code=404, detail="Usuario nao encontrado")
-
-    if str(usuario.id_usuario) == str(usuario_atual.id_usuario):
-        raise HTTPException(
-            status_code=400,
-            detail="Voce nao pode alterar o proprio perfil por esta tela."
-        )
-
-    if _tipo_valor(usuario.tipo) == "ADMIN":
-        raise HTTPException(
-            status_code=400,
-            detail="Nao e permitido alterar o perfil de outro administrador."
-        )
-
-    novo_enum = mapa[tipo_str]
-    usuario.tipo = novo_enum
-    db.add(usuario)
-    db.commit()
-    db.refresh(usuario)
-
-    # Confirma se gravou; se o ORM nao refletir, tenta update direto
-    tipo_retorno = _tipo_valor(usuario.tipo)
-    if tipo_retorno not in ("COMUM", "TECNICO") or tipo_retorno != tipo_str:
-        db.query(UsuarioEmpresa).filter(
-            UsuarioEmpresa.id_usuario == str(id_usuario)
-        ).update({"tipo": novo_enum})
-        db.commit()
-        usuario = db.query(UsuarioEmpresa).filter(
-            UsuarioEmpresa.id_usuario == str(id_usuario)
-        ).first()
-        tipo_retorno = _tipo_valor(usuario.tipo) if usuario else tipo_str
-
-    return {
-        "msg": f"Usuario atualizado para {tipo_retorno}",
-        "usuario": {
-            "id_usuario": str(usuario.id_usuario),
-            "nome": usuario.nome,
-            "email": usuario.email,
-            "tipo": tipo_retorno
-        }
-    }
-
 
 @router.delete("/{id_usuario}")
 def excluir_usuario(
@@ -296,23 +146,76 @@ def excluir_usuario(
 
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
-
-    if usuario.id_usuario == usuario_atual.id_usuario:
-        raise HTTPException(
-            status_code=400,
-            detail="Você não pode excluir a própria conta."
-        )
-
-    if _tipo_valor(usuario.tipo) == "ADMIN":
-        raise HTTPException(
-            status_code=400,
-            detail="Não é permitido excluir outro administrador."
-        )
-
+    
+    # Executa a deleção
     db.delete(usuario)
     db.commit()
 
     return {
         "msg": "Usuário excluído com sucesso",
-        "id_usuario": id_usuario
+        "id_usuario": usuario.id_usuario,
+        "nome": usuario.nome,
+        "email": usuario.email,
+        "tipo": _tipo_str(usuario),
+    }
+
+@router.put("/usuarios/{id_usuario}/tipo")
+def alterar_tipo_usuario(
+    id_usuario: str,
+    body: AlterarTipoBody,
+    db: Session = Depends(get_db),
+    _admin: UsuarioEmpresa = Depends(verificar_admin),
+):
+    """ADMIN promove/rebaixa usuário entre COMUM e TECNICO."""
+    novo = (body.tipo or "").strip().upper()
+    mapa = {
+        "COMUM": TipoUsuario.COMUM,
+        "TECNICO": TipoUsuario.TECNICO,
+    }
+    if novo not in mapa:
+        raise HTTPException(
+            status_code=400,
+            detail="Tipo inválido. Use COMUM ou TECNICO.",
+        )
+
+    alvo = db.query(UsuarioEmpresa).filter(
+        UsuarioEmpresa.id_usuario == id_usuario
+    ).first()
+    if not alvo:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    if _tipo_str(alvo) == "ADMIN":
+        raise HTTPException(
+            status_code=400,
+            detail="Não é permitido alterar o tipo de um administrador por esta rota.",
+        )
+
+    try:
+        alvo.tipo = mapa[novo]
+        db.commit()
+        db.refresh(alvo)
+    except Exception as e:
+        db.rollback()
+        # Fallback SQLite TEXT / enum incompatível
+        try:
+            from sqlalchemy import text
+            db.execute(
+                text("UPDATE usuario_empresa SET tipo = :t WHERE id_usuario = :id"),
+                {"t": mapa[novo].value, "id": id_usuario},
+            )
+            db.commit()
+            alvo = db.query(UsuarioEmpresa).filter(
+                UsuarioEmpresa.id_usuario == id_usuario
+            ).first()
+        except Exception as e2:
+            db.rollback()
+            raise HTTPException(
+                status_code=400,
+                detail=f"Erro ao alterar tipo: {e} | fallback: {e2}",
+            )
+
+    return {
+        "msg": f"Tipo atualizado para {novo}",
+        "id_usuario": alvo.id_usuario,
+        "tipo": _tipo_str(alvo),
     }
