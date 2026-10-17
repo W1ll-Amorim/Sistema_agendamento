@@ -49,6 +49,7 @@
         }
 
         body {
+            background-image: url('static/img/background_sistema.png');
             background-color: var(--bg-main);
             color: var(--text-main);
             font-family: var(--font-sans);
@@ -101,7 +102,9 @@
             font-weight: 600;
             background: var(--grad-primary);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            color: transparent;
         }
 
         .nav-right-actions {
@@ -197,10 +200,12 @@
             margin-bottom: 16px;
         }
 
-        .hero-title .highlight {
+       .hero-title .highlight {
             background: var(--grad-primary);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            color: transparent;
         }
 
         .hero-description {
