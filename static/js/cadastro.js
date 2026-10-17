@@ -6,11 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const nome = document.getElementById("nome").value.trim();
         const email = document.getElementById("email").value.trim();
+        const telefone = document.getElementById("telefone").value.trim();
         const senha = document.getElementById("senha").value;
         const confirmarSenha = document.getElementById("confirmar_senha").value;
 
         // 🔹 validações
-        if (!nome || !email || !senha || !confirmarSenha) {
+        if (!nome || !email || !telefone || !senha || !confirmarSenha) {
             alert("Preencha todos os campos");
             return;
         }
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     nome,
                     email,
+                    telefone,
                     senha,
                     confirmar_senha: confirmarSenha // 🔥 opcional mas recomendado
                 })
