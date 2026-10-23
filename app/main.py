@@ -1,13 +1,18 @@
 import os
+from typing import Optional
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI,APIRouter, Request, Depends, Query
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.core.database import engine, Base, SessionLocal
-from app.models.models import UsuarioEmpresa, TipoUsuario
+from app.core.database import engine, Base, SessionLocal, get_db
+from sqlalchemy.orm import Session
+from app.models.models import UsuarioEmpresa, TipoUsuario, OrdemServico
 from app.core.security import hash_senha
+
+from app.core.deps import get_current_user, _norm_tipo
+
 from app.scheduler.Scheduler import start_scheduler, stop_scheduler
 from app.routes import (
     usuario_routes, agendamento_routes, ativo_routes,
@@ -105,3 +110,44 @@ async def cadastro(request: Request):
 @app.get("/telainicial")
 async def telainicial(request: Request):
     return templates.TemplateResponse("telainicial.html", {"request": request})
+
+router = APIRouter()
+
+@router.get("/")
+def listar_agendamentos(
+    setor: Optional[str] = Query(None, description="Filtro por setor"),
+    status: Optional[str] = Query(None, description="Filtro por status"),
+    prioridade: Optional[str] = Query(None, description="Filtro por prioridade"),
+    db: Session = Depends(get_db),
+    usuario_logado = Depends(get_current_user)  # 🔒 Autentica e bloqueia acessos sem token
+):
+    # 1. Inicia a query base buscando as ordens de serviço (agendamentos)
+    query = db.query(OrdemServico)
+    
+    # 2. Trava de Segurança (Zero Trust)
+    tipo_usuario = _norm_tipo(usuario_logado)
+    
+    if tipo_usuario == "COMUM":
+        # Se for COMUM, injeta o filtro obrigatório amarrando ao ID do usuário do token.
+        # (Se na sua model OrdemServico a coluna for 'id_usuario', mantenha assim. 
+        #  Se a chave primária em UsuarioEmpresa for 'id', use usuario_logado.id)
+        query = query.filter(OrdemServico.id_usuario == usuario_logado.id)
+    
+    # 3. Filtros Dinâmicos do Frontend
+    # Ignora o valor "all" que é enviado quando o usuário seleciona "Todos" no dropdown
+    if setor and setor.lower() != "all":
+        # Ajuste o atributo abaixo conforme sua model (ex: OrdemServico.setor)
+        query = query.filter(OrdemServico.descricao_servico == setor)
+        
+    if status and status.lower() != "all":
+        query = query.filter(OrdemServico.status == status)
+        
+    if prioridade and prioridade.lower() != "all":
+        # Ajuste o atributo abaixo conforme sua model (ex: OrdemServico.criticidade)
+        query = query.filter(OrdemServico.prioridade == prioridade)
+        
+    # 4. Executa a busca no banco de dados
+    resultados = query.all()
+    
+    # 5. Retorna o JSON no padrão esperado pela função carregarAgendamentos() do seu frontend
+    return {"agendamentos": resultados}

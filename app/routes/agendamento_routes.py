@@ -172,6 +172,9 @@ def criar_agendamento_completo(
 
 @router.get("/")
 def listar_agendamentos(
+    setor: Optional[str] = Query(None, description="Filtro por setor"),
+    status: Optional[str] = Query(None, description="Filtro por status"),
+    prioridade: Optional[str] = Query(None, description="Filtro por prioridade"),
     id_usuario: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     usuario: UsuarioEmpresa = Depends(obter_usuario_completo)
@@ -179,6 +182,7 @@ def listar_agendamentos(
     try:
         query = db.query(Agendamento)
 
+        # Regra de segurança: Usuário comum só vê os próprios agendamentos
         if _is_comum(usuario):
             query = query.filter(Agendamento.id_usuario == str(usuario.id_usuario))
         elif id_usuario:
@@ -200,20 +204,38 @@ def listar_agendamentos(
                     TipoServico.id_servico == ordem.id_servico
                 ).first()
 
-            # Setor = nome do servico (gravado a partir do setor do form)
-            setor = ""
+            # Variáveis cruzadas
+            setor_val = ""
             if servico:
-                setor = (servico.nome or servico.descricao or "").strip()
-            if not setor:
-                setor = "Geral"
+                setor_val = (servico.nome or servico.descricao or "").strip()
+            if not setor_val:
+                setor_val = "Geral"
 
-            prioridade = ""
+            prioridade_val = ""
             if ordem and ordem.prioridade:
-                prioridade = str(ordem.prioridade).strip()
-            if not prioridade:
-                prioridade = "Alta"
+                prioridade_val = str(ordem.prioridade).strip()
+            if not prioridade_val:
+                prioridade_val = "Alta"
 
             status_val = (ag.status or "Pendente").strip()
+
+            # ---------------------------------------------------------
+            # 🚀 APLICAÇÃO DOS FILTROS DO FRONTEND
+            # Se o filtro existir, for diferente de "all", e não bater
+            # com a tarefa atual, usamos 'continue' para ignorar esta tarefa.
+            # ---------------------------------------------------------
+            if status and status.lower() != "all":
+                if status.lower() != status_val.lower():
+                    continue 
+
+            if prioridade and prioridade.lower() != "all":
+                if prioridade.lower() != prioridade_val.lower():
+                    continue
+
+            if setor and setor.lower() != "all":
+                if setor.lower() != setor_val.lower():
+                    continue
+            # ---------------------------------------------------------
 
             resultado.append({
                 "id_agendamento": ag.id_agendamento,
@@ -222,11 +244,11 @@ def listar_agendamentos(
                 "nome_ativo": ativo.nome if ativo else "Geral",
                 "tipo_ativo": ativo.tipo if ativo else "",
                 "nome_servico": servico.nome if servico else "",
-                "descricao_servico": setor,
+                "descricao_servico": setor_val,
                 "data_agendamento": ag.data_agendamento.isoformat() if ag.data_agendamento else None,
                 "id_ordem_servico": ag.id_ordem_servico,
                 "status": status_val,
-                "criticidade": prioridade,
+                "criticidade": prioridade_val,
                 "id_usuario": ag.id_usuario
             })
 
@@ -236,7 +258,6 @@ def listar_agendamentos(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao listar agendamentos: {str(e)}")
-
 
 @router.delete("/{id_agendamento}")
 def deletar_agendamento(

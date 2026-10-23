@@ -1743,48 +1743,49 @@
             const token = localStorage.getItem('token');
             if (!token) { window.location.href = '/'; return; }
 
-            TIPO_USUARIO = (localStorage.getItem('tipo') || TIPO_USUARIO || 'COMUM').toUpperCase();
-            if (!ID_USUARIO_LOGADO) ID_USUARIO_LOGADO = localStorage.getItem('id_usuario');
-            const verTodas = (TIPO_USUARIO === 'ADMIN' || TIPO_USUARIO === 'TECNICO');
-
             try {
-                let url = '/agendamentos/';
-                if (!verTodas && ID_USUARIO_LOGADO) {
-                    url += `?id_usuario=${encodeURIComponent(ID_USUARIO_LOGADO)}`;
+                // 1. Prepara a URL base
+                const url = new URL('/agendamentos/', window.location.origin);
+
+                // 2. Anexa os filtros dinamicamente se não forem "all" (Todos)
+                if (activeFilters.setor && activeFilters.setor !== 'all') {
+                    url.searchParams.append('setor', activeFilters.setor);
                 }
-                const response = await fetch(url, {
+                if (activeFilters.status && activeFilters.status !== 'all') {
+                    url.searchParams.append('status', activeFilters.status);
+                }
+                if (activeFilters.prioridade && activeFilters.prioridade !== 'all') {
+                    url.searchParams.append('prioridade', activeFilters.prioridade);
+                }
+
+                // 3. Faz a requisição limpa e segura (O token faz o trabalho de identificar o usuário)
+                const response = await fetch(url.toString(), {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+
                 if (!response.ok) {
-                    if (url.includes('?')) {
-                        const resp2 = await fetch('/agendamentos/', {
-                            method: 'GET',
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-                        if (resp2.ok) {
-                            const result2 = await resp2.json();
-                            const lista2 = Array.isArray(result2) ? result2 : (result2.agendamentos || []);
-                            aplicarListaAgendamentos(lista2, verTodas);
-                            return;
-                        }
-                    }
                     let detalhe = `HTTP ${response.status}`;
                     try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
                     throw new Error(detalhe);
                 }
+
                 const result = await response.json();
                 const agendamentos = Array.isArray(result) ? result : (result.agendamentos || result.items || []);
-                if (!Array.isArray(agendamentos)) throw new Error('Formato de resposta inválido.');
-                aplicarListaAgendamentos(agendamentos, verTodas);
+                
+                // 4. Repassa os dados para renderizar a tela. 
+                // Passamos "true" no segundo parâmetro pois o backend já filtrou tudo com segurança.
+                aplicarListaAgendamentos(agendamentos, true); 
+
             } catch (error) {
                 console.error('Erro ao carregar agendamentos:', error);
-                TAREFAS_BACKEND = TAREFAS_BACKEND || [];
+                TAREFAS_BACKEND = [];
                 renderTimeline();
                 atualizarContadores();
                 showToast('Não foi possível carregar as tarefas.');
             }
         }
+        
 
         async function salvarNovaTarefa(event) {
             event.preventDefault();
@@ -2036,9 +2037,13 @@
             if (!e.target.closest('.filter-group')) closeAllPopovers();
         });
 
-        function selectFilter(filterType, val, displayText, event) {
+       function selectFilter(filterType, val, displayText, event) {
             if (event) { event.preventDefault(); event.stopPropagation(); }
+            
+            // 1. Atualiza o estado global dos filtros
             activeFilters[filterType] = val;
+            
+            // 2. Atualiza os textos dos botões na tela
             if (filterType === 'setor') {
                 const el = document.getElementById('selected-setor-text');
                 if (el) el.textContent = displayText;
@@ -2051,6 +2056,8 @@
                 const el = document.getElementById('selected-prioridade-text');
                 if (el) el.textContent = displayText;
             }
+            
+            // 3. Marca o item com o "✓" no popover
             const popover = document.getElementById(`popover-${filterType}`);
             if (popover) {
                 popover.querySelectorAll('.popover-item').forEach(item => {
@@ -2062,7 +2069,10 @@
                 });
             }
             closeAllPopovers();
-            renderTimeline();
+            
+            // 🚀 MUDANÇA ARQUITETURAL AQUI:
+            // Dispara a requisição para o backend aplicando os novos filtros no banco
+            carregarAgendamentos(); 
         }
 
         function renderTimeline() {
@@ -2070,20 +2080,8 @@
             if (!container) return;
             container.innerHTML = '';
 
-            const filteredTasks = TAREFAS_BACKEND.filter(task => {
-                if (activeFilters.status !== 'all') {
-                    if (normalizarStatus(task.status) !== normalizarStatus(activeFilters.status)) return false;
-                }
-                if (activeFilters.prioridade !== 'all') {
-                    if (normalizarPrioridade(task.prioridade) !== normalizarPrioridade(activeFilters.prioridade)) return false;
-                }
-                if (activeFilters.setor !== 'all') {
-                    const setorTask = String(task.setor || '').trim().toLowerCase();
-                    const setorFiltro = String(activeFilters.setor || '').trim().toLowerCase();
-                    if (setorTask !== setorFiltro) return false;
-                }
-                return true;
-            });
+            // NOVA LÓGICA: O backend já filtrou, então usamos todas as tarefas recebidas
+            const filteredTasks = TAREFAS_BACKEND;
 
             if (filteredTasks.length === 0) {
                 container.innerHTML = `
@@ -2092,6 +2090,8 @@
                     </div>`;
                 return;
             }
+            
+            // ... restante do código do groupsByDate continua igual ...
 
             const groupsByDate = {};
             filteredTasks.forEach(task => {
