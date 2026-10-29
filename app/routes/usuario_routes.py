@@ -42,6 +42,7 @@ def cadastro(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     novo_usuario = UsuarioEmpresa(
         nome=usuario.nome,
         email=usuario.email,
+        telefone=usuario.telefone,
         senha_hash=hash_senha(usuario.senha),
         tipo=TipoUsuario.COMUM,
     )
@@ -55,6 +56,7 @@ def cadastro(usuario: UsuarioCreate, db: Session = Depends(get_db)):
         "usuario": {
             "id_usuario": novo_usuario.id_usuario,
             "nome": novo_usuario.nome,
+            "telefone": novo_usuario.telefone,
             "email": novo_usuario.email,
             "tipo": _tipo_str(novo_usuario),
         },

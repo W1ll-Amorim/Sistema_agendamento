@@ -180,31 +180,39 @@ def listar_agendamentos(
     usuario: UsuarioEmpresa = Depends(obter_usuario_completo)
 ):
     try:
-        query = db.query(Agendamento)
+        # Join para filtrar corretamente por setor e prioridade
+        query = (
+            db.query(Agendamento, OrdemServico, Ativo, TipoServico)
+            .outerjoin(OrdemServico, OrdemServico.id_ordem_servico == Agendamento.id_ordem_servico)
+            .outerjoin(Ativo, Ativo.id_ativo == OrdemServico.id_ativo)
+            .outerjoin(TipoServico, TipoServico.id_servico == OrdemServico.id_servico)
+        )
 
-        # Regra de segurança: Usuário comum só vê os próprios agendamentos
+        # ---------- Segurança por perfil ----------
+        # COMUM → só os próprios
+        # TECNICO e ADMIN → veem todos
         if _is_comum(usuario):
             query = query.filter(Agendamento.id_usuario == str(usuario.id_usuario))
         elif id_usuario:
             query = query.filter(Agendamento.id_usuario == str(id_usuario))
 
-        agendamentos = query.order_by(Agendamento.data_agendamento.desc()).all()
+        # ---------- Filtros do frontend (ignoram "all") ----------
+        if status and status.strip().lower() != "all":
+            query = query.filter(Agendamento.status.ilike(status.strip()))
+
+        if prioridade and prioridade.strip().lower() != "all":
+            query = query.filter(OrdemServico.prioridade.ilike(prioridade.strip()))
+
+        if setor and setor.strip().lower() != "all":
+            query = query.filter(
+                (TipoServico.nome.ilike(setor.strip())) |
+                (TipoServico.descricao.ilike(setor.strip()))
+            )
+
+        rows = query.order_by(Agendamento.data_agendamento.desc()).all()
 
         resultado = []
-        for ag in agendamentos:
-            ordem = db.query(OrdemServico).filter(
-                OrdemServico.id_ordem_servico == ag.id_ordem_servico
-            ).first()
-
-            ativo = None
-            servico = None
-            if ordem:
-                ativo = db.query(Ativo).filter(Ativo.id_ativo == ordem.id_ativo).first()
-                servico = db.query(TipoServico).filter(
-                    TipoServico.id_servico == ordem.id_servico
-                ).first()
-
-            # Variáveis cruzadas
+        for ag, ordem, ativo, servico in rows:
             setor_val = ""
             if servico:
                 setor_val = (servico.nome or servico.descricao or "").strip()
@@ -219,24 +227,6 @@ def listar_agendamentos(
 
             status_val = (ag.status or "Pendente").strip()
 
-            # ---------------------------------------------------------
-            # 🚀 APLICAÇÃO DOS FILTROS DO FRONTEND
-            # Se o filtro existir, for diferente de "all", e não bater
-            # com a tarefa atual, usamos 'continue' para ignorar esta tarefa.
-            # ---------------------------------------------------------
-            if status and status.lower() != "all":
-                if status.lower() != status_val.lower():
-                    continue 
-
-            if prioridade and prioridade.lower() != "all":
-                if prioridade.lower() != prioridade_val.lower():
-                    continue
-
-            if setor and setor.lower() != "all":
-                if setor.lower() != setor_val.lower():
-                    continue
-            # ---------------------------------------------------------
-
             resultado.append({
                 "id_agendamento": ag.id_agendamento,
                 "titulo": (ordem.titulo if ordem else None) or "Sem titulo",
@@ -249,6 +239,7 @@ def listar_agendamentos(
                 "id_ordem_servico": ag.id_ordem_servico,
                 "status": status_val,
                 "criticidade": prioridade_val,
+                "prioridade": prioridade_val,
                 "id_usuario": ag.id_usuario
             })
 
@@ -258,6 +249,7 @@ def listar_agendamentos(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao listar agendamentos: {str(e)}")
+
 
 @router.delete("/{id_agendamento}")
 def deletar_agendamento(
