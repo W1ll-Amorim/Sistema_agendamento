@@ -8,6 +8,10 @@
         href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=Montserrat:wght@300;400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <!-- Estilos modulares do Kanban Cerulean 3D -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/kanban_theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/kanban_layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/kanban_cards.css') }}">
     <title>Dashboard - Stellare Kitchens</title>
 </head>
 
@@ -40,6 +44,18 @@
     <header class="app-header">
         <span class="app-header-logo">Stellare Kitchens</span>
         <div class="app-header-user">
+            <!-- Alternador dos 3 temas: Escuro (Lua), Médio (Meia-Lua/Sol) e Claro (Sol) -->
+            <div class="theme-switcher-kanban">
+                <button id="btn-theme-dark" class="theme-btn-kb active" onclick="setKanbanTheme('dark')" title="Tema Escuro - Lua Completa">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                </button>
+                <button id="btn-theme-medium" class="theme-btn-kb" onclick="setKanbanTheme('medium')" title="Tema Médio - Meia Lua e Sol">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <button id="btn-theme-light" class="theme-btn-kb" onclick="setKanbanTheme('light')" title="Tema Claro - Sol">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                </button>
+            </div>
             <span class="user-avatar" id="user-avatar">?</span>
             <span class="user-name" id="user-name">Carregando...</span>
             <button class="btn-logout" onclick="fazerLogout()">Sair</button>
@@ -50,7 +66,10 @@
         <section id="board-section">
             <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
                 <div class="column-header">
-                    <h3>Tarefas</h3>
+                    <div class="column-header-info">
+                        <h3>Tarefas</h3>
+                        <span class="column-counter" id="count-col-0">0</span>
+                    </div>
                     <button class="btn-add" onclick="adicionarNovaTarefa()">+</button>
                 </div>
                 <div class="card-list"></div>
@@ -58,21 +77,30 @@
 
             <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
                 <div class="column-header">
-                    <h3>Em Progresso</h3>
+                    <div class="column-header-info">
+                        <h3>Em Progresso</h3>
+                        <span class="column-counter" id="count-col-1">0</span>
+                    </div>
                 </div>
                 <div class="card-list"></div>
             </div>
 
             <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
                 <div class="column-header">
-                    <h3>Concluído</h3>
+                    <div class="column-header-info">
+                        <h3>Concluído</h3>
+                        <span class="column-counter" id="count-col-2">0</span>
+                    </div>
                 </div>
                 <div class="card-list"></div>
             </div>
 
             <div class="column" id="coluna-lixeira" ondragover="allowDrop(event)" ondrop="drop(event)">
                 <div class="column-header">
-                    <h3>Lixeira</h3>
+                    <div class="column-header-info">
+                        <h3>Lixeira</h3>
+                        <span class="column-counter" id="count-col-3">0</span>
+                    </div>
                 </div>
                 <div class="card-list"></div>
             </div>
@@ -195,6 +223,7 @@
                         const cardList = coluna.querySelector('.card-list');
                         cardList.appendChild(card);
                     });
+                    atualizarContadoresColunas();
                 } else if (response.status === 401) {
                     window.location.href = '/index';
                 }
@@ -333,6 +362,7 @@
                 if (card.getAttribute('data-salvo') === 'true') {
                     atualizarStatusAgendamento(card, novoStatus);
                 }
+                atualizarContadoresColunas();
             }
         }
 
@@ -420,6 +450,7 @@
                     atualizarStatusAgendamento(cardToRemove, 'Lixeira');
                 }
             }
+            atualizarContadoresColunas();
         }
 
         async function deletarAgendamentoBackend(card) {
@@ -606,7 +637,41 @@
             novoCartao.querySelector('.date-input').addEventListener('change', () => resetAutoSave(novoCartao));
 
             novoCartao.querySelector('.card-title').focus();
+            atualizarContadoresColunas();
         }
+
+        // ==========================================
+        // CONTROLE VISUAL: TEMAS E CONTADORES
+        // ==========================================
+
+        // Aplica o tema escolhido (dark, medium, light) e salva no localStorage
+        function setKanbanTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('kanban_theme', themeName);
+            ['dark', 'medium', 'light'].forEach(t => {
+                const btn = document.getElementById('btn-theme-' + t);
+                if (btn) btn.classList.toggle('active', t === themeName);
+            });
+        }
+
+        // Atualiza a contagem de cards no topo de cada coluna
+        function atualizarContadoresColunas() {
+            const colunas = document.querySelectorAll('.column');
+            colunas.forEach((col, idx) => {
+                const list = col.querySelector('.card-list');
+                const badge = document.getElementById('count-col-' + idx);
+                if (list && badge) {
+                    badge.textContent = list.children.length;
+                }
+            });
+        }
+
+        // Carrega o tema do usuário e inicia a contagem ao abrir a tela
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentTheme = localStorage.getItem('kanban_theme') || 'dark';
+            setKanbanTheme(currentTheme);
+            setTimeout(atualizarContadoresColunas, 600);
+        });
     </script>
 </body>
 
