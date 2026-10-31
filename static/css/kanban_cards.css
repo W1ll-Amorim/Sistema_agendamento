@@ -1,0 +1,135 @@
+/* ========================================================= */
+/* CARDS 3D, FORMULÁRIOS E AÇÕES DO KANBAN                  */
+/* ========================================================= */
+
+/* Card com relevo 3D, cantos arredondados e transições */
+.card {
+    background: var(--kb-grad-card) !important;
+    border: 1px solid var(--kb-border-card) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--kb-shadow-3d) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+/* Efeito de elevação ao passar o mouse */
+.card:hover {
+    transform: translateY(-3px) !important;
+    border-color: var(--kb-border-hover) !important;
+    box-shadow: 0 14px 28px -4px rgba(0, 123, 167, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Estado visual durante o arrastar e soltar (drag and drop) */
+.card[style*="opacity: 0.5"], .card.dragging {
+    box-shadow: var(--kb-shadow-drag) !important;
+    transform: scale(1.02) !important;
+}
+
+/* Título editável da demanda */
+.card-title {
+    color: var(--kb-text-main) !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border-bottom: 1px dashed rgba(0, 163, 222, 0.4) !important;
+}
+
+/* Nome do ativo ou máquina vinculada */
+#card-title-maquina {
+    color: var(--kb-text-muted) !important;
+    font-size: 12px !important;
+    border-bottom: 1px dashed var(--kb-border-subtle) !important;
+}
+
+/* Seletor de prioridade e urgência (Fazer, Agendar, Delegar, Excluir) */
+.tag-select {
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    padding: 3px 12px !important;
+}
+
+.tag-select.urgency-do {
+    background-color: var(--kb-btn-danger-bg) !important;
+    color: var(--kb-status-urgent) !important;
+    border-color: var(--kb-btn-danger-border) !important;
+}
+
+.tag-select.urgency-schedule {
+    background-color: rgba(0, 163, 222, 0.16) !important;
+    color: var(--kb-status-schedule) !important;
+    border-color: var(--kb-status-schedule) !important;
+}
+
+.tag-select.urgency-delegate {
+    background-color: rgba(255, 165, 2, 0.16) !important;
+    color: var(--kb-status-delegate) !important;
+    border-color: var(--kb-status-delegate) !important;
+}
+
+.tag-select.urgency-delete {
+    background-color: rgba(116, 125, 140, 0.16) !important;
+    color: var(--kb-status-delete) !important;
+    border-color: var(--kb-status-delete) !important;
+}
+
+/* Campo de data do agendamento */
+.date-input {
+    background: var(--kb-bg-input) !important;
+    color: var(--kb-text-main) !important;
+    border: 1px solid var(--kb-border-subtle) !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+}
+
+/* Rodapé do card com contador de comentários e botões */
+.card-footer {
+    border-top: 1px solid var(--kb-border-subtle) !important;
+    color: var(--kb-text-light) !important;
+}
+
+/* Botões de ação rápida no card */
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* Botão de mover tarefa para a lixeira */
+.delete-task-btn {
+    background: transparent !important;
+    color: var(--kb-btn-danger-text) !important;
+}
+
+.delete-task-btn:hover {
+    background: var(--kb-btn-danger-bg) !important;
+}
+
+/* Botão de salvar alterações do agendamento */
+.save-btn {
+    background: transparent !important;
+    color: var(--kb-color-primary) !important;
+}
+
+.save-btn:hover {
+    background: rgba(0, 123, 167, 0.12) !important;
+}
+
+/* Gaveta expansível de comentários e histórico */
+.comments-div {
+    border-top: 1px solid var(--kb-border-subtle) !important;
+    background: rgba(0, 0, 0, 0.08) !important;
+    padding: 10px !important;
+    border-radius: 0 0 14px 14px !important;
+}
+
+/* Item de comentário registrado */
+.comment-item {
+    background: var(--kb-bg-input) !important;
+    border-left: 2px solid var(--kb-color-accent) !important;
+    color: var(--kb-text-main) !important;
+    border-radius: 4px !important;
+}

@@ -1,0 +1,156 @@
+/* ========================================================= */
+/* LAYOUT E ESTRUTURA DO KANBAN                             */
+/* ========================================================= */
+
+/* Fundo geral da aplicação com transição suave */
+.board-body {
+    background-color: var(--kb-bg-main) !important;
+    background-image: none !important;
+    color: var(--kb-text-main) !important;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Barra superior da aplicação */
+.app-header {
+    background: var(--kb-bg-main) !important;
+    border-bottom: 1px solid var(--kb-border-subtle) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Logotipo Stellare Kitchens com gradiente */
+.app-header-logo {
+    color: var(--kb-color-primary) !important;
+    background: linear-gradient(135deg, var(--kb-color-accent), var(--kb-color-primary)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Seletor visual dos 3 temas (Lua / Meia-Lua e Sol / Sol) */
+.theme-switcher-kanban {
+    display: flex;
+    align-items: center;
+    background: var(--kb-bg-column);
+    border: 1px solid var(--kb-border-card);
+    border-radius: 30px;
+    padding: 2px;
+    gap: 3px;
+    margin-right: 14px;
+}
+
+/* Botões circulares de alternância do tema */
+.theme-btn-kb {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--kb-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.theme-btn-kb:hover {
+    color: var(--kb-color-accent);
+}
+
+.theme-btn-kb.active {
+    background: var(--kb-btn-primary-bg);
+    color: var(--kb-btn-primary-text);
+    box-shadow: 0 2px 8px rgba(0, 123, 167, 0.4);
+}
+
+/* Botão de sair da conta */
+.btn-logout {
+    background: var(--kb-btn-danger-bg) !important;
+    color: var(--kb-btn-danger-text) !important;
+    border: 1px solid var(--kb-btn-danger-border) !important;
+    border-radius: 8px !important;
+    padding: 6px 16px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background: var(--kb-btn-danger-hover) !important;
+}
+
+/* Grid e colunas do Kanban */
+.board {
+    gap: 20px !important;
+    padding: 20px !important;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* Estilo individual de cada coluna */
+.column {
+    background: var(--kb-bg-column) !important;
+    border: 1px solid var(--kb-border-card) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+    padding: 16px !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+/* Cabeçalho da coluna com título e contador */
+.column-header {
+    border-bottom: 1px solid var(--kb-border-subtle) !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.column-header-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.column-header h3 {
+    font-family: 'Exo 2', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    color: var(--kb-text-main) !important;
+}
+
+/* Contador compacto de cards da coluna */
+.column-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 12px;
+    background: rgba(0, 123, 167, 0.16);
+    color: var(--kb-color-accent);
+    border: 1px solid rgba(0, 163, 222, 0.25);
+}
+
+/* Botão de adicionar nova tarefa na coluna Tarefas */
+.btn-add {
+    background: var(--kb-btn-primary-bg) !important;
+    color: var(--kb-btn-primary-text) !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 167, 0.35) !important;
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 6px !important;
+    font-size: 16px !important;
+    border: none !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+    background: var(--kb-btn-primary-hover) !important;
+}
