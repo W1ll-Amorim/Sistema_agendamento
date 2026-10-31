@@ -1,0 +1,135 @@
+/* ========================================================= */
+/* TOKENS DE DESIGN - CRM KANBAN (DARK, MÉDIO E CLARO)        */
+/* ========================================================= */
+
+/* --- 1. TEMA ESCURO (PADRÃO) - Navy cerúleo com realces em ciano --- */
+:root, [data-theme="dark"] {
+    /* Cores das superfícies e fundos */
+    --kb-bg-main: #060d17;
+    --kb-bg-column: #0c1a2b;
+    --kb-bg-card: #11243a;
+    --kb-bg-card-hover: #152d47;
+    --kb-bg-input: #071220;
+    
+    /* Cores de tipografia */
+    --kb-text-main: #f8fafc;
+    --kb-text-muted: #8ea5bc;
+    --kb-text-light: #5a738c;
+    
+    /* Bordas e acentos cerúleos */
+    --kb-border-subtle: rgba(255, 255, 255, 0.08);
+    --kb-border-card: rgba(0, 163, 222, 0.25);
+    --kb-border-hover: #00A3DE;
+    --kb-color-primary: #0088B8;
+    --kb-color-accent: #00A3DE;
+    --kb-color-turquoise: #00c2cb;
+    
+    /* Efeitos de iluminação e relevo 3D */
+    --kb-grad-card: linear-gradient(165deg, #132a44 0%, #0e1f32 60%, #0a1726 100%);
+    --kb-shadow-3d: 0 10px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+    --kb-shadow-drag: 0 18px 36px -4px rgba(0, 123, 167, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    
+    /* Cores semânticas dos botões */
+    --kb-btn-primary-bg: #0088B8;
+    --kb-btn-primary-hover: #009DD4;
+    --kb-btn-primary-active: #00759E;
+    --kb-btn-primary-text: #ffffff;
+    --kb-btn-danger-bg: rgba(173, 53, 77, 0.20);
+    --kb-btn-danger-text: #FB7185;
+    --kb-btn-danger-border: rgba(251, 113, 133, 0.35);
+    --kb-btn-danger-hover: rgba(173, 53, 77, 0.35);
+    
+    /* Etiquetas de prioridade do card */
+    --kb-status-urgent: #FB7185;
+    --kb-status-schedule: #00A3DE;
+    --kb-status-delegate: #ffa502;
+    --kb-status-delete: #747d8c;
+}
+
+/* --- 2. TEMA MÉDIO - Fundo azul névoa com cards 3D azul-gelo --- */
+[data-theme="medium"] {
+    /* Cores das superfícies e fundos */
+    --kb-bg-main: #A9BED2;
+    --kb-bg-column: #BFD0E0;
+    --kb-bg-card: #EDF4FA;
+    --kb-bg-card-hover: #F7FAFD;
+    --kb-bg-input: #D9E5F0;
+    
+    /* Cores de tipografia corporativa */
+    --kb-text-main: #193B5A;
+    --kb-text-muted: #5D7690;
+    --kb-text-light: #7A91A7;
+    
+    /* Bordas suaves */
+    --kb-border-subtle: rgba(25, 59, 90, 0.12);
+    --kb-border-card: rgba(25, 59, 90, 0.15);
+    --kb-border-hover: #079FC9;
+    --kb-color-primary: #087FA8;
+    --kb-color-accent: #079FC9;
+    --kb-color-turquoise: #28BFA8;
+    
+    /* Efeitos de relevo suave */
+    --kb-grad-card: linear-gradient(180deg, #F7FAFD 0%, #EDF4FA 100%);
+    --kb-shadow-3d: 0 8px 20px -3px rgba(25, 59, 90, 0.16), 0 2px 5px -1px rgba(25, 59, 90, 0.08), inset 0 1px 1px #ffffff, inset 0 -2px 3px rgba(25, 59, 90, 0.04);
+    --kb-shadow-drag: 0 16px 32px -4px rgba(25, 59, 90, 0.25), inset 0 1px 1px #ffffff;
+    
+    /* Botões semânticos */
+    --kb-btn-primary-bg: #087FA8;
+    --kb-btn-primary-hover: #066C91;
+    --kb-btn-primary-active: #075A79;
+    --kb-btn-primary-text: #FFFFFF;
+    --kb-btn-danger-bg: #FBECEF;
+    --kb-btn-danger-text: #AD354D;
+    --kb-btn-danger-border: #E8BAC4;
+    --kb-btn-danger-hover: #F6DDE3;
+    
+    /* Etiquetas de prioridade */
+    --kb-status-urgent: #AD354D;
+    --kb-status-schedule: #079FC9;
+    --kb-status-delegate: #d97706;
+    --kb-status-delete: #5D7690;
+}
+
+/* --- 3. TEMA CLARO - Superfície limpa com contraste corporativo --- */
+[data-theme="light"] {
+    /* Cores das superfícies e fundos */
+    --kb-bg-main: #eef3f8;
+    --kb-bg-column: #e2e8f0;
+    --kb-bg-card: #ffffff;
+    --kb-bg-card-hover: #f8fafc;
+    --kb-bg-input: #f8fafc;
+    
+    /* Cores de tipografia */
+    --kb-text-main: #0f172a;
+    --kb-text-muted: #475569;
+    --kb-text-light: #94a3b8;
+    
+    /* Bordas e acentos */
+    --kb-border-subtle: rgba(0, 0, 0, 0.06);
+    --kb-border-card: rgba(0, 123, 167, 0.16);
+    --kb-border-hover: #007BA7;
+    --kb-color-primary: #087FA8;
+    --kb-color-accent: #0284c7;
+    --kb-color-turquoise: #009688;
+    
+    /* Relevo leve */
+    --kb-grad-card: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    --kb-shadow-3d: 0 8px 20px -4px rgba(0, 40, 80, 0.08), 0 3px 6px -2px rgba(0, 40, 80, 0.04), inset 0 1px 1px #ffffff, inset 0 -2px 3px rgba(0, 0, 0, 0.04);
+    --kb-shadow-drag: 0 16px 30px -4px rgba(0, 40, 80, 0.16), inset 0 1px 1px #ffffff;
+    
+    /* Botões semânticos */
+    --kb-btn-primary-bg: #087FA8;
+    --kb-btn-primary-hover: #066C91;
+    --kb-btn-primary-active: #075A79;
+    --kb-btn-primary-text: #FFFFFF;
+    --kb-btn-danger-bg: #FBECEF;
+    --kb-btn-danger-text: #AD354D;
+    --kb-btn-danger-border: #E8BAC4;
+    --kb-btn-danger-hover: #F6DDE3;
+    
+    /* Etiquetas de prioridade */
+    --kb-status-urgent: #AD354D;
+    --kb-status-schedule: #0284c7;
+    --kb-status-delegate: #d97706;
+    --kb-status-delete: #64748b;
+}

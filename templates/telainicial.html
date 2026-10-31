@@ -3,43 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Agenda & Pedidos - nexus</title>
+    <title>Central de Operações - Cerulean Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-main: #0b0e14;
-            --bg-card: #161922;
-            --bg-surface: #1f2330;
-            --bg-input: #11141c;
-            --bg-dark-popover: #0d1017;
+        /* ========================================================= */
+        /* TOKENS CERULEAN 3D - 3 TEMAS: DARK, MÉDIO E CLARO         */
+        /* ========================================================= */
+        :root, [data-theme="dark"] {
+            --bg-main: #07121e;
+            --bg-card: #0d2135;
+            --bg-card-hover: #122c46;
+            --bg-surface: #0a1827;
+            --bg-input: #060e18;
+            --bg-dark-popover: #0a1928;
             --text-main: #ffffff;
-            --text-muted: #9ba1b0;
-            --text-light: #656c7d;
-            --border-color: rgba(0, 229, 255, 0.18);
-            --border-hover: #00E5FF;
-            --border-dark: #00E5FF;
-            
-            --color-primary: #00E5FF;
-            --color-secondary: #7000FF;
-            --grad-primary: linear-gradient(90deg, #00E5FF 0%, #7000FF 100%);
-            --grad-glow: 0px 4px 15px rgba(0, 229, 255, 0.35);
-            
-            --color-critical: #FF4757;
-            --color-high: #FFA502;
-            --color-medium: #00E5FF;
-            --color-low: #747D8C;
-            --color-success: #2ED573;
-            
-            --font-sans: 'Inter', sans-serif;
+            --text-muted: #8ea5bc;
+            --text-light: #5a738c;
+            --border-color: rgba(0, 163, 222, 0.22);
+            --border-hover: #00A3DE;
+            --border-dark: #0088B8;
+            --color-primary: #0088B8;
+            --color-cerulean: #007BA7;
+            --color-secondary: #007BA7;
+            --grad-primary: linear-gradient(135deg, #0088B8 0%, #007BA7 100%);
+            --grad-card: linear-gradient(160deg, #102840 0%, #0c1d2e 60%, #081522 100%);
+            --grad-glow: 0px 4px 14px rgba(0, 136, 184, 0.35);
+            --shadow-3d: 0 14px 28px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            --btn-primary-bg: #0088B8;
+            --btn-primary-hover: #009DD4;
+            --btn-primary-text: #ffffff;
+            --btn-sec-bg: #10263E;
+            --btn-sec-border: rgba(0, 163, 222, 0.28);
+            --btn-sec-text: #D6E6F5;
+            --btn-danger-bg: rgba(173, 53, 77, 0.20);
+            --btn-danger-text: #FB7185;
+            --btn-danger-border: rgba(251, 113, 133, 0.35);
+            --btn-danger-hover: rgba(173, 53, 77, 0.35);
+            --color-critical: #FB7185;
+            --color-critical-bg: rgba(173, 53, 77, 0.20);
+            --color-high: #ffa502;
+            --color-medium: #00A3DE;
+            --color-low: #5a738c;
+            --color-success: #2ed573;
+            --font-sans: 'Inter', system-ui, sans-serif;
             --font-brand: 'Orbitron', sans-serif;
             --font-tech: 'Exo 2', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            
-            --shadow-popover: 0 12px 30px rgba(0, 0, 0, 0.7);
-            --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.8);
-            --transition: all 0.2s ease-in-out;
+            --shadow-popover: 0 16px 40px rgba(0, 0, 0, 0.4);
+            --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.6);
+            --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="medium"] {
+            --bg-main: #A9BED2;
+            --bg-card: #EDF4FA;
+            --bg-card-hover: #F7FAFD;
+            --bg-surface: #BFD0E0;
+            --bg-input: #D9E5F0;
+            --bg-dark-popover: #F7FAFD;
+            --text-main: #193B5A;
+            --text-muted: #5D7690;
+            --text-light: #7A91A7;
+            --border-color: rgba(25, 59, 90, 0.15);
+            --border-hover: #079FC9;
+            --border-dark: #087FA8;
+            --color-primary: #087FA8;
+            --color-cerulean: #007BA7;
+            --color-secondary: #007BA7;
+            --grad-primary: linear-gradient(135deg, #087FA8 0%, #007BA7 100%);
+            --grad-card: linear-gradient(180deg, #F7FAFD 0%, #EDF4FA 100%);
+            --grad-glow: 0px 4px 14px rgba(8, 127, 168, 0.25);
+            --shadow-3d: 0 8px 20px -3px rgba(25, 59, 90, 0.16), inset 0 1px 1px #ffffff;
+            --btn-primary-bg: #087FA8;
+            --btn-primary-hover: #066C91;
+            --btn-primary-text: #FFFFFF;
+            --btn-sec-bg: #E5EEF6;
+            --btn-sec-border: #B9CDDF;
+            --btn-sec-text: #244662;
+            --btn-danger-bg: #FBECEF;
+            --btn-danger-text: #AD354D;
+            --btn-danger-border: #E8BAC4;
+            --btn-danger-hover: #F6DDE3;
+            --color-critical: #AD354D;
+            --color-critical-bg: #FBECEF;
+            --color-high: #d97706;
+            --color-medium: #079FC9;
+            --color-low: #5D7690;
+            --color-success: #28BFA8;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #eef2f6;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-surface: #e2e8f0;
+            --bg-input: #f8fafc;
+            --bg-dark-popover: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-light: #94a3b8;
+            --border-color: rgba(0, 123, 167, 0.15);
+            --border-hover: #007BA7;
+            --border-dark: #087FA8;
+            --color-primary: #087FA8;
+            --color-cerulean: #007BA7;
+            --color-secondary: #007BA7;
+            --grad-primary: linear-gradient(135deg, #087FA8 0%, #007BA7 100%);
+            --grad-card: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+            --grad-glow: 0px 4px 14px rgba(8, 127, 168, 0.20);
+            --shadow-3d: 0 10px 24px -4px rgba(0, 40, 80, 0.09), inset 0 1px 1px #ffffff;
+            --btn-primary-bg: #087FA8;
+            --btn-primary-hover: #066C91;
+            --btn-primary-text: #FFFFFF;
+            --btn-sec-bg: #F1F5F9;
+            --btn-sec-border: #CBD5E1;
+            --btn-sec-text: #1E293B;
+            --btn-danger-bg: #FBECEF;
+            --btn-danger-text: #AD354D;
+            --btn-danger-border: #E8BAC4;
+            --btn-danger-hover: #F6DDE3;
+            --color-critical: #AD354D;
+            --color-critical-bg: #FBECEF;
+            --color-high: #d97706;
+            --color-medium: #0284c7;
+            --color-low: #64748b;
+            --color-success: #16a34a;
         }
 
         * {
@@ -49,8 +139,8 @@
         }
 
         body {
-            background-image: url('static/img/background_sistema.png');
             background-color: var(--bg-main);
+            transition: background-color 0.25s ease, color 0.25s ease;
             color: var(--text-main);
             font-family: var(--font-sans);
             line-height: 1.5;
@@ -341,7 +431,7 @@
         }
 
         .btn-primary-action {
-            background: var(--grad-primary);
+            background: var(--btn-primary-bg);
             color: #FFFFFF;
             font-family: var(--font-tech);
             font-size: 14px;
@@ -1060,6 +1150,48 @@
             .order-detail-header { flex-direction: column; align-items: flex-start; }
             .form-row-2 { grid-template-columns: 1fr; }
         }
+    
+        /* Estilos do Seletor Triplo de Temas */
+        .theme-switcher {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 2px;
+            gap: 2px;
+            margin-right: 12px;
+        }
+
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn:hover {
+            color: var(--color-primary);
+        }
+
+        .theme-btn.active {
+            background: var(--btn-primary-bg);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 123, 167, 0.4);
+        }
+
+        .theme-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
     </style>
 </head>
 <body>
@@ -1092,7 +1224,7 @@
         <header class="top-nav">
             <div class="brand-section" onclick="switchView('overview')">
                 <span class="brand-logo-box"></span>
-                <span class="brand-label">Nexus</span>
+                <span class="brand-label">OPERAÇÕES / NÚCLEO</span>
             </div>
 
             <div class="nav-right-actions">
@@ -1101,6 +1233,18 @@
                     <button class="tab-btn" id="tab-agenda" onclick="switchView('agenda')">Agenda</button>
                     <button class="tab-btn" id="tab-pedidos" onclick="switchView('pedidos')">Pedidos</button>
                 </nav>
+                <!-- Seletor dos 3 Temas: Dark (Lua), Médio (Meia-Lua/Sol) e Claro (Sol) -->
+                <div class="theme-switcher">
+                    <button id="btn-theme-dark" class="theme-btn active" onclick="setTheme('dark')" title="Escuro - Lua Completa">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                    </button>
+                    <button id="btn-theme-medium" class="theme-btn" onclick="setTheme('medium')" title="Médio - Lua com Sol">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </button>
+                    <button id="btn-theme-light" class="theme-btn" onclick="setTheme('light')" title="Claro - Solzinho">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    </button>
+                </div>
                 <div class="user-profile-badge">
                     <span class="user-avatar" id="user-avatar">?</span>
                     <span id="user-name">Carregando...</span>
@@ -1978,6 +2122,17 @@
             drawer.style.display = (drawer.style.display === 'none' || drawer.style.display === '') ? 'block' : 'none';
         }
 
+        
+        // Controle dinâmico dos 3 temas Cerulean 3D
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('app_theme', themeName);
+            ['dark', 'medium', 'light'].forEach(t => {
+                const btn = document.getElementById('btn-theme-' + t);
+                if (btn) btn.classList.toggle('active', t === themeName);
+            });
+        }
+
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -2306,6 +2461,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            const savedTheme = localStorage.getItem('app_theme') || 'dark';
+            setTheme(savedTheme);
             try {
                 const ok = await carregarUsuario();
                 if (!ok) return;
