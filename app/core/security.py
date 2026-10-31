@@ -1,12 +1,12 @@
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 
 # 🔐 Configuração do hash de senha
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # 🔑 Configuração do JWT
-SECRET_KEY = "sua_chave_secreta_aqui"  # ⚠️ depois coloque em variável de ambiente
+SECRET_KEY = "sua_chave_secreta_aqui"  # ⚠️ depois coloque em variável de ambiente (.env)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -16,6 +16,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # =========================
 
 def hash_senha(senha: str) -> str:
+    # O bcrypt tem limite de 72 bytes. O corte previne erros se o usuário enviar uma senha gigante
     senha = senha[:72]
     return pwd_context.hash(senha)
 
@@ -32,7 +33,8 @@ def verificar_senha(senha: str, senha_hash: str) -> bool:
 def criar_token(data: dict):
     dados = data.copy()
 
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    # Melhoria: Usando timezone.utc (utcnow() está sendo descontinuado no Python)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     dados.update({"exp": expire})
 

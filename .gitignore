@@ -41,5 +41,4 @@ htmlcov/
 *.sqlite
 *.sqlite3
 database/database.db
-
 preview_lab/

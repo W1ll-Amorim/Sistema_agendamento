@@ -1,678 +1,2480 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=Montserrat:wght@300;400;500&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
-    <!-- Estilos modulares do Kanban Cerulean 3D -->
-    <link rel="stylesheet" href="{{ url_for('static', path='css/kanban_theme.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='css/kanban_layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='css/kanban_cards.css') }}">
-    <title>Dashboard - Stellare Kitchens</title>
+    <title>Central de Operações - Cerulean Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================================= */
+        /* TOKENS CERULEAN 3D - 3 TEMAS: DARK, MÉDIO E CLARO         */
+        /* ========================================================= */
+        :root, [data-theme="dark"] {
+            --bg-main: #07121e;
+            --bg-card: #0d2135;
+            --bg-card-hover: #122c46;
+            --bg-surface: #0a1827;
+            --bg-input: #060e18;
+            --bg-dark-popover: #0a1928;
+            --text-main: #ffffff;
+            --text-muted: #8ea5bc;
+            --text-light: #5a738c;
+            --border-color: rgba(0, 163, 222, 0.22);
+            --border-hover: #00A3DE;
+            --border-dark: #0088B8;
+            --color-primary: #0088B8;
+            --color-cerulean: #007BA7;
+            --color-secondary: #007BA7;
+            --grad-primary: linear-gradient(135deg, #0088B8 0%, #007BA7 100%);
+            --grad-card: linear-gradient(160deg, #102840 0%, #0c1d2e 60%, #081522 100%);
+            --grad-glow: 0px 4px 14px rgba(0, 136, 184, 0.35);
+            --shadow-3d: 0 14px 28px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            --btn-primary-bg: #0088B8;
+            --btn-primary-hover: #009DD4;
+            --btn-primary-text: #ffffff;
+            --btn-sec-bg: #10263E;
+            --btn-sec-border: rgba(0, 163, 222, 0.28);
+            --btn-sec-text: #D6E6F5;
+            --btn-danger-bg: rgba(173, 53, 77, 0.20);
+            --btn-danger-text: #FB7185;
+            --btn-danger-border: rgba(251, 113, 133, 0.35);
+            --btn-danger-hover: rgba(173, 53, 77, 0.35);
+            --color-critical: #FB7185;
+            --color-critical-bg: rgba(173, 53, 77, 0.20);
+            --color-high: #ffa502;
+            --color-medium: #00A3DE;
+            --color-low: #5a738c;
+            --color-success: #2ed573;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --font-brand: 'Orbitron', sans-serif;
+            --font-tech: 'Exo 2', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --shadow-popover: 0 16px 40px rgba(0, 0, 0, 0.4);
+            --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.6);
+            --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="medium"] {
+            --bg-main: #A9BED2;
+            --bg-card: #EDF4FA;
+            --bg-card-hover: #F7FAFD;
+            --bg-surface: #BFD0E0;
+            --bg-input: #D9E5F0;
+            --bg-dark-popover: #F7FAFD;
+            --text-main: #193B5A;
+            --text-muted: #5D7690;
+            --text-light: #7A91A7;
+            --border-color: rgba(25, 59, 90, 0.15);
+            --border-hover: #079FC9;
+            --border-dark: #087FA8;
+            --color-primary: #087FA8;
+            --color-cerulean: #007BA7;
+            --color-secondary: #007BA7;
+            --grad-primary: linear-gradient(135deg, #087FA8 0%, #007BA7 100%);
+            --grad-card: linear-gradient(180deg, #F7FAFD 0%, #EDF4FA 100%);
+            --grad-glow: 0px 4px 14px rgba(8, 127, 168, 0.25);
+            --shadow-3d: 0 8px 20px -3px rgba(25, 59, 90, 0.16), inset 0 1px 1px #ffffff;
+            --btn-primary-bg: #087FA8;
+            --btn-primary-hover: #066C91;
+            --btn-primary-text: #FFFFFF;
+            --btn-sec-bg: #E5EEF6;
+            --btn-sec-border: #B9CDDF;
+            --btn-sec-text: #244662;
+            --btn-danger-bg: #FBECEF;
+            --btn-danger-text: #AD354D;
+            --btn-danger-border: #E8BAC4;
+            --btn-danger-hover: #F6DDE3;
+            --color-critical: #AD354D;
+            --color-critical-bg: #FBECEF;
+            --color-high: #d97706;
+            --color-medium: #079FC9;
+            --color-low: #5D7690;
+            --color-success: #28BFA8;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #eef2f6;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-surface: #e2e8f0;
+            --bg-input: #f8fafc;
+            --bg-dark-popover: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-light: #94a3b8;
+            --border-color: rgba(0, 123, 167, 0.15);
+            --border-hover: #007BA7;
+            --border-dark: #087FA8;
+            --color-primary: #087FA8;
+            --color-cerulean: #007BA7;
+            --color-secondary: #007BA7;
+            --grad-primary: linear-gradient(135deg, #087FA8 0%, #007BA7 100%);
+            --grad-card: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+            --grad-glow: 0px 4px 14px rgba(8, 127, 168, 0.20);
+            --shadow-3d: 0 10px 24px -4px rgba(0, 40, 80, 0.09), inset 0 1px 1px #ffffff;
+            --btn-primary-bg: #087FA8;
+            --btn-primary-hover: #066C91;
+            --btn-primary-text: #FFFFFF;
+            --btn-sec-bg: #F1F5F9;
+            --btn-sec-border: #CBD5E1;
+            --btn-sec-text: #1E293B;
+            --btn-danger-bg: #FBECEF;
+            --btn-danger-text: #AD354D;
+            --btn-danger-border: #E8BAC4;
+            --btn-danger-hover: #F6DDE3;
+            --color-critical: #AD354D;
+            --color-critical-bg: #FBECEF;
+            --color-high: #d97706;
+            --color-medium: #0284c7;
+            --color-low: #64748b;
+            --color-success: #16a34a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            transition: background-color 0.25s ease, color 0.25s ease;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 24px 28px 60px;
+            flex: 1;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 36px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+
+        .brand-logo-box {
+            width: 22px;
+            height: 22px;
+            background: var(--grad-primary);
+            display: inline-block;
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .brand-label {
+            font-family: var(--font-brand);
+            font-size: 13px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .nav-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-surface);
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 18px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--grad-primary);
+            color: #FFFFFF;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-surface);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: var(--grad-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--color-critical);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+            font-family: var(--font-sans);
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1.2px;
+            margin-bottom: 16px;
+        }
+
+       .hero-title .highlight {
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 680px;
+            line-height: 1.6;
+            margin-bottom: 48px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            padding: 32px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 48px;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -1.5px;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .metric-value.critical {
+            color: var(--color-critical);
+        }
+
+        .metric-label {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .overview-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .action-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 32px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+        }
+
+        .action-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.15);
+        }
+
+        .card-num {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .card-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .card-title-row h3 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .card-arrow {
+            font-size: 20px;
+            transition: transform 0.2s ease;
+            color: var(--color-primary);
+        }
+
+        .action-card:hover .card-arrow {
+            transform: translateX(6px);
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .module-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .module-meta {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .module-title {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+        }
+
+        .btn-primary-action {
+            background: var(--btn-primary-bg);
+            color: #FFFFFF;
+            font-family: var(--font-tech);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--grad-glow);
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .filter-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 36px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .filter-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .custom-select-trigger {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .custom-select-trigger:hover,
+        .custom-select-trigger.active {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .select-chevron {
+            font-size: 10px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .custom-select-trigger.active .select-chevron {
+            transform: rotate(180deg);
+        }
+
+        .dark-popover-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background-color: var(--bg-dark-popover);
+            color: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: var(--shadow-popover);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 220px;
+        }
+
+        .dark-popover-menu.open {
+            display: flex;
+            animation: popIn 0.15s ease-out;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .popover-item {
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.15s;
+        }
+
+        .popover-item:hover {
+            background-color: rgba(0, 229, 255, 0.12);
+            color: var(--color-primary);
+        }
+
+        .popover-item.selected {
+            background-color: rgba(0, 229, 255, 0.2);
+            color: #FFFFFF;
+        }
+
+        .item-check {
+            width: 14px;
+            font-size: 12px;
+            color: var(--color-primary);
+            display: inline-block;
+        }
+
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+        }
+
+        .day-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .day-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .day-title {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .day-count {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--color-primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left-width: 5px;
+            border-radius: 8px;
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 20px;
+            align-items: flex-start;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .task-card.border-critical { border-left-color: var(--color-critical); }
+        .task-card.border-high { border-left-color: var(--color-high); }
+        .task-card.border-medium { border-left-color: var(--color-medium); }
+        .task-card.border-low { border-left-color: var(--color-low); }
+
+        .task-time {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding-top: 2px;
+        }
+
+        .task-body {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-title {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            line-height: 1.3;
+        }
+
+        .task-badges-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 2px 0 4px;
+        }
+
+        .badge-priority {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-priority.critical {
+            background-color: rgba(255, 71, 87, 0.15);
+            color: var(--color-critical);
+            border: 1px solid rgba(255, 71, 87, 0.4);
+        }
+
+        .badge-priority.high {
+            background-color: rgba(255, 165, 2, 0.15);
+            color: var(--color-high);
+            border: 1px solid rgba(255, 165, 2, 0.4);
+        }
+
+        .badge-priority.medium {
+            background-color: rgba(0, 229, 255, 0.15);
+            color: var(--color-medium);
+            border: 1px solid rgba(0, 229, 255, 0.4);
+        }
+
+        .badge-priority.low {
+            background-color: rgba(116, 125, 140, 0.15);
+            color: var(--color-low);
+            border: 1px solid rgba(116, 125, 140, 0.4);
+        }
+
+        .badge-status {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background-color: var(--bg-surface);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .badge-status.concluida {
+            background-color: rgba(46, 213, 115, 0.15);
+            color: var(--color-success);
+            border-color: rgba(46, 213, 115, 0.4);
+        }
+
+        .task-metadata-list {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .metadata-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-icon {
+            color: var(--color-primary);
+            font-size: 12px;
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon-action {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-icon-action:hover {
+            color: #FFFFFF;
+            border-color: var(--color-primary);
+            background-color: rgba(0, 229, 255, 0.15);
+        }
+
+        /* Comentários na Agenda */
+        .comments-drawer {
+            margin-top: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            display: none;
+        }
+        .comments-list {
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .comment-item {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .comment-author {
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+        .comment-input-area {
+            display: flex;
+            gap: 6px;
+        }
+        .comment-input {
+            flex: 1;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+        }
+        .comment-submit {
+            background: var(--color-primary);
+            border: none;
+            color: #0b0e14;
+            padding: 0 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .folder-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 28px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 190px;
+        }
+
+        .folder-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.15);
+        }
+
+        .folder-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .folder-icon-box {
+            font-size: 28px;
+        }
+
+        .folder-code {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-primary);
+            background-color: var(--bg-surface);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .folder-client-name {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 6px;
+        }
+
+        .folder-card-bottom {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+            margin-top: 16px;
+        }
+
+        .folder-items-count {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .folder-total-val {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .back-nav-btn {
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            padding: 4px 0;
+            transition: var(--transition);
+        }
+
+        .back-nav-btn:hover {
+            text-decoration: underline;
+        }
+
+        .order-detail-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .order-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-outline {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: var(--font-tech);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            background-color: rgba(0, 229, 255, 0.1);
+        }
+
+        .table-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .products-table th {
+            background-color: var(--bg-surface);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .products-table td {
+            padding: 16px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .products-table tbody tr:hover {
+            background-color: rgba(0, 229, 255, 0.04);
+        }
+
+        .td-product {
+            font-weight: 600;
+        }
+
+        .td-mono {
+            font-family: var(--font-mono);
+        }
+
+        .table-total-row td {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            background-color: var(--bg-surface);
+            border-bottom: none;
+            color: #FFFFFF;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(11, 14, 20, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: modalFade 0.2s ease-out;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-window {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: var(--shadow-modal);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-surface);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close-btn:hover {
+            color: #FFFFFF;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: #FFFFFF;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--color-primary);
+            color: #FFFFFF;
+            padding: 14px 22px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3);
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 860px) {
+            .hero-title { font-size: 38px; }
+            .overview-cards-grid { grid-template-columns: 1fr; }
+            .filter-panel { grid-template-columns: 1fr; }
+            .folders-grid { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: 1fr; gap: 24px; }
+            .task-card { grid-template-columns: 1fr; }
+            .task-time { font-size: 13px; }
+            .top-nav { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .nav-right-actions { width: 100%; justify-content: space-between; }
+            .order-detail-header { flex-direction: column; align-items: flex-start; }
+            .form-row-2 { grid-template-columns: 1fr; }
+        }
+    
+        /* Estilos do Seletor Triplo de Temas */
+        .theme-switcher {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 2px;
+            gap: 2px;
+            margin-right: 12px;
+        }
+
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn:hover {
+            color: var(--color-primary);
+        }
+
+        .theme-btn.active {
+            background: var(--btn-primary-bg);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 123, 167, 0.4);
+        }
+
+        .theme-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+    </style>
 </head>
+<body>
 
-<body class="board-body">
-
+    <!-- Verificação de autenticação ao carregar a página -->
     <script>
-        // Verificação de autenticação ao carregar a página (Máquina Local)
         (function() {
             const token = localStorage.getItem('token');
             const idUsuario = localStorage.getItem('id_usuario');
-            
             if (!token || !idUsuario) {
-                window.location.href = '/index';
+                // Descomente em produção caso tenha página de login configurada:
+                // window.location.href = '/index';
             }
         })();
 
-        // Detectar quando o usuário volta pelo botão "voltar" do navegador
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 const token = localStorage.getItem('token');
                 const idUsuario = localStorage.getItem('id_usuario');
-                
                 if (!token || !idUsuario) {
-                    window.location.href = '/index';
+                    // Descomente em produção:
+                    // window.location.href = '/index';
                 }
             }
         });
     </script>
 
-    <header class="app-header">
-        <span class="app-header-logo">Stellare Kitchens</span>
-        <div class="app-header-user">
-            <!-- Alternador dos 3 temas: Escuro (Lua), Médio (Meia-Lua/Sol) e Claro (Sol) -->
-            <div class="theme-switcher-kanban">
-                <button id="btn-theme-dark" class="theme-btn-kb active" onclick="setKanbanTheme('dark')" title="Tema Escuro - Lua Completa">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
-                </button>
-                <button id="btn-theme-medium" class="theme-btn-kb" onclick="setKanbanTheme('medium')" title="Tema Médio - Meia Lua e Sol">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                </button>
-                <button id="btn-theme-light" class="theme-btn-kb" onclick="setKanbanTheme('light')" title="Tema Claro - Sol">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    <div class="app-container">
+        
+        <header class="top-nav">
+            <div class="brand-section" onclick="switchView('overview')">
+                <span class="brand-logo-box"></span>
+                <span class="brand-label">OPERAÇÕES / NÚCLEO</span>
+            </div>
+
+            <div class="nav-right-actions">
+                <nav class="nav-tabs">
+                    <button class="tab-btn active" id="tab-overview" onclick="switchView('overview')">Início</button>
+                    <button class="tab-btn" id="tab-agenda" onclick="switchView('agenda')">Agenda</button>
+                    <button class="tab-btn" id="tab-pedidos" onclick="switchView('pedidos')">Pedidos</button>
+                </nav>
+                <!-- Seletor dos 3 Temas: Dark (Lua), Médio (Meia-Lua/Sol) e Claro (Sol) -->
+                <div class="theme-switcher">
+                    <button id="btn-theme-dark" class="theme-btn active" onclick="setTheme('dark')" title="Escuro - Lua Completa">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                    </button>
+                    <button id="btn-theme-medium" class="theme-btn" onclick="setTheme('medium')" title="Médio - Lua com Sol">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </button>
+                    <button id="btn-theme-light" class="theme-btn" onclick="setTheme('light')" title="Claro - Solzinho">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    </button>
+                </div>
+                <div class="user-profile-badge">
+                    <span class="user-avatar" id="user-avatar">?</span>
+                    <span id="user-name">Carregando...</span>
+                    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- VISÃO GERAL -->
+        <main id="view-overview" class="view-section active">
+            <h1 class="hero-title">Central de<br>Agenda & <span class="highlight">Pedidos</span></h1>
+            
+            <p class="hero-description">
+                Planeje tarefas por prioridade e urgência, atribua setor e profissional, e mantenha os pedidos dos clientes organizados em pastas — com rotas integradas via API.
+            </p>
+
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <span class="metric-value" id="count-tarefas">00</span>
+                    <span class="metric-label">Tarefas Abertas</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value critical" id="count-criticas">00</span>
+                    <span class="metric-label">Críticas</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value" id="count-pedidos">00</span>
+                    <span class="metric-label">Itens em Pedidos</span>
+                </div>
+            </div>
+
+            <div class="overview-cards-grid">
+                <div class="action-card" onclick="switchView('agenda')">
+                    <span class="card-num">01</span>
+                    <div>
+                        <div class="card-title-row">
+                            <h3>Agenda de tarefas</h3>
+                            <span class="card-arrow">→</span>
+                        </div>
+                        <p class="card-subtitle">Cronograma, prioridades, urgência, setor e profissional responsável.</p>
+                    </div>
+                </div>
+
+                <div class="action-card" onclick="switchView('pedidos')">
+                    <span class="card-num">02</span>
+                    <div>
+                        <div class="card-title-row">
+                            <h3>Pedidos</h3>
+                            <span class="card-arrow">→</span>
+                        </div>
+                        <p class="card-subtitle">Pastas por cliente com os produtos comprados. Importe e exporte via Excel.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- VISÃO AGENDA -->
+        <main id="view-agenda" class="view-section">
+            <div class="module-header">
+                <div>
+                    <div class="module-meta">Módulo 01</div>
+                    <h2 class="module-title">Agenda</h2>
+                </div>
+                <button class="btn-primary-action" onclick="openModal('modal-tarefa')">
+                    <span>+</span> Nova tarefa
                 </button>
             </div>
-            <span class="user-avatar" id="user-avatar">?</span>
-            <span class="user-name" id="user-name">Carregando...</span>
-            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+
+            <div class="filter-panel">
+                <div class="filter-group">
+                    <label class="filter-label">Setor</label>
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-setor', this, event)">
+                        <span id="selected-setor-text">Todos os setores</span>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <div class="dark-popover-menu" id="popover-setor">
+                        <div class="popover-item selected" data-value="all" onclick="selectFilter('setor', 'all', 'Todos os setores', event)"><span class="item-check">✓</span> Todos os setores</div>
+                        <div class="popover-item" data-value="Produção" onclick="selectFilter('setor', 'Produção', 'Produção', event)"><span class="item-check"></span> Produção</div>
+                        <div class="popover-item" data-value="Logística" onclick="selectFilter('setor', 'Logística', 'Logística', event)"><span class="item-check"></span> Logística</div>
+                        <div class="popover-item" data-value="Comercial" onclick="selectFilter('setor', 'Comercial', 'Comercial', event)"><span class="item-check"></span> Comercial</div>
+                        <div class="popover-item" data-value="Manutenção" onclick="selectFilter('setor', 'Manutenção', 'Manutenção', event)"><span class="item-check"></span> Manutenção</div>
+                        <div class="popover-item" data-value="Financeiro" onclick="selectFilter('setor', 'Financeiro', 'Financeiro', event)"><span class="item-check"></span> Financeiro</div>
+                        <div class="popover-item" data-value="Qualidade" onclick="selectFilter('setor', 'Qualidade', 'Qualidade', event)"><span class="item-check"></span> Qualidade</div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-status', this, event)">
+                        <span id="selected-status-text">Todos</span>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <div class="dark-popover-menu" id="popover-status">
+                        <div class="popover-item selected" data-value="all" onclick="selectFilter('status', 'all', 'Todos', event)"><span class="item-check">✓</span> Todos</div>
+                        <div class="popover-item" data-value="Pendente" onclick="selectFilter('status', 'Pendente', 'Pendente', event)"><span class="item-check"></span> Pendente</div>
+                        <div class="popover-item" data-value="Em Progresso" onclick="selectFilter('status', 'Em Progresso', 'Em Progresso', event)"><span class="item-check"></span> Em Progresso</div>
+                        <div class="popover-item" data-value="Concluído" onclick="selectFilter('status', 'Concluído', 'Concluído', event)"><span class="item-check"></span> Concluído</div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Prioridade</label>
+                    <div class="custom-select-trigger" onclick="togglePopover('popover-prioridade', this, event)">
+                        <span id="selected-prioridade-text">Todas</span>
+                        <span class="select-chevron">▼</span>
+                    </div>
+                    <div class="dark-popover-menu" id="popover-prioridade">
+                        <div class="popover-item selected" data-value="all" onclick="selectFilter('prioridade', 'all', 'Todas', event)"><span class="item-check">✓</span> Todas</div>
+                        <div class="popover-item" data-value="Crítica" onclick="selectFilter('prioridade', 'Crítica', 'Crítica', event)"><span class="item-check"></span> Crítica</div>
+                        <div class="popover-item" data-value="Alta" onclick="selectFilter('prioridade', 'Alta', 'Alta', event)"><span class="item-check"></span> Alta</div>
+                        <div class="popover-item" data-value="Média" onclick="selectFilter('prioridade', 'Média', 'Média', event)"><span class="item-check"></span> Média</div>
+                        <div class="popover-item" data-value="Baixa" onclick="selectFilter('prioridade', 'Baixa', 'Baixa', event)"><span class="item-check"></span> Baixa</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-container" id="timeline-task-list"></div>
+        </main>
+
+        <!-- VISÃO PEDIDOS -->
+        <main id="view-pedidos" class="view-section">
+            <div class="module-header">
+                <div>
+                    <div class="module-meta">Módulo 02</div>
+                    <h2 class="module-title">Pedidos</h2>
+                </div>
+                <button class="btn-primary-action" onclick="openModal('modal-pasta')">
+                    <span>+</span> Nova pasta
+                </button>
+            </div>
+
+            <div class="folders-grid" id="folders-container"></div>
+        </main>
+        <!-- VISÃO DE GERENCIAMENTO DE USUÁRIOS -->
+
+        <main id="view-usuarios" class="view-section">
+
+            <div class="module-header">
+                <div>
+                    <div class="module-meta">Administração</div>
+                    <h2 class="module-title">Gerenciar Usuários</h2>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table class="products-table">
+
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Tipo Atual</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="usuarios-tbody"></tbody>
+
+                </table>
+            </div>
+
+        </main>
+        <!-- VISÃO DETALHE DA PASTA -->
+        <main id="view-pasta-detalhe" class="view-section">
+            <button class="back-nav-btn" onclick="switchView('pedidos')">
+                ← Voltar às pastas
+            </button>
+
+            <div class="order-detail-header">
+                <div>
+                    <div class="module-meta" id="folder-detail-code">PASTA • PED-2041</div>
+                    <h2 class="module-title" id="folder-detail-name">Grupo Meridiano</h2>
+                </div>
+
+                <div class="order-actions-row">
+                    <button class="btn-outline" onclick="simularImportarExcel()">↑ Importar Excel</button>
+                    <button class="btn-outline" onclick="simularExportarExcel()">↓ Exportar Excel</button>
+                    <button class="btn-primary-action" onclick="openModal('modal-produto')">+ Produto</button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Qtd</th>
+                            <th>Vlr. Unit.</th>
+                            <th>Total</th>
+                            <th>Compra</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="folder-products-tbody"></tbody>
+                    <tfoot>
+                        <tr class="table-total-row">
+                            <td colspan="3">TOTAL DO PEDIDO</td>
+                            <td colspan="4" id="folder-grand-total">R$ 0,00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL NOVA TAREFA -->
+    <div class="modal-overlay" id="modal-tarefa">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova tarefa da agenda</h3>
+                <button class="modal-close-btn" onclick="closeModal('modal-tarefa')">✕</button>
+            </div>
+            <form onsubmit="salvarNovaTarefa(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Título da Tarefa</label>
+                        <input type="text" id="task-input-titulo" class="form-input" placeholder="Ex.: Manutenção preventiva na esteira 04" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nome do Ativo / Máquina</label>
+                        <input type="text" id="task-input-ativo" class="form-input" placeholder="Ex.: Esteira 04" required>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Data</label>
+                            <input type="date" id="task-input-data" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Horário</label>
+                            <input type="time" id="task-input-hora" class="form-input" value="09:00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Prioridade / Criticidade</label>
+                            <select id="task-input-prioridade" class="form-select">
+                                <option value="Crítica">Crítica</option>
+                                <option value="Alta" selected>Alta</option>
+                                <option value="Média">Média</option>
+                                <option value="Baixa">Baixa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Urgência</label>
+                            <select id="task-input-urgencia" class="form-select">
+                                <option value="Imediata">Imediata</option>
+                                <option value="Ainda hoje" selected>Ainda hoje</option>
+                                <option value="Esta semana">Esta semana</option>
+                                <option value="Baixa urgência">Baixa urgência</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Setor</label>
+                            <select id="task-input-setor" class="form-select">
+                                <option value="Produção">Produção</option>
+                                <option value="Logística" selected>Logística</option>
+                                <option value="Comercial">Comercial</option>
+                                <option value="Manutenção">Manutenção</option>
+                                <option value="Financeiro">Financeiro</option>
+                                <option value="Qualidade">Qualidade</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Profissional Responsável</label>
+                            <input type="text" id="task-input-profissional" class="form-input" placeholder="Ex.: Patrícia Alencar" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status Inicial</label>
+                        <select id="task-input-status" class="form-select">
+                            <option value="Pendente" selected>Pendente</option>
+                            <option value="Em Progresso">Em Progresso</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-tarefa')">Cancelar</button>
+                    <button type="submit" class="btn-primary-action">Salvar tarefa</button>
+                </div>
+            </form>
         </div>
-    </header>
+    </div>
 
-    <main class="board">
-        <section id="board-section">
-            <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
-                <div class="column-header">
-                    <div class="column-header-info">
-                        <h3>Tarefas</h3>
-                        <span class="column-counter" id="count-col-0">0</span>
-                    </div>
-                    <button class="btn-add" onclick="adicionarNovaTarefa()">+</button>
-                </div>
-                <div class="card-list"></div>
+    <!-- MODAL NOVA PASTA -->
+    <div class="modal-overlay" id="modal-pasta">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova pasta de cliente</h3>
+                <button class="modal-close-btn" onclick="closeModal('modal-pasta')">✕</button>
             </div>
-
-            <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
-                <div class="column-header">
-                    <div class="column-header-info">
-                        <h3>Em Progresso</h3>
-                        <span class="column-counter" id="count-col-1">0</span>
+            <form onsubmit="salvarNovaPasta(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Código da Pasta</label>
+                        <input type="text" id="folder-input-code" class="form-input" value="PED-2055" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nome do Cliente / Empresa</label>
+                        <input type="text" id="folder-input-name" class="form-input" placeholder="Ex.: Indústria Alvorada S.A." required>
                     </div>
                 </div>
-                <div class="card-list"></div>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-pasta')">Cancelar</button>
+                    <button type="submit" class="btn-primary-action">Criar pasta</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            <div class="column" ondragover="allowDrop(event)" ondrop="drop(event)">
-                <div class="column-header">
-                    <div class="column-header-info">
-                        <h3>Concluído</h3>
-                        <span class="column-counter" id="count-col-2">0</span>
+    <!-- MODAL NOVO PRODUTO -->
+    <div class="modal-overlay" id="modal-produto">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3 class="modal-title">Adicionar produto ao pedido</h3>
+                <button class="modal-close-btn" onclick="closeModal('modal-produto')">✕</button>
+            </div>
+            <form onsubmit="salvarNovoProduto(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Produto / Descrição</label>
+                        <input type="text" id="prod-input-name" class="form-input" placeholder="Ex.: Bobina de Papel Kraft" required>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Quantidade</label>
+                            <input type="number" id="prod-input-qtd" class="form-input" min="1" value="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Valor Unitário (R$)</label>
+                            <input type="number" step="0.01" id="prod-input-valor" class="form-input" min="0.01" value="25.50" required>
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label">Data da Compra</label>
+                            <input type="date" id="prod-input-data" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status do Item</label>
+                            <select id="prod-input-status" class="form-select">
+                                <option value="Aguardando" selected>Aguardando</option>
+                                <option value="Separado">Separado / Pronto</option>
+                                <option value="Enviado">Enviado</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="card-list"></div>
-            </div>
-
-            <div class="column" id="coluna-lixeira" ondragover="allowDrop(event)" ondrop="drop(event)">
-                <div class="column-header">
-                    <div class="column-header-info">
-                        <h3>Lixeira</h3>
-                        <span class="column-counter" id="count-col-3">0</span>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-produto')">Cancelar</button>
+                    <button type="submit" class="btn-primary-action">Adicionar</button>
                 </div>
-                <div class="card-list"></div>
-            </div>
-        </section>
-    </main>
+            </form>
+        </div>
+    </div>
 
+    <div class="toast-notification" id="toast">
+        <span id="toast-message">Operação realizada com sucesso!</span>
+    </div>
+
+        <!-- ========================================== -->
+    <!-- SCRIPTS DE INTEGRAÇÃO COM ROTAS DE BACKEND -->
+    <!-- ========================================== -->
     <script>
-        // ==========================================
-        // CONFIGURAÇÕES E AUTENTICAÇÃO DO SISTEMA
-        // ==========================================
-        let USUARIO_LOGADO = "Usuário";
-        let contadorCartoes = 1;
-        const autoSaveTimers = {}; 
+        let TAREFAS_BACKEND = [];
+        let PASTAS_MOCK = [
+            {
+                id: "ped-2041",
+                codigo: "PED-2041",
+                cliente: "Grupo Meridiano",
+                produtos: [
+                    { id: 101, nome: "Caixa reforçada 40×30", qtd: 120, valorUnit: 8.50, dataCompra: "2026-09-02", status: "Separado" },
+                    { id: 102, nome: "Fita industrial 48mm", qtd: 60, valorUnit: 12.00, dataCompra: "2026-09-02", status: "Aguardando" }
+                ]
+            }
+        ];
+        let pastaAtivaId = "ped-2041";
+        let TIPO_USUARIO = 'COMUM';
+        let ID_USUARIO_LOGADO = null;
+
+        const activeFilters = { setor: 'all', status: 'all', prioridade: 'all' };
+
+        function isAdmin() { return TIPO_USUARIO === 'ADMIN'; }
+        function isTecnico() { return TIPO_USUARIO === 'TECNICO'; }
+        function isComum() { return TIPO_USUARIO === 'COMUM'; }
+        function podeCriarTarefa() { return isAdmin() || isComum(); }
+        function podeAlterarStatus() { return isAdmin() || isTecnico(); }
+        function podeExcluirTarefa(task) {
+            if (isAdmin() || isTecnico()) return true;
+            if (isComum() && task && String(task.id_usuario) === String(ID_USUARIO_LOGADO)) return true;
+            return false;
+        }
+        function podeVerTodasTarefas() { return isAdmin() || isTecnico(); }
+
+        function normalizarStatus(status) {
+            const s = String(status || 'Pendente').trim();
+            const map = {
+                'concluido': 'Concluído', 'concluído': 'Concluído',
+                'concluida': 'Concluído', 'concluída': 'Concluído',
+                'em progresso': 'Em Progresso', 'em andamento': 'Em Progresso',
+                'pendente': 'Pendente', 'tarefas': 'Pendente', 'agendado': 'Pendente'
+            };
+            return map[s.toLowerCase()] || s;
+        }
+
+        function normalizarPrioridade(p) {
+            const s = String(p || 'Alta').trim();
+            const map = {
+                'critica': 'Crítica', 'crítica': 'Crítica',
+                'alta': 'Alta', 'alto': 'Alta',
+                'media': 'Média', 'média': 'Média', 'medio': 'Média', 'médio': 'Média',
+                'baixa': 'Baixa', 'baixo': 'Baixa'
+            };
+            return map[s.toLowerCase()] || s;
+        }
 
         async function carregarUsuario() {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                window.location.href = "/index";
-                return;
-            }
-            try {
-                const resp = await fetch("/usuario_empresa/me", {
-                    headers: { "Authorization": "Bearer " + token }
-                });
-                if (!resp.ok) {
-                    fazerLogout();
-                    return;
-                }
-                const dados = await resp.json();
-                USUARIO_LOGADO = dados.nome;
-                document.getElementById("user-name").textContent = dados.nome;
-                document.getElementById("user-avatar").textContent = dados.nome.charAt(0).toUpperCase();
-            } catch (e) {
-                fazerLogout();
-            }
-        }
-
-        // ==========================================
-        // SALVAMENTO AUTOMÁTICO COM TIMER
-        // ==========================================
-        function resetAutoSave(card) {
-            const cardId = card.id;
-            if (autoSaveTimers[cardId]) {
-                clearTimeout(autoSaveTimers[cardId]);
-            }
-            autoSaveTimers[cardId] = setTimeout(() => {
-                salvarAgendamento(card, false);
-                delete autoSaveTimers[cardId];
-            }, 60000); 
-        }
-
-        // ==========================================
-        // LÓGICA DE CAMPOS EDITÁVEIS (PLACEHOLDER)
-        // ==========================================
-        function inicializarCamposEditaveis() {
-            document.querySelectorAll('[contenteditable="true"]').forEach(campo => {
-                if (!campo.hasAttribute('data-placeholder')) {
-                    campo.setAttribute('data-placeholder', campo.textContent.trim());
-                }
-
-                campo.addEventListener('focus', function() {
-                    const placeholder = this.getAttribute('data-placeholder');
-                    if (this.textContent.trim() === placeholder) {
-                        this.textContent = '';
-                    }
-                });
-
-                campo.addEventListener('blur', function() {
-                    const placeholder = this.getAttribute('data-placeholder');
-                    if (this.textContent.trim() === '') {
-                        this.textContent = placeholder;
-                    }
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            inicializarCamposEditaveis();
-            carregarUsuario();
-            carregarAgendamentos();
-        });
-
-        // ==========================================
-        // CARREGAR AGENDAMENTOS EXISTENTES
-        // ==========================================
-        async function carregarAgendamentos() {
             const token = localStorage.getItem('token');
-            const idUsuario = localStorage.getItem('id_usuario');
-
-            if (!token || !idUsuario) return;
-
+            if (!token) { window.location.href = '/'; return false; }
+            ID_USUARIO_LOGADO = localStorage.getItem('id_usuario');
             try {
-                const response = await fetch(`/agendamentos/?id_usuario=${idUsuario}`, {
+                const resp = await fetch('/usuario_empresa/me', {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                let result;
-                try {
-                    result = await response.json();
-                } catch (parseErr) {
-                    const text = await response.text();
-                    result = { error: text || 'Resposta inválida do servidor' };
+                if (resp.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('id_usuario');
+                    localStorage.removeItem('email');
+                    localStorage.removeItem('tipo');
+                    window.location.href = '/';
+                    return false;
                 }
-
-                if (response.ok && result.agendamentos) {
-                    result.agendamentos.forEach(agendamento => {
-                        const card = criarCardDoAgendamento(agendamento);
-                        const colunas = document.querySelectorAll('.column');
-                        let coluna = colunas[0]; 
-
-                        if (agendamento.status === 'Em Progresso') {
-                            coluna = colunas[1];
-                        } else if (agendamento.status === 'Concluído') {
-                            coluna = colunas[2];
-                        } else if (agendamento.status === 'Lixeira') {
-                            coluna = colunas[3];
-                        }
-
-                        const cardList = coluna.querySelector('.card-list');
-                        cardList.appendChild(card);
-                    });
-                    atualizarContadoresColunas();
-                } else if (response.status === 401) {
-                    window.location.href = '/index';
+                if (!resp.ok) {
+                    TIPO_USUARIO = (localStorage.getItem('tipo') || 'COMUM').toUpperCase();
+                    aplicarPermissoes();
+                    return true;
                 }
-            } catch (error) {
-                console.error('Erro de conexão ao carregar agendamentos:', error);
+                const dados = await resp.json();
+                const userName = document.getElementById('user-name');
+                if (userName) userName.textContent = dados.nome || 'Usuário';
+                const userAvatar = document.getElementById('user-avatar');
+                if (userAvatar) userAvatar.textContent = (dados.nome && dados.nome.charAt(0).toUpperCase()) || 'U';
+                if (dados.id_usuario != null) {
+                    ID_USUARIO_LOGADO = String(dados.id_usuario);
+                    localStorage.setItem('id_usuario', ID_USUARIO_LOGADO);
+                }
+                TIPO_USUARIO = String(dados.tipo || localStorage.getItem('tipo') || 'COMUM').toUpperCase();
+                localStorage.setItem('tipo', TIPO_USUARIO);
+                aplicarPermissoes();
+                return true;
+            } catch (erro) {
+                console.error('Erro de rede ao carregar usuário:', erro);
+                TIPO_USUARIO = (localStorage.getItem('tipo') || 'COMUM').toUpperCase();
+                aplicarPermissoes();
+                return true;
             }
         }
 
-        function criarCardDoAgendamento(agendamento) {
-            const idNovoCartao = 'card-' + contadorCartoes;
-            contadorCartoes++;
-
-            const novoCartao = document.createElement('div');
-            novoCartao.className = 'card';
-            novoCartao.draggable = true;
-            novoCartao.id = idNovoCartao;
-            novoCartao.ondragstart = drag;
-            novoCartao.setAttribute('data-salvo', 'true');
-            novoCartao.setAttribute('data-id-agendamento', agendamento.id_agendamento);
-            
-            if (agendamento.id_ordem_servico) {
-                novoCartao.setAttribute('data-id-ordem-servico', agendamento.id_ordem_servico);
-            }
-            novoCartao.setAttribute('data-status', agendamento.status);
-            novoCartao.style.borderLeft = '4px solid #00E5FF';
-
-            const dataFormatada = agendamento.data_agendamento ? new Date(agendamento.data_agendamento).toISOString().split('T')[0] : '';
-
-            novoCartao.innerHTML = `
-                <div class="card-content">
-                    <div class="tags">
-                        <select class="tag-select urgency-do">
-                            <option value="do" selected>Fazer (Urgente)</option>
-                            <option value="schedule">Agendar</option>
-                            <option value="delegate">Delegar</option>
-                            <option value="delete">Eliminar</option>
-                        </select>
-                    </div>
-                    <p class="card-title" contenteditable="true" data-placeholder="Escreva a tarefa aqui..." style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">${agendamento.titulo || 'Escreva a tarefa aqui...'}</p>
-                    <p id="card-title-maquina" class="card-title" contenteditable="true" data-placeholder="Escreva o nome do ativo" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">${agendamento.nome_ativo || 'Escreva o nome do ativo'}</p>
-                    <div class="card-footer">
-                        <span class="footer-item comment-btn" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">💬 <span class="comment-count">0</span></span>
-                        <div class="date-wrapper">
-                            <input type="date" class="date-input" value="${dataFormatada}">
-                        </div>
-                        <div class="card-actions">
-                            <button class="action-btn save-btn" title="Salvar Agendamento" onclick="salvarAgendamento(this.closest('.card'), true)">💾</button>
-                            <button class="action-btn delete-task-btn" title="Mover para Lixeira" onclick="excluirTarefa(this)">🗑</button>
-                        </div>
-                    </div>
-                    <div class="comments-div" style="display: none;">
-                        <div class="comments-list"></div>
-                        <div class="comment-input-area">
-                            <input type="text" class="comment-input" placeholder="Escreva um comentário...">
-                            <button class="comment-submit" onclick="adicionarComentario(this)">+</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            const novoSelect = novoCartao.querySelector('.tag-select');
-            try {
-                if (agendamento.criticidade) {
-                    novoSelect.value = agendamento.criticidade;
-                }
-            } catch (e) {}
-
-            novoSelect.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
-            novoSelect.classList.add('urgency-' + (novoSelect.value || 'do'));
-
-            novoSelect.addEventListener('change', function () {
-                this.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
-                this.classList.add('urgency-' + this.value);
-            });
-
-            // Carregar comentários
-            (async function carregarComentarios() {
-                const idOrdem = novoCartao.getAttribute('data-id-ordem-servico');
-                if (!idOrdem) return;
-                const token = localStorage.getItem('token');
-                try {
-                    const resp = await fetch(`/historico/?id_ordem_servico=${idOrdem}`, {
-                        method: 'GET',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const data = await resp.json();
-                    if (resp.ok && data.historicos) {
-                        const lista = novoCartao.querySelector('.comments-list');
-                        lista.innerHTML = '';
-                        data.historicos.forEach(h => {
-                            const item = document.createElement('div');
-                            item.className = 'comment-item';
-                            item.innerHTML = `<span class="comment-author">${h.nome_usuario || 'Usuário'}:</span> <span class="comment-text">${h.observacao}</span>`;
-                            lista.appendChild(item);
-                        });
-                        novoCartao.querySelector('.comment-count').innerText = data.historicos.length;
-                    }
-                } catch (e) {
-                    console.error('Erro ao carregar comentários:', e);
-                }
-            })();
-
-            novoCartao.querySelectorAll('[contenteditable="true"]').forEach(campo => {
-                campo.addEventListener('input', () => resetAutoSave(novoCartao));
-            });
-            novoCartao.querySelector('.date-input').addEventListener('change', () => resetAutoSave(novoCartao));
-
-            return novoCartao;
-        }
-
-        // ==========================================
-        // LÓGICA DE DRAG AND DROP
-        // ==========================================
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
-        function allowDrop(ev) { ev.preventDefault(); }
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            var card = document.getElementById(data);
-            var targetColumn = ev.target.closest('.column');
-            if (targetColumn) {
-                var cardList = targetColumn.querySelector('.card-list');
-                cardList.appendChild(card);
-                
-                const colunas = document.querySelectorAll('.column');
-                let colunaIndex = -1;
-                colunas.forEach((col, index) => {
-                    if (col === targetColumn) colunaIndex = index;
-                });
-                
-                let novoStatus = 'Tarefas';
-                if (colunaIndex === 1) novoStatus = 'Em Progresso';
-                else if (colunaIndex === 2) novoStatus = 'Concluído';
-                else if (colunaIndex === 3) novoStatus = 'Lixeira';
-                
-                if (card.getAttribute('data-salvo') === 'true') {
-                    atualizarStatusAgendamento(card, novoStatus);
-                }
-                atualizarContadoresColunas();
-            }
-        }
-
-        // ==========================================
-        // LÓGICA DE COMENTÁRIOS
-        // ==========================================
-        function abrirComentarios(botaoClicado) {
-            const card = botaoClicado.closest('.card');
-            const gaveta = card.querySelector('.comments-div');
-            gaveta.style.display = (gaveta.style.display === 'none' || gaveta.style.display === '') ? 'block' : 'none';
-        }
-
-        function adicionarComentario(botaoClicado) {
-            const card = botaoClicado.closest('.card');
-            const input = card.querySelector('.comment-input');
-            const textoDoComentario = input.value.trim();
-
-            if (textoDoComentario !== "") {
-                const lista = card.querySelector('.comments-list');
-                const nomeAutor = localStorage.getItem('nome_usuario') || USUARIO_LOGADO;
-                
-                const novoComentario = document.createElement('div');
-                novoComentario.className = 'comment-item';
-                novoComentario.innerHTML = `<span class="comment-author">${nomeAutor}:</span> <span class="comment-text">${textoDoComentario}</span>`;
-
-                lista.appendChild(novoComentario);
-                input.value = ""; 
-
-                const contadorSpan = card.querySelector('.comment-count');
-                let contagem = parseInt(contadorSpan.innerText || '0');
-                contadorSpan.innerText = contagem + 1;
-                lista.scrollTop = lista.scrollHeight;
-
-                const idOrdem = card.getAttribute('data-id-ordem-servico');
-                const idUsuario = localStorage.getItem('id_usuario');
-                const token = localStorage.getItem('token');
-
-                if (idOrdem && idUsuario) {
-                    fetch('/historico/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: textoDoComentario, id_usuario: idUsuario })
-                    }).catch(err => console.error('Erro ao enviar comentário:', err));
-                } else {
-                    const pendentes = card.getAttribute('data-pending-comments');
-                    let arr = [];
-                    try { arr = pendentes ? JSON.parse(pendentes) : []; } catch(e) {}
-                    arr.push({ texto: textoDoComentario, autor: nomeAutor });
-                    card.setAttribute('data-pending-comments', JSON.stringify(arr));
-                }
-            }
-        }
-
-        // ==========================================
-        // LÓGICA DE EXCLUSÃO E MOVIMENTAÇÃO
-        // ==========================================
-        function concluirTarefa(cardToMove) {
-            const colunas = document.querySelectorAll('.column');
-            const colunaConcluido = colunas[2].querySelector('.card-list');
-            colunaConcluido.appendChild(cardToMove);
-            
-            if (cardToMove.getAttribute('data-salvo') === 'true') {
-                atualizarStatusAgendamento(cardToMove, 'Concluído');
-            }
-        }
-
-        function excluirTarefa(botaoClicado) {
-            const cardToRemove = botaoClicado.closest('.card');
-            const colunaAtual = cardToRemove.closest('.column');
-            const colunaLixeira = document.getElementById('coluna-lixeira').querySelector('.card-list');
-
-            if (colunaAtual.id === 'coluna-lixeira') {
-                if (confirm("Tem certeza que deseja apagar esta tarefa DEFINITIVAMENTE?")) {
-                    if (cardToRemove.getAttribute('data-salvo') === 'true') {
-                        deletarAgendamentoBackend(cardToRemove);
-                    }
-                    cardToRemove.remove();
-                }
-            } else {
-                colunaLixeira.appendChild(cardToRemove);
-                if (cardToRemove.getAttribute('data-salvo') === 'true') {
-                    atualizarStatusAgendamento(cardToRemove, 'Lixeira');
-                }
-            }
-            atualizarContadoresColunas();
-        }
-
-        async function deletarAgendamentoBackend(card) {
-            const idAgendamento = card.getAttribute('data-id-agendamento');
-            if (!idAgendamento) return;
+        async function carregarUsuarios() {
+            if (!isAdmin()) return;
             const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/'; return; }
+            const tbody = document.getElementById('usuarios-tbody');
+            if (!tbody) return;
             try {
-                const response = await fetch(`/agendamentos/${idAgendamento}`, {
-                    method: 'DELETE',
+                const resp = await fetch('/usuario_empresa/usuarios', {
+                    method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!response.ok) alert('Erro ao deletar agendamento no servidor');
-            } catch (error) {
-                console.error('Erro de conexão ao deletar:', error);
-            }
-        }
-
-        async function atualizarStatusAgendamento(card, novoStatus) {
-            const idAgendamento = card.getAttribute('data-id-agendamento');
-            if (!idAgendamento) return;
-            const token = localStorage.getItem('token');
-            try {
-                const response = await fetch(`/agendamentos/${idAgendamento}/status?novo_status=${encodeURIComponent(novoStatus)}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                if (!resp.ok) throw new Error('Erro ao listar usuários.');
+                const lista = await resp.json();
+                const usuarios = Array.isArray(lista) ? lista : (lista.usuarios || []);
+                tbody.innerHTML = '';
+                usuarios.forEach(u => {
+                    const id = u.id_usuario;
+                    const tipoAtual = String(u.tipo || 'COMUM').toUpperCase();
+                    const tr = document.createElement('tr');
+                    let acoesHtml = '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+                    if (tipoAtual === 'COMUM') {
+                        acoesHtml = `<select class="form-select" style="padding:6px 10px;font-size:13px;min-width:140px;"
+                            onchange="promoverUsuario('${id}', this.value)">
+                            <option value="">Alterar tipo…</option>
+                            <option value="TECNICO">Promover a Técnico</option>
+                        </select>`;
+                    } else if (tipoAtual === 'TECNICO') {
+                        acoesHtml = `<select class="form-select" style="padding:6px 10px;font-size:13px;min-width:140px;"
+                            onchange="promoverUsuario('${id}', this.value)">
+                            <option value="">Alterar tipo…</option>
+                            <option value="COMUM">Rebaixar a Comum</option>
+                        </select>`;
+                    }
+                    tr.innerHTML = `
+                        <td class="td-product">${u.nome || '—'}</td>
+                        <td>${u.email || '—'}</td>
+                        <td><span class="badge-status">${tipoAtual}</span></td>
+                        <td>${acoesHtml}</td>`;
+                    tbody.appendChild(tr);
                 });
-                if (response.ok) {
-                    card.setAttribute('data-status', novoStatus);
-                }
-            } catch (error) {
-                console.error('Erro ao atualizar status:', error);
+            } catch (erro) {
+                console.error('Erro ao carregar usuários:', erro);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">
+                    Não foi possível carregar a lista de usuários.</td></tr>`;
             }
         }
 
-        // ==========================================
-        // LÓGICA DE SALVAR AGENDAMENTO
-        // ==========================================
-        async function salvarAgendamento(card, showAlert = false) {
-            const titulo = card.querySelector('.card-title').textContent.trim();
-            const nomeAtivo = card.querySelector('#card-title-maquina').textContent.trim();
-            const dataAgendamento = card.querySelector('.date-input').value;
-
-            if (!titulo || titulo === 'Escreva a tarefa aqui...' ||
-                !nomeAtivo || nomeAtivo === 'Escreva o nome do ativo' || !dataAgendamento) {
-                if (showAlert) alert('Por favor, preencha o título, ativo e a data.');
+        async function promoverUsuario(idUsuario, novoTipo) {
+            if (!novoTipo) return;
+            if (!isAdmin()) { alert('Você não tem permissão para alterar usuários.'); return; }
+            if (!['COMUM', 'TECNICO'].includes(novoTipo)) {
+                alert('Tipo de usuário inválido.');
+                await carregarUsuarios();
                 return;
             }
-
+            if (!confirm(`Deseja alterar o tipo deste usuário para ${novoTipo}?`)) {
+                await carregarUsuarios();
+                return;
+            }
             const token = localStorage.getItem('token');
-            const idUsuario = localStorage.getItem('id_usuario');
-
-            if (!token || !idUsuario) {
-                fazerLogout();
-                return;
-            }
-
-            const agendamentoData = {
-                titulo: titulo,
-                descricao: titulo,
-                nome_ativo: nomeAtivo,
-                tipo_ativo: 'Equipamento',
-                nome_servico: 'Manutenção',
-                descricao_servico: 'Serviço de manutenção preventiva',
-                data_agendamento: new Date(dataAgendamento).toISOString(),
-                id_usuario: idUsuario,
-                status: card.getAttribute('data-status') || 'Tarefas',
-                criticidade: (card.querySelector('.tag-select') ? card.querySelector('.tag-select').value : 'do')
-            };
-
+            if (!token) { window.location.href = '/'; return; }
             try {
-                const idAgendamento = card.getAttribute('data-id-agendamento');
-                const url = idAgendamento ? `/agendamentos/${idAgendamento}` : '/agendamentos/';
-                const method = idAgendamento ? 'PUT' : 'POST';
-
-                const response = await fetch(url, {
-                    method: method,
+                const resp = await fetch(`/usuario_empresa/usuarios/${encodeURIComponent(idUsuario)}/tipo`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(agendamentoData)
+                    body: JSON.stringify({ tipo: novoTipo })
                 });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    card.style.borderLeft = '4px solid #00E5FF';
-                    card.setAttribute('data-salvo', 'true');
-
-                    if (result.agendamento && result.agendamento.id_agendamento) {
-                        card.setAttribute('data-id-agendamento', result.agendamento.id_agendamento);
-                    }
-                    if (result.agendamento && result.agendamento.id_ordem_servico) {
-                        card.setAttribute('data-id-ordem-servico', result.agendamento.id_ordem_servico);
-                    }
-
-                    // Envia comentários acumulados se houver
-                    try {
-                        const pendentesRaw = card.getAttribute('data-pending-comments');
-                        const idOrdem = card.getAttribute('data-id-ordem-servico');
-                        if (pendentesRaw && idOrdem) {
-                            const pendentes = JSON.parse(pendentesRaw);
-                            for (const p of pendentes) {
-                                await fetch('/historico/', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                                    body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: p.texto, id_usuario: idUsuario })
-                                });
-                            }
-                            card.removeAttribute('data-pending-comments');
-                        }
-                    } catch (e) {}
-
-                    if (showAlert) alert('Agendamento salvo com sucesso!');
+                if (!resp.ok) {
+                    let detalhe = 'Erro ao alterar o tipo do usuário.';
+                    try { const err = await resp.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    alert(typeof detalhe === 'string' ? detalhe : JSON.stringify(detalhe));
+                    await carregarUsuarios();
+                    return;
                 }
-            } catch (error) {
-                console.error('Erro de conexão:', error);
+                showToast(`Usuário atualizado para ${novoTipo}.`);
+                await carregarUsuarios();
+            } catch (erro) {
+                console.error(erro);
+                alert('Não foi possível alterar o tipo do usuário (erro de rede).');
+                await carregarUsuarios();
             }
         }
 
-        function fazerLogout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('id_usuario');
-            localStorage.removeItem('email');
-            window.location.href = '/index';
+        function aplicarPermissoes() {
+            const tipo = TIPO_USUARIO;
+            const btnNovaTarefa = document.querySelector('#view-agenda .btn-primary-action');
+            if (btnNovaTarefa) btnNovaTarefa.style.display = podeCriarTarefa() ? 'inline-flex' : 'none';
+
+            let tabUsuarios = document.getElementById('tab-usuarios');
+            if (!tabUsuarios && isAdmin()) {
+                const navTabs = document.querySelector('.nav-tabs');
+                if (navTabs) {
+                    tabUsuarios = document.createElement('button');
+                    tabUsuarios.type = 'button';
+                    tabUsuarios.className = 'tab-btn';
+                    tabUsuarios.id = 'tab-usuarios';
+                    tabUsuarios.textContent = 'Usuários';
+                    tabUsuarios.onclick = () => switchView('usuarios');
+                    navTabs.appendChild(tabUsuarios);
+                }
+            }
+            if (tabUsuarios) tabUsuarios.style.display = isAdmin() ? 'inline-block' : 'none';
+
+            const badge = document.querySelector('.user-profile-badge');
+            if (badge) {
+                const existing = badge.querySelector('.role-badge');
+                if (existing) existing.remove();
+                const roleBadge = document.createElement('span');
+                roleBadge.className = 'role-badge';
+                roleBadge.style.cssText = 'font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;';
+                if (tipo === 'ADMIN') {
+                    roleBadge.textContent = 'ADMIN';
+                    roleBadge.style.background = 'rgba(112,0,255,0.2)';
+                    roleBadge.style.color = '#c084fc';
+                } else if (tipo === 'TECNICO') {
+                    roleBadge.textContent = 'TÉCNICO';
+                    roleBadge.style.background = 'rgba(0,229,255,0.15)';
+                    roleBadge.style.color = '#00E5FF';
+                } else {
+                    roleBadge.textContent = 'COMUM';
+                    roleBadge.style.background = 'rgba(116,125,140,0.2)';
+                    roleBadge.style.color = '#9ba1b0';
+                }
+                const btnLogout = badge.querySelector('.btn-logout');
+                if (btnLogout) badge.insertBefore(roleBadge, btnLogout);
+                else badge.appendChild(roleBadge);
+            }
         }
 
-        function adicionarNovaTarefa() {
-            const colunaTarefas = document.querySelector('.column:first-child .card-list');
-            const idNovoCartao = 'card-' + contadorCartoes;
-            contadorCartoes++;
-
-            const novoCartao = document.createElement('div');
-            novoCartao.className = 'card';
-            novoCartao.draggable = true;
-            novoCartao.id = idNovoCartao;
-            novoCartao.ondragstart = drag;
-            novoCartao.setAttribute('data-status', 'Tarefas');
-
-            novoCartao.innerHTML = `
-                <div class="card-content">
-                    <div class="tags">
-                        <select class="tag-select urgency-do">
-                            <option value="do" selected>Fazer (Urgente)</option>
-                            <option value="schedule">Agendar</option>
-                            <option value="delegate">Delegar</option>
-                            <option value="delete">Eliminar</option>
-                        </select>
-                    </div>
-                    <p class="card-title" contenteditable="true" data-placeholder="Escreva a tarefa aqui..." style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva a tarefa aqui...</p>
-                    <p id="card-title-maquina" class="card-title" contenteditable="true" data-placeholder="Escreva o nome do ativo" style="outline: none; border-bottom: 1px dashed #00E5FF; padding-bottom: 2px;">Escreva o nome do ativo</p>
-                    <div class="card-footer">
-                        <span class="footer-item comment-btn" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">💬 <span class="comment-count">0</span></span>
-                        <div class="date-wrapper">
-                            <input type="date" class="date-input">
-                        </div>
-                        <div class="card-actions">
-                            <button class="action-btn save-btn" title="Salvar Agendamento" onclick="salvarAgendamento(this.closest('.card'), true)">💾</button>
-                            <button class="action-btn delete-task-btn" title="Mover para Lixeira" onclick="excluirTarefa(this)">🗑</button>
-                        </div>
-                    </div>
-                    <div class="comments-div" style="display: none;">
-                        <div class="comments-list"></div>
-                        <div class="comment-input-area">
-                            <input type="text" class="comment-input" placeholder="Escreva um comentário...">
-                            <button class="comment-submit" onclick="adicionarComentario(this)">+</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            colunaTarefas.appendChild(novoCartao);
-            inicializarCamposEditaveis();
-
-            const novoSelect = novoCartao.querySelector('.tag-select');
-            novoSelect.addEventListener('change', function () {
-                this.classList.remove('urgency-do', 'urgency-schedule', 'urgency-delegate', 'urgency-delete');
-                this.classList.add('urgency-' + this.value);
+        function aplicarListaAgendamentos(agendamentos, verTodas) {
+            TAREFAS_BACKEND = agendamentos.map(ag => {
+                const dataIso = ag.data_agendamento || '';
+                let dataDisplay = 'Data Indefinida';
+                let hora = '09:00';
+                if (dataIso) {
+                    const d = new Date(dataIso);
+                    if (!isNaN(d.getTime())) {
+                        dataDisplay = d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+                        hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    }
+                }
+                return {
+                    id: ag.id_agendamento,
+                    idOrdemServico: ag.id_ordem_servico,
+                    data: dataIso ? String(dataIso).split('T')[0] : '',
+                    dataDisplay,
+                    hora,
+                    titulo: ag.titulo || 'Sem título',
+                    descricao: ag.descricao || '',
+                    nomeAtivo: ag.nome_ativo || 'Geral',
+                    prioridade: normalizarPrioridade(ag.criticidade || ag.prioridade || 'Alta'),
+                    urgencia: 'Ainda hoje',
+                    setor: ag.descricao_servico || ag.nome_servico || 'Logística',
+                    profissional: ag.profissional || 'Responsável',
+                    status: normalizarStatus(ag.status || 'Pendente'),
+                    id_usuario: ag.id_usuario != null ? String(ag.id_usuario) : null
+                };
             });
-
-            novoCartao.querySelectorAll('[contenteditable="true"]').forEach(campo => {
-                campo.addEventListener('input', () => resetAutoSave(novoCartao));
-            });
-            novoCartao.querySelector('.date-input').addEventListener('change', () => resetAutoSave(novoCartao));
-
-            novoCartao.querySelector('.card-title').focus();
-            atualizarContadoresColunas();
+            if (!verTodas && ID_USUARIO_LOGADO) {
+                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(
+                    t => !t.id_usuario || String(t.id_usuario) === String(ID_USUARIO_LOGADO)
+                );
+            }
+            renderTimeline();
+            atualizarContadores();
         }
 
-        // ==========================================
-        // CONTROLE VISUAL: TEMAS E CONTADORES
-        // ==========================================
+        async function carregarAgendamentos() {
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/'; return; }
 
-        // Aplica o tema escolhido (dark, medium, light) e salva no localStorage
-        function setKanbanTheme(themeName) {
+            try {
+                // 1. Prepara a URL base
+                const url = new URL('/agendamentos/', window.location.origin);
+
+                // 2. Anexa os filtros dinamicamente se não forem "all" (Todos)
+                if (activeFilters.setor && activeFilters.setor !== 'all') {
+                    url.searchParams.append('setor', activeFilters.setor);
+                }
+                if (activeFilters.status && activeFilters.status !== 'all') {
+                    url.searchParams.append('status', activeFilters.status);
+                }
+                if (activeFilters.prioridade && activeFilters.prioridade !== 'all') {
+                    url.searchParams.append('prioridade', activeFilters.prioridade);
+                }
+
+                // 3. Faz a requisição limpa e segura (O token faz o trabalho de identificar o usuário)
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    let detalhe = `HTTP ${response.status}`;
+                    try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    throw new Error(detalhe);
+                }
+
+                const result = await response.json();
+                const agendamentos = Array.isArray(result) ? result : (result.agendamentos || result.items || []);
+                
+                // 4. Repassa os dados para renderizar a tela. 
+                // Passamos "true" no segundo parâmetro pois o backend já filtrou tudo com segurança.
+                aplicarListaAgendamentos(agendamentos, true); 
+
+            } catch (error) {
+                console.error('Erro ao carregar agendamentos:', error);
+                TAREFAS_BACKEND = [];
+                renderTimeline();
+                atualizarContadores();
+                showToast('Não foi possível carregar as tarefas.');
+            }
+        }
+        
+
+        async function salvarNovaTarefa(event) {
+            event.preventDefault();
+            if (!podeCriarTarefa()) {
+                alert('Você não tem permissão para criar tarefas.');
+                return;
+            }
+            const titulo = document.getElementById('task-input-titulo').value.trim();
+            const nomeAtivo = document.getElementById('task-input-ativo').value.trim();
+            const data = document.getElementById('task-input-data').value;
+            const hora = document.getElementById('task-input-hora').value;
+            const prioridade = document.getElementById('task-input-prioridade').value;
+            const urgencia = document.getElementById('task-input-urgencia').value;
+            const setor = document.getElementById('task-input-setor').value;
+            const profissional = document.getElementById('task-input-profissional').value.trim();
+            const status = document.getElementById('task-input-status').value;
+            const token = localStorage.getItem('token');
+            const idUsuario = localStorage.getItem('id_usuario');
+
+            if (!token) {
+                const dataObj = new Date(data + 'T12:00:00');
+                let dataFormatada = dataObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+                TAREFAS_BACKEND.unshift({
+                    id: Date.now(), idOrdemServico: null,
+                    dataDisplay: dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1),
+                    hora, titulo, descricao: titulo, nomeAtivo, prioridade, urgencia, setor, profissional, status,
+                    id_usuario: idUsuario
+                });
+                closeModal('modal-tarefa');
+                event.target.reset();
+                showToast('Tarefa simulada localmente!');
+                renderTimeline();
+                atualizarContadores();
+                return;
+            }
+            if (!idUsuario) {
+                alert('Sessão inválida. Faça login novamente.');
+                return;
+            }
+            const agendamentoData = {
+                titulo, descricao: titulo, nome_ativo: nomeAtivo, tipo_ativo: 'Equipamento',
+                nome_servico: 'Manutenção', descricao_servico: setor,
+                data_agendamento: new Date(data + 'T' + hora).toISOString(),
+                id_usuario: String(idUsuario), status, criticidade: prioridade
+            };
+            try {
+                const response = await fetch('/agendamentos/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(agendamentoData)
+                });
+                if (response.ok) {
+                    closeModal('modal-tarefa');
+                    event.target.reset();
+                    showToast('Nova tarefa salva no servidor!');
+                    await carregarAgendamentos();
+                } else {
+                    let detalhe = 'Erro ao salvar tarefa no servidor.';
+                    try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    alert(typeof detalhe === 'string' ? detalhe : JSON.stringify(detalhe));
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão ao salvar a tarefa.');
+            }
+        }
+
+        async function atualizarStatusAgendamento(idAgendamento, novoStatus) {
+            if (!podeAlterarStatus()) {
+                alert('Você não tem permissão para alterar o status de tarefas.');
+                return;
+            }
+            const id = String(idAgendamento);
+            const token = localStorage.getItem('token');
+            const t = TAREFAS_BACKEND.find(x => String(x.id) === id);
+            const statusAnterior = t ? t.status : null;
+            if (t) {
+                t.status = normalizarStatus(novoStatus);
+                renderTimeline();
+                atualizarContadores();
+            }
+            if (!token) {
+                showToast('Status atualizado localmente.');
+                return;
+            }
+            try {
+                const response = await fetch(
+                    `/agendamentos/${encodeURIComponent(id)}/status?novo_status=${encodeURIComponent(novoStatus)}`,
+                    { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } }
+                );
+                if (response.ok) {
+                    showToast(novoStatus === 'Concluído' ? 'Tarefa concluída!' : 'Status atualizado.');
+                    await carregarAgendamentos();
+                } else {
+                    if (t && statusAnterior != null) { t.status = statusAnterior; renderTimeline(); atualizarContadores(); }
+                    let detalhe = 'Erro ao atualizar status.';
+                    try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
+                    alert(typeof detalhe === 'string' ? detalhe : JSON.stringify(detalhe));
+                }
+            } catch (error) {
+                if (t && statusAnterior != null) { t.status = statusAnterior; renderTimeline(); atualizarContadores(); }
+                console.error(error);
+                alert('Erro de conexão ao atualizar status.');
+            }
+        }
+
+        async function deletarTarefa(idAgendamento) {
+            const task = TAREFAS_BACKEND.find(t => String(t.id) === String(idAgendamento));
+            if (!podeExcluirTarefa(task)) {
+                alert('Você só pode excluir os próprios registros.');
+                return;
+            }
+            if (!confirm('Deseja remover esta tarefa do sistema?')) return;
+            const token = localStorage.getItem('token');
+            if (!token) {
+                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t => String(t.id) !== String(idAgendamento));
+                renderTimeline(); atualizarContadores(); showToast('Removido localmente!');
+                return;
+            }
+            try {
+                const response = await fetch(`/agendamentos/${encodeURIComponent(idAgendamento)}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    showToast('Tarefa removida com sucesso!');
+                    await carregarAgendamentos();
+                } else {
+                    alert('Erro ao deletar agendamento.');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function carregarHistoricoComentarios(idOrdem, containerLista, contadorSpan) {
+            if (!idOrdem || idOrdem === 'null') return;
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            try {
+                const resp = await fetch(`/historico/?id_ordem_servico=${idOrdem}`, {
+                    method: 'GET', headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await resp.json();
+                if (resp.ok && data.historicos) {
+                    containerLista.innerHTML = '';
+                    data.historicos.forEach(h => {
+                        const item = document.createElement('div');
+                        item.className = 'comment-item';
+                        item.innerHTML = `<span class="comment-author">${h.nome_usuario || 'Usuário'}:</span> <span class="comment-text">${h.observacao}</span>`;
+                        containerLista.appendChild(item);
+                    });
+                    contadorSpan.innerText = data.historicos.length;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function adicionarComentario(btn, idOrdem) {
+            const card = btn.closest('.task-card');
+            const input = card.querySelector('.comment-input');
+            const texto = input.value.trim();
+            const idUsuario = localStorage.getItem('id_usuario');
+            const token = localStorage.getItem('token');
+            if (texto && idOrdem && idOrdem !== 'null' && token) {
+                try {
+                    const resp = await fetch('/historico/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ id_ordem_servico: idOrdem, observacao: texto, id_usuario: idUsuario })
+                    });
+                    if (resp.ok) {
+                        input.value = '';
+                        await carregarHistoricoComentarios(idOrdem, card.querySelector('.comments-list'), card.querySelector('.comment-count'));
+                    }
+                } catch (e) { console.error(e); }
+            } else if (texto) {
+                const lista = card.querySelector('.comments-list');
+                const el = document.createElement('div');
+                el.className = 'comment-item';
+                el.innerHTML = `<span class="comment-author">Local:</span> <span class="comment-text">${texto}</span>`;
+                lista.appendChild(el);
+                input.value = '';
+                const contador = card.querySelector('.comment-count');
+                contador.innerText = parseInt(contador.innerText, 10) + 1;
+            }
+        }
+
+        function abrirComentarios(btn) {
+            const drawer = btn.closest('.task-card').querySelector('.comments-drawer');
+            drawer.style.display = (drawer.style.display === 'none' || drawer.style.display === '') ? 'block' : 'none';
+        }
+
+        
+        // Controle dinâmico dos 3 temas Cerulean 3D
+        function setTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('kanban_theme', themeName);
+            localStorage.setItem('app_theme', themeName);
             ['dark', 'medium', 'light'].forEach(t => {
                 const btn = document.getElementById('btn-theme-' + t);
                 if (btn) btn.classList.toggle('active', t === themeName);
             });
         }
 
-        // Atualiza a contagem de cards no topo de cada coluna
-        function atualizarContadoresColunas() {
-            const colunas = document.querySelectorAll('.column');
-            colunas.forEach((col, idx) => {
-                const list = col.querySelector('.card-list');
-                const badge = document.getElementById('count-col-' + idx);
-                if (list && badge) {
-                    badge.textContent = list.children.length;
-                }
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (viewName === 'overview') {
+                document.getElementById('view-overview').classList.add('active');
+                document.getElementById('tab-overview').classList.add('active');
+            } else if (viewName === 'agenda') {
+                document.getElementById('view-agenda').classList.add('active');
+                document.getElementById('tab-agenda').classList.add('active');
+                renderTimeline();
+            } else if (viewName === 'pedidos') {
+                document.getElementById('view-pedidos').classList.add('active');
+                document.getElementById('tab-pedidos').classList.add('active');
+                renderPastas();
+            } else if (viewName === 'pasta-detalhe') {
+                document.getElementById('view-pasta-detalhe').classList.add('active');
+                document.getElementById('tab-pedidos').classList.add('active');
+                renderDetalhePasta(pastaAtivaId);
+            } else if (viewName === 'usuarios') {
+                if (!isAdmin()) return;
+                document.getElementById('view-usuarios')?.classList.add('active');
+                document.getElementById('tab-usuarios')?.classList.add('active');
+                carregarUsuarios();
+            }
+            atualizarContadores();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function atualizarContadores() {
+            const abertas = TAREFAS_BACKEND.filter(t => normalizarStatus(t.status) !== 'Concluído').length;
+            const criticas = TAREFAS_BACKEND.filter(t => normalizarPrioridade(t.prioridade) === 'Crítica' && normalizarStatus(t.status) !== 'Concluído').length;
+            let totalItens = 0;
+            PASTAS_MOCK.forEach(p => { totalItens += p.produtos.length; });
+            document.getElementById('count-tarefas').textContent = abertas.toString().padStart(2, '0');
+            document.getElementById('count-criticas').textContent = criticas.toString().padStart(2, '0');
+            document.getElementById('count-pedidos').textContent = totalItens.toString().padStart(2, '0');
+        }
+
+        function togglePopover(popoverId, triggerElem, event) {
+            if (event) { event.preventDefault(); event.stopPropagation(); }
+            const popover = document.getElementById(popoverId);
+            if (!popover) return;
+            const isOpen = popover.classList.contains('open');
+            closeAllPopovers();
+            if (!isOpen) {
+                popover.classList.add('open');
+                if (triggerElem) triggerElem.classList.add('active');
+            }
+        }
+
+        function closeAllPopovers() {
+            document.querySelectorAll('.dark-popover-menu').forEach(p => p.classList.remove('open'));
+            document.querySelectorAll('.custom-select-trigger').forEach(t => t.classList.remove('active'));
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.filter-group')) closeAllPopovers();
+        });
+
+       function selectFilter(filterType, val, displayText, event) {
+            if (event) { event.preventDefault(); event.stopPropagation(); }
+            
+            // 1. Atualiza o estado global dos filtros
+            activeFilters[filterType] = val;
+            
+            // 2. Atualiza os textos dos botões na tela
+            if (filterType === 'setor') {
+                const el = document.getElementById('selected-setor-text');
+                if (el) el.textContent = displayText;
+            }
+            if (filterType === 'status') {
+                const el = document.getElementById('selected-status-text');
+                if (el) el.textContent = displayText;
+            }
+            if (filterType === 'prioridade') {
+                const el = document.getElementById('selected-prioridade-text');
+                if (el) el.textContent = displayText;
+            }
+            
+            // 3. Marca o item com o "✓" no popover
+            const popover = document.getElementById(`popover-${filterType}`);
+            if (popover) {
+                popover.querySelectorAll('.popover-item').forEach(item => {
+                    const itemVal = item.getAttribute('data-value');
+                    const isMatch = itemVal != null ? itemVal === String(val) : item.textContent.replace('✓', '').trim() === displayText;
+                    item.classList.toggle('selected', isMatch);
+                    const check = item.querySelector('.item-check');
+                    if (check) check.textContent = isMatch ? '✓' : '';
+                });
+            }
+            closeAllPopovers();
+            
+            // 🚀 MUDANÇA ARQUITETURAL AQUI:
+            // Dispara a requisição para o backend aplicando os novos filtros no banco
+            carregarAgendamentos(); 
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('timeline-task-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // NOVA LÓGICA: O backend já filtrou, então usamos todas as tarefas recebidas
+            const filteredTasks = TAREFAS_BACKEND;
+
+            if (filteredTasks.length === 0) {
+                container.innerHTML = `
+                    <div style="background:var(--bg-card);border:1px solid var(--border-color);padding:40px;text-align:center;color:var(--text-muted);border-radius:8px;">
+                        <p style="font-family:var(--font-mono);font-size:14px;">Nenhuma tarefa encontrada com os filtros selecionados.</p>
+                    </div>`;
+                return;
+            }
+            
+            // ... restante do código do groupsByDate continua igual ...
+
+            const groupsByDate = {};
+            filteredTasks.forEach(task => {
+                const groupKey = task.dataDisplay || 'Geral';
+                if (!groupsByDate[groupKey]) groupsByDate[groupKey] = [];
+                groupsByDate[groupKey].push(task);
+            });
+
+            for (const [dateTitle, tasks] of Object.entries(groupsByDate)) {
+                const dayGroup = document.createElement('div');
+                dayGroup.className = 'day-group';
+                dayGroup.innerHTML = `
+                    <div class="day-header">
+                        <span class="day-title">${dateTitle}</span>
+                        <span class="day-count">${tasks.length} tarefa(s)</span>
+                    </div>`;
+
+                tasks.forEach(task => {
+                    let borderClass = 'border-medium', priorityClass = 'medium';
+                    const prio = normalizarPrioridade(task.prioridade);
+                    if (prio === 'Crítica') { borderClass = 'border-critical'; priorityClass = 'critical'; }
+                    else if (prio === 'Alta') { borderClass = 'border-high'; priorityClass = 'high'; }
+                    else if (prio === 'Baixa') { borderClass = 'border-low'; priorityClass = 'low'; }
+
+                    const statusNorm = normalizarStatus(task.status);
+                    const statusClass = statusNorm === 'Concluído' ? 'concluida' : '';
+                    const podeStatus = podeAlterarStatus();
+                    const podeDel = podeExcluirTarefa(task);
+                    const idEsc = String(task.id).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                    const proximoStatus = statusNorm === 'Concluído' ? 'Pendente' : 'Concluído';
+
+                    const botoesAcoes = `
+                        <button type="button" class="btn-icon-action" title="Ver/Adicionar Comentários" onclick="abrirComentarios(this)">
+                            💬 <span class="comment-count" style="margin-left:4px;">0</span>
+                        </button>
+                        ${podeStatus ? `
+                            <button type="button" class="btn-icon-action" title="${statusNorm === 'Concluído' ? 'Reabrir tarefa' : 'Concluir tarefa'}"
+                                onclick="atualizarStatusAgendamento('${idEsc}', '${proximoStatus}')">✓</button>` : ''}
+                        ${podeDel ? `
+                            <button type="button" class="btn-icon-action" title="Excluir"
+                                onclick="deletarTarefa('${idEsc}')">🗑</button>` : ''}
+                    `;
+
+                    const taskCard = document.createElement('div');
+                    taskCard.className = `task-card ${borderClass}`;
+                    taskCard.innerHTML = `
+                        <div class="task-time">${task.hora}</div>
+                        <div class="task-body">
+                            <h4 class="task-title">${task.titulo}</h4>
+                            <div class="task-badges-row">
+                                <span class="badge-priority ${priorityClass}">${prio}</span>
+                                <span class="badge-status ${statusClass}">${statusNorm}</span>
+                            </div>
+                            <div class="task-metadata-list">
+                                <div class="metadata-row"><span class="meta-icon">◆</span><span>Ativo: ${task.nomeAtivo}</span></div>
+                                <div class="metadata-row"><span class="meta-icon">◇</span><span>Setor: ${task.setor}</span></div>
+                            </div>
+                            <div class="comments-drawer">
+                                <div class="comments-list"></div>
+                                <div class="comment-input-area">
+                                    <input type="text" class="comment-input" placeholder="Escreva um comentário...">
+                                    <button type="button" class="comment-submit" onclick="adicionarComentario(this, '${task.idOrdemServico}')">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="task-actions">${botoesAcoes}</div>
+                    `;
+
+                    if (task.idOrdemServico && task.idOrdemServico !== 'null') {
+                        carregarHistoricoComentarios(
+                            task.idOrdemServico,
+                            taskCard.querySelector('.comments-list'),
+                            taskCard.querySelector('.comment-count')
+                        );
+                    }
+                    dayGroup.appendChild(taskCard);
+                });
+                container.appendChild(dayGroup);
+            }
+        }
+
+        function renderPastas() {
+            const container = document.getElementById('folders-container');
+            if (!container) return;
+            container.innerHTML = '';
+            PASTAS_MOCK.forEach(pasta => {
+                let valorTotal = 0;
+                pasta.produtos.forEach(p => { valorTotal += p.qtd * p.valorUnit; });
+                const card = document.createElement('div');
+                card.className = 'folder-card';
+                card.onclick = () => abrirPastaDetalhe(pasta.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="folder-card-top">
+                            <div class="folder-icon-box">📁</div>
+                            <span class="folder-code">${pasta.codigo}</span>
+                        </div>
+                        <h3 class="folder-client-name">${pasta.cliente}</h3>
+                    </div>
+                    <div class="folder-card-bottom">
+                        <span class="folder-items-count">${pasta.produtos.length} item(ns)</span>
+                        <span class="folder-total-val">${formatarMoeda(valorTotal)}</span>
+                    </div>`;
+                container.appendChild(card);
             });
         }
 
-        // Carrega o tema do usuário e inicia a contagem ao abrir a tela
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentTheme = localStorage.getItem('kanban_theme') || 'dark';
-            setKanbanTheme(currentTheme);
-            setTimeout(atualizarContadoresColunas, 600);
+        function abrirPastaDetalhe(pastaId) {
+            pastaAtivaId = pastaId;
+            switchView('pasta-detalhe');
+        }
+
+        function renderDetalhePasta(pastaId) {
+            const pasta = PASTAS_MOCK.find(p => p.id === pastaId);
+            if (!pasta) return;
+            document.getElementById('folder-detail-code').textContent = `PASTA • ${pasta.codigo}`;
+            document.getElementById('folder-detail-name').textContent = pasta.cliente;
+            const tbody = document.getElementById('folder-products-tbody');
+            tbody.innerHTML = '';
+            let grandTotal = 0;
+            pasta.produtos.forEach(item => {
+                const totalItem = item.qtd * item.valorUnit;
+                grandTotal += totalItem;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="td-product">${item.nome}</td>
+                    <td class="td-mono">${item.qtd}</td>
+                    <td class="td-mono">${formatarMoeda(item.valorUnit)}</td>
+                    <td class="td-mono" style="font-weight:600;color:var(--color-primary);">${formatarMoeda(totalItem)}</td>
+                    <td class="td-mono" style="color:var(--text-muted);">${item.dataCompra}</td>
+                    <td><span class="badge-status ${item.status === 'Separado' ? 'concluida' : ''}">${item.status}</span></td>
+                    <td><button type="button" class="btn-icon-action" title="Excluir produto" onclick="deletarProduto(${item.id})">🗑</button></td>`;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('folder-grand-total').textContent = formatarMoeda(grandTotal);
+        }
+
+        function deletarProduto(prodId) {
+            const pasta = PASTAS_MOCK.find(p => p.id === pastaAtivaId);
+            if (pasta && confirm('Deseja remover este produto do pedido?')) {
+                pasta.produtos = pasta.produtos.filter(p => p.id !== prodId);
+                renderDetalhePasta(pastaAtivaId);
+                atualizarContadores();
+                showToast('Produto removido do pedido!');
+            }
+        }
+
+        function openModal(modalId) {
+            if (modalId === 'modal-tarefa' && !podeCriarTarefa()) {
+                alert('Você não tem permissão para criar tarefas.');
+                return;
+            }
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                modal.querySelectorAll('input[type="date"]').forEach(input => {
+                    if (!input.value) input.value = new Date().toISOString().split('T')[0];
+                });
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('active');
+        }
+
+        function salvarNovaPasta(event) {
+            event.preventDefault();
+            const codigo = document.getElementById('folder-input-code').value.trim();
+            const nome = document.getElementById('folder-input-name').value.trim();
+            PASTAS_MOCK.push({ id: 'ped-' + Date.now(), codigo, cliente: nome, produtos: [] });
+            closeModal('modal-pasta');
+            event.target.reset();
+            renderPastas();
+            atualizarContadores();
+            showToast(`Pasta "${nome}" criada com sucesso!`);
+        }
+
+        function salvarNovoProduto(event) {
+            event.preventDefault();
+            const pasta = PASTAS_MOCK.find(p => p.id === pastaAtivaId);
+            if (!pasta) return;
+            const nome = document.getElementById('prod-input-name').value.trim();
+            const qtd = parseInt(document.getElementById('prod-input-qtd').value, 10);
+            const valor = parseFloat(document.getElementById('prod-input-valor').value);
+            const dataCompra = document.getElementById('prod-input-data').value;
+            const status = document.getElementById('prod-input-status').value;
+            pasta.produtos.push({ id: Date.now(), nome, qtd, valorUnit: valor, dataCompra, status });
+            closeModal('modal-produto');
+            event.target.reset();
+            renderDetalhePasta(pastaAtivaId);
+            atualizarContadores();
+            showToast(`Produto "${nome}" adicionado ao pedido!`);
+        }
+
+        function fazerLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('id_usuario');
+            localStorage.removeItem('email');
+            localStorage.removeItem('tipo');
+            window.location.href = '/index';
+        }
+
+        function simularImportarExcel() { showToast('Simulação: Importando planilha Excel com produtos...'); }
+        function simularExportarExcel() { showToast('Simulação: Planilha Excel exportada com sucesso!'); }
+        function formatarMoeda(val) { return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedTheme = localStorage.getItem('app_theme') || 'dark';
+            setTheme(savedTheme);
+            try {
+                const ok = await carregarUsuario();
+                if (!ok) return;
+                await carregarAgendamentos();
+                renderPastas();
+                atualizarContadores();
+            } catch (erro) {
+                console.error('Erro ao inicializar:', erro);
+                showToast('Não foi possível carregar os dados do sistema.');
+            }
         });
     </script>
-</body>
 
+</body>
 </html>

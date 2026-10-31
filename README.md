@@ -2,6 +2,25 @@
 
 Sistema Web para agendamento de tarefas, desenvolvido com foco em organização e produtividade.
 
+## 🗺️ Roadmap do Projeto
+
+### ✅ Concluído (Base do Sistema)
+- [x] Modelagem inicial do banco de dados (SQLite).
+- [x] CRUD completo de usuário e agendamentos.
+- [x] Funcionalidade de verificação de horários disponíveis.
+
+### 🚧 Em Andamento (Transição para v2.0)
+- [x] Migração de banco de dados para PostgreSQL para maior escalabilidade.
+- [x] Implementação do Alembic para versionamento do esquema de dados.
+- [x] Conteinerização da aplicação (Docker e Docker Compose).
+- [ ] Refatoração completa da Interface de Usuário (UI).
+- [ ] Ajustes de responsividade para dispositivos móveis.
+
+### 📅 Planejado (Futuro)
+- [ ] Integração com sistema de notificações (Email/WhatsApp).
+- [ ] Dashboard analítico com métricas de agendamento para administradores.
+- [ ] Configuração de pipeline de CI/CD via GitHub Actions.
+
 ## 🚀 Tecnologias Utilizadas
 
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
@@ -63,24 +82,56 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 ![Diagrama](static/img/banco01.jpg)
 ![Diagrama](static/img/banco02.jpg)
 
-## 👨‍💻 Autor Principal
+## 👨‍💻 Desenvolvedor Principal
 <div align="center">
   <a href="https://github.com/W1ll-Amorim">
     <img src="https://github.com/W1ll-Amorim.png" width="150" alt="Foto de Wiliam de Amorim"/><br>
     <sub><b>Wiliam de Amorim</b></sub>
   </a>
   <br>
-  <i>Desenvolvedor Principal</i>
+  <i>Desenvolvedor Fullstack</i>
   <br><br>
   <a href="https://www.linkedin.com/in/wiliam-amorim-241784331" target="_blank">
     <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
   </a>
 </div>
 
----
-
 ## 🤝 Contribuidores
 
-| [<img src="https://github.com/Victoroliveira07.png" width=115><br><sub>João Victor</sub>](https://github.com/Victoroliveira07) | [<img src="https://github.com/LilNavaHoods.png" width=115><br><sub>Lohan da Silva</sub>](https://github.com/LilNavaHoods) | [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) |
-| :--- | :--- | :--- |
-| [<img src="https://github.com/allawder09-source.png" width=115><br><sub>Allan Fernandes</sub>](https://github.com/allawder09-source) | [<img src="https://github.com/davifsena-nv.png" width=115><br><sub>Davi Sena</sub>](https://github.com/davifsena-nv) | <sub>*Vaga aberta para sua PR!*</sub> |
+<div align="center">
+  <table width="100%">
+    <tr>
+      <td align="center" width="50%">
+        <a href="https://github.com/LilNavaHoods">
+          <img src="https://github.com/LilNavaHoods.png" width="100" alt="Foto de Lohan da Silva"/><br>
+          <sub><b>Lohan da Silva</b></sub>
+        </a>
+        <br>
+        <i>Desenvolvedor back-end</i>
+        <br><br>
+        <a href="https://www.linkedin.com/in/lohan-da-silva" target="_blank">
+          <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+        </a>
+      </td>
+      <td align="center" width="50%">
+        <a href="https://github.com/Victoroliveira07">
+          <img src="https://github.com/Victoroliveira07.png" width="100" alt="Foto de João Cavalcante"/><br>
+          <sub><b>João Cavalcante</b></sub>
+        </a>
+        <br>
+        <i>Desenvolvedor front-end</i>
+        <br><br>
+        <a href="https://www.linkedin.com/in/joão-victor-oliveira-cavalcante-720331209" target="_blank">
+          <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## Participantes
+
+| [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) | [<img src="https://github.com/MrFelps.png" width=115><br><sub>Felipe Gabriel</sub>](https://github.com/MrFelps) | [<img src="https://github.com/Gustavo-Urbano-Alvarenga.png" width=115><br><sub>Gustavo Urbano</sub>](https://github.com/Gustavo-Urbano-Alvarenga) |
+| :---: | :---: | :---: |

@@ -1,35 +1,45 @@
 services:
   sistema_agendamento:
-    build: .
-    container_name: agendamento_v2
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
       - .:/app
+    # Carrega automaticamente todas as variáveis do seu arquivo .env, 
+    # incluindo a DATABASE_URL
+    env_file:
+      - .env
     environment:
-      - TZ=America/Sao_Paulo
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - DB_HOST=db
-      - DB_PORT=5432
-
-    restart: unless-stopped
+      TZ: America/Sao_Paulo
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    init: true
+    restart: unless-stopped
 
   db:
-    image: postgres:15-alpine
-    restart: always
+    image: postgres:15-bookworm
     environment:
-
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      TZ: America/Sao_Paulo
+      # A imagem do Postgres SÓ entende as variáveis POSTGRES_*, 
+      # então fazemos o "de/para" pegando os valores do seu .env
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # O healthcheck agora usa corretamente as variáveis POSTGRES_*
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
 
 volumes:
   postgres_data:

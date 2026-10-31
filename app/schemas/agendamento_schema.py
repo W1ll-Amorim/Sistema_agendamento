@@ -11,7 +11,7 @@ class AgendamentoCreate(BaseModel):
     descricao_servico: str
     data_agendamento: datetime
     id_usuario: str
-    status: Optional[str] = "Tarefas"
+    status: Optional[str] = "Pendente"
     criticidade: Optional[str] = None
 
 class AgendamentoResponse(BaseModel):

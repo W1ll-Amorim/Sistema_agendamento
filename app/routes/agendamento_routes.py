@@ -1,212 +1,312 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Header
 from sqlalchemy.orm import Session
-from app.core.database import SessionLocal
 from app.core.database import get_db
 from app.core.security import verificar_token
 from datetime import datetime
-from app.models.models import Agendamento, OrdemServico, Ativo, TipoServico
-from app.schemas.agendamento_schema import AgendamentoCreate, AgendamentoResponse
-from app.scheduler.Scheduler import agendar_ordem # Reativado do GitHub
+from app.models.models import (
+    Agendamento, OrdemServico, Ativo, TipoServico,
+    UsuarioEmpresa, TipoUsuario
+)
+from app.schemas.agendamento_schema import AgendamentoCreate
+from typing import Optional
 
-# Dependência para verificar autenticação
-def get_current_user(authorization: str = Header(None)):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Token de autenticação não fornecido")
-    
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Formato de token inválido")
-    
-    token = authorization.replace("Bearer ", "")
-    payload = verificar_token(token)
-    
-    if not payload:
-        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
-    
-    return payload
+try:
+    from app.scheduler.Scheduler import agendar_ordem
+except Exception:
+    def agendar_ordem(*args, **kwargs):
+        pass
 
 
 router = APIRouter(prefix="", tags=["Agendamentos"])
 
-@router.post("/teste")
-def teste_criar():
-    return {"message": "Rota funcionando"}
+
+def obter_usuario_completo(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+) -> UsuarioEmpresa:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token não fornecido ou formato inválido")
+
+    token = authorization.split(" ")[1]
+    payload = verificar_token(token)
+
+    if not payload:
+        raise HTTPException(status_code=401, detail="Token inválido ou expirado")
+
+    email = payload.get("sub")
+    usuario = db.query(UsuarioEmpresa).filter(UsuarioEmpresa.email == email).first()
+
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    return usuario
+
+
+def _tipo_val(tipo) -> str:
+    if tipo is None:
+        return ""
+    if hasattr(tipo, "value"):
+        return str(tipo.value).upper()
+    if hasattr(tipo, "name"):
+        return str(tipo.name).upper()
+    return str(tipo).upper()
+
+
+def _is_admin(u: UsuarioEmpresa) -> bool:
+    return _tipo_val(u.tipo) == "ADMIN"
+
+
+def _is_tecnico(u: UsuarioEmpresa) -> bool:
+    return _tipo_val(u.tipo) == "TECNICO"
+
+
+def _is_comum(u: UsuarioEmpresa) -> bool:
+    return _tipo_val(u.tipo) == "COMUM"
+
+
+def _mesmo_usuario(id_a, id_b) -> bool:
+    return str(id_a) == str(id_b)
+
 
 @router.post("/")
 def criar_agendamento_completo(
     agendamento_data: AgendamentoCreate,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    usuario: UsuarioEmpresa = Depends(obter_usuario_completo)
 ):
+    """TECNICO nao cria. COMUM e ADMIN podem."""
+    if _is_tecnico(usuario):
+        raise HTTPException(status_code=403, detail="Tecnicos nao podem criar novas tarefas.")
+
     try:
-        # Primeiro, verificar se o serviço já existe, senão criar
-        servico = db.query(TipoServico).filter(
-            TipoServico.nome == agendamento_data.nome_servico
-        ).first()
+        if _is_comum(usuario):
+            id_dono = str(usuario.id_usuario)
+        else:
+            id_dono = str(getattr(agendamento_data, "id_usuario", None) or usuario.id_usuario)
 
+        # setor vem em descricao_servico (front). Usamos como nome do servico
+        # para o filtro de setor funcionar de forma confiavel.
+        setor = (getattr(agendamento_data, "descricao_servico", None) or "").strip()
+        nome_servico = setor or getattr(agendamento_data, "nome_servico", None) or "Geral"
+        descricao_servico = setor or getattr(agendamento_data, "nome_servico", None) or ""
+
+        servico = db.query(TipoServico).filter(TipoServico.nome == nome_servico).first()
         if not servico:
-            servico = TipoServico(
-                nome=agendamento_data.nome_servico,
-                descricao=agendamento_data.descricao_servico
-            )
+            servico = TipoServico(nome=nome_servico, descricao=descricao_servico)
             db.add(servico)
-            db.commit()
-            db.refresh(servico)
+            db.flush()
+        elif setor and (not servico.descricao or servico.descricao != setor):
+            servico.descricao = setor
+            db.flush()
 
-        # Segundo, verificar se o ativo já existe, senão criar
+        nome_ativo = getattr(agendamento_data, "nome_ativo", None) or "Geral"
+        tipo_ativo = getattr(agendamento_data, "tipo_ativo", None) or "Equipamento"
+
         ativo = db.query(Ativo).filter(
-            Ativo.nome == agendamento_data.nome_ativo,
-            Ativo.id_usuario == agendamento_data.id_usuario
+            Ativo.nome == nome_ativo,
+            Ativo.id_usuario == id_dono
         ).first()
-
         if not ativo:
-            ativo = Ativo(
-                nome=agendamento_data.nome_ativo,
-                tipo=agendamento_data.tipo_ativo,
-                id_usuario=agendamento_data.id_usuario
-            )
+            ativo = Ativo(nome=nome_ativo, tipo=tipo_ativo, id_usuario=id_dono)
             db.add(ativo)
-            db.commit()
-            db.refresh(ativo)
+            db.flush()
 
-        # Terceiro, criar a ordem de serviço
+        criticidade = (
+            getattr(agendamento_data, "criticidade", None)
+            or getattr(agendamento_data, "prioridade", None)
+            or "Alta"
+        )
+
         nova_ordem = OrdemServico(
             titulo=agendamento_data.titulo,
-            descricao=agendamento_data.descricao,
-            id_usuario=agendamento_data.id_usuario,
+            descricao=getattr(agendamento_data, "descricao", None) or agendamento_data.titulo,
+            id_usuario=id_dono,
             id_ativo=ativo.id_ativo,
             id_servico=servico.id_servico,
-            prioridade=getattr(agendamento_data, 'criticidade', None)
+            prioridade=str(criticidade),
+            status=getattr(agendamento_data, "status", None) or "Pendente"
         )
-
         db.add(nova_ordem)
-        db.commit()
-        db.refresh(nova_ordem)
+        db.flush()
 
-        # Quarto, criar o agendamento
+        data_ag = agendamento_data.data_agendamento
+        if isinstance(data_ag, str):
+            data_ag = datetime.fromisoformat(data_ag.replace("Z", "+00:00"))
+
+        status_ag = getattr(agendamento_data, "status", None) or "Pendente"
+
         novo_agendamento = Agendamento(
             id_ordem_servico=nova_ordem.id_ordem_servico,
-            id_usuario=agendamento_data.id_usuario,
-            data_agendamento=agendamento_data.data_agendamento,
-            status=agendamento_data.status
+            id_usuario=id_dono,
+            data_agendamento=data_ag,
+            status=status_ag
         )
-
         db.add(novo_agendamento)
         db.commit()
         db.refresh(novo_agendamento)
+        db.refresh(nova_ordem)
 
-        # Aciona o disparador de tarefas automáticas vindo do GitHub
-        agendar_ordem(agendamento_data.data_agendamento, nova_ordem.id_ordem_servico)
+        try:
+            agendar_ordem(data_ag, nova_ordem.id_ordem_servico)
+        except Exception:
+            pass
 
         return {
             "message": "Agendamento criado com sucesso",
             "agendamento": {
                 "id_agendamento": novo_agendamento.id_agendamento,
                 "id_ordem_servico": nova_ordem.id_ordem_servico,
-                "titulo": agendamento_data.titulo,
-                "data_agendamento": agendamento_data.data_agendamento.isoformat()
+                "titulo": nova_ordem.titulo,
+                "data_agendamento": novo_agendamento.data_agendamento.isoformat() if novo_agendamento.data_agendamento else None,
+                "status": novo_agendamento.status,
+                "id_usuario": id_dono
             }
         }
+
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
-        return {"error": f"Erro ao criar agendamento: {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"Erro ao criar agendamento: {str(e)}")
 
-@router.post("/simples")
-def criar_agendamento_simples(
-    titulo: str,
-    id_usuario: str,
-    data_agendamento: str,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
-):
-    try:
-        from datetime import datetime
-        data = datetime.fromisoformat(data_agendamento.replace('Z', '+00:00'))
-        
-        novo_agendamento = Agendamento(
-            id_ordem_servico="teste-ordem",
-            id_usuario=id_usuario,
-            data_agendamento=data
-        )
-
-        db.add(novo_agendamento)
-        db.commit()
-        db.refresh(novo_agendamento)
-
-        return {"message": "Agendamento simples criado", "id": novo_agendamento.id_agendamento}
-    except Exception as e:
-        db.rollback()
-        return {"error": str(e)}
 
 @router.get("/")
-def listar_agendamentos(id_usuario: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def listar_agendamentos(
+    setor: Optional[str] = Query(None, description="Filtro por setor"),
+    status: Optional[str] = Query(None, description="Filtro por status"),
+    prioridade: Optional[str] = Query(None, description="Filtro por prioridade"),
+    id_usuario: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    usuario: UsuarioEmpresa = Depends(obter_usuario_completo)
+):
     try:
-        agendamentos = db.query(Agendamento).filter(
-            Agendamento.id_usuario == id_usuario
-        ).all()
+        # Join para filtrar corretamente por setor e prioridade
+        query = (
+            db.query(Agendamento, OrdemServico, Ativo, TipoServico)
+            .outerjoin(OrdemServico, OrdemServico.id_ordem_servico == Agendamento.id_ordem_servico)
+            .outerjoin(Ativo, Ativo.id_ativo == OrdemServico.id_ativo)
+            .outerjoin(TipoServico, TipoServico.id_servico == OrdemServico.id_servico)
+        )
+
+        # ---------- Segurança por perfil ----------
+        # COMUM → só os próprios
+        # TECNICO e ADMIN → veem todos
+        if _is_comum(usuario):
+            query = query.filter(Agendamento.id_usuario == str(usuario.id_usuario))
+        elif id_usuario:
+            query = query.filter(Agendamento.id_usuario == str(id_usuario))
+
+        # ---------- Filtros do frontend (ignoram "all") ----------
+        if status and status.strip().lower() != "all":
+            query = query.filter(Agendamento.status.ilike(status.strip()))
+
+        if prioridade and prioridade.strip().lower() != "all":
+            query = query.filter(OrdemServico.prioridade.ilike(prioridade.strip()))
+
+        if setor and setor.strip().lower() != "all":
+            query = query.filter(
+                (TipoServico.nome.ilike(setor.strip())) |
+                (TipoServico.descricao.ilike(setor.strip()))
+            )
+
+        rows = query.order_by(Agendamento.data_agendamento.desc()).all()
 
         resultado = []
-        for agendamento in agendamentos:
-            ordem = db.query(OrdemServico).filter(
-                OrdemServico.id_ordem_servico == agendamento.id_ordem_servico
-            ).first()
-            
-            if ordem:
-                ativo = db.query(Ativo).filter(Ativo.id_ativo == ordem.id_ativo).first()
-                servico = db.query(TipoServico).filter(TipoServico.id_servico == ordem.id_servico).first()
-                
-                resultado.append({
-                    "id_agendamento": agendamento.id_agendamento,
-                    "titulo": ordem.titulo or "Sem título",
-                    "descricao": ordem.descricao or "",
-                    "nome_ativo": ativo.nome if ativo else "Ativo não encontrado",
-                    "tipo_ativo": ativo.tipo if ativo else "",
-                    "nome_servico": servico.nome if servico else "Serviço não encontrado",
-                    "data_agendamento": agendamento.data_agendamento.isoformat(),
-                    "id_ordem_servico": agendamento.id_ordem_servico,
-                    "status": agendamento.status or "Tarefas",
-                    "criticidade": ordem.prioridade if ordem and getattr(ordem, 'prioridade', None) else None
-                })
+        for ag, ordem, ativo, servico in rows:
+            setor_val = ""
+            if servico:
+                setor_val = (servico.nome or servico.descricao or "").strip()
+            if not setor_val:
+                setor_val = "Geral"
+
+            prioridade_val = ""
+            if ordem and ordem.prioridade:
+                prioridade_val = str(ordem.prioridade).strip()
+            if not prioridade_val:
+                prioridade_val = "Alta"
+
+            status_val = (ag.status or "Pendente").strip()
+
+            resultado.append({
+                "id_agendamento": ag.id_agendamento,
+                "titulo": (ordem.titulo if ordem else None) or "Sem titulo",
+                "descricao": (ordem.descricao if ordem else None) or "",
+                "nome_ativo": ativo.nome if ativo else "Geral",
+                "tipo_ativo": ativo.tipo if ativo else "",
+                "nome_servico": servico.nome if servico else "",
+                "descricao_servico": setor_val,
+                "data_agendamento": ag.data_agendamento.isoformat() if ag.data_agendamento else None,
+                "id_ordem_servico": ag.id_ordem_servico,
+                "status": status_val,
+                "criticidade": prioridade_val,
+                "prioridade": prioridade_val,
+                "id_usuario": ag.id_usuario
+            })
 
         return {"agendamentos": resultado}
+
+    except HTTPException:
+        raise
     except Exception as e:
-        return {"error": f"Erro ao listar agendamentos: {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"Erro ao listar agendamentos: {str(e)}")
+
 
 @router.delete("/{id_agendamento}")
-def deletar_agendamento(id_agendamento: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def deletar_agendamento(
+    id_agendamento: str,
+    db: Session = Depends(get_db),
+    usuario: UsuarioEmpresa = Depends(obter_usuario_completo)
+):
     try:
         agendamento = db.query(Agendamento).filter(
             Agendamento.id_agendamento == id_agendamento
         ).first()
 
         if not agendamento:
-            return {"error": "Agendamento não encontrado"}
+            raise HTTPException(status_code=404, detail="Agendamento nao encontrado")
+
+        if _is_comum(usuario) and not _mesmo_usuario(agendamento.id_usuario, usuario.id_usuario):
+            raise HTTPException(status_code=403, detail="Voce so pode excluir suas proprias tarefas.")
 
         db.delete(agendamento)
         db.commit()
-
         return {"message": "Agendamento deletado com sucesso"}
+
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
-        return {"error": f"Erro ao deletar agendamento: {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"Erro ao deletar: {str(e)}")
+
 
 @router.put("/{id_agendamento}/status")
-def atualizar_status_agendamento(id_agendamento: str, novo_status: str = Query(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def atualizar_status_agendamento(
+    id_agendamento: str,
+    novo_status: str = Query(...),
+    db: Session = Depends(get_db),
+    usuario: UsuarioEmpresa = Depends(obter_usuario_completo)
+):
     try:
         agendamento = db.query(Agendamento).filter(
             Agendamento.id_agendamento == id_agendamento
         ).first()
 
         if not agendamento:
-            return {"error": "Agendamento não encontrado"}
+            raise HTTPException(status_code=404, detail="Agendamento nao encontrado")
+
+        if _is_comum(usuario) and not _mesmo_usuario(agendamento.id_usuario, usuario.id_usuario):
+            raise HTTPException(status_code=403, detail="Voce so pode alterar suas proprias tarefas.")
 
         agendamento.status = novo_status
         db.commit()
         db.refresh(agendamento)
+        return {"message": "Status atualizado com sucesso", "novo_status": novo_status}
 
-        return {"message": "Status updated com sucesso", "novo_status": novo_status}
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
-        return {"error": f"Erro ao atualizar status: {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"Erro ao atualizar status: {str(e)}")
 
 
 @router.put("/{id_agendamento}")
@@ -214,7 +314,7 @@ def atualizar_agendamento(
     id_agendamento: str,
     agendamento_data: AgendamentoCreate,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+    usuario: UsuarioEmpresa = Depends(obter_usuario_completo)
 ):
     try:
         agendamento = db.query(Agendamento).filter(
@@ -222,35 +322,43 @@ def atualizar_agendamento(
         ).first()
 
         if not agendamento:
-            return {"error": "Agendamento não encontrado"}
+            raise HTTPException(status_code=404, detail="Agendamento nao encontrado")
 
-        servico = db.query(TipoServico).filter(
-            TipoServico.nome == agendamento_data.nome_servico
-        ).first()
+        if _is_comum(usuario) and not _mesmo_usuario(agendamento.id_usuario, usuario.id_usuario):
+            raise HTTPException(status_code=403, detail="Voce so pode editar suas proprias tarefas.")
 
+        # setor vem em descricao_servico (front). Usamos como nome do servico
+        # para o filtro de setor funcionar de forma confiavel.
+        setor = (getattr(agendamento_data, "descricao_servico", None) or "").strip()
+        nome_servico = setor or getattr(agendamento_data, "nome_servico", None) or "Geral"
+        descricao_servico = setor or getattr(agendamento_data, "nome_servico", None) or ""
+
+        servico = db.query(TipoServico).filter(TipoServico.nome == nome_servico).first()
         if not servico:
-            servico = TipoServico(
-                nome=agendamento_data.nome_servico,
-                descricao=agendamento_data.descricao_servico
-            )
+            servico = TipoServico(nome=nome_servico, descricao=descricao_servico)
             db.add(servico)
-            db.commit()
-            db.refresh(servico)
+            db.flush()
+        elif setor and (not servico.descricao or servico.descricao != setor):
+            servico.descricao = setor
+            db.flush()
+
+        nome_ativo = getattr(agendamento_data, "nome_ativo", None) or "Geral"
+        tipo_ativo = getattr(agendamento_data, "tipo_ativo", None) or "Equipamento"
+        id_dono = str(getattr(agendamento_data, "id_usuario", None) or agendamento.id_usuario)
 
         ativo = db.query(Ativo).filter(
-            Ativo.nome == agendamento_data.nome_ativo,
-            Ativo.id_usuario == agendamento_data.id_usuario
+            Ativo.nome == nome_ativo,
+            Ativo.id_usuario == id_dono
         ).first()
-
         if not ativo:
-            ativo = Ativo(
-                nome=agendamento_data.nome_ativo,
-                tipo=agendamento_data.tipo_ativo,
-                id_usuario=agendamento_data.id_usuario
-            )
+            ativo = Ativo(nome=nome_ativo, tipo=tipo_ativo, id_usuario=id_dono)
             db.add(ativo)
-            db.commit()
-            db.refresh(ativo)
+            db.flush()
+
+        criticidade = (
+            getattr(agendamento_data, "criticidade", None)
+            or getattr(agendamento_data, "prioridade", None)
+        )
 
         ordem = db.query(OrdemServico).filter(
             OrdemServico.id_ordem_servico == agendamento.id_ordem_servico
@@ -258,28 +366,30 @@ def atualizar_agendamento(
 
         if ordem:
             ordem.titulo = agendamento_data.titulo
-            ordem.descricao = agendamento_data.descricao
+            ordem.descricao = getattr(agendamento_data, "descricao", None) or agendamento_data.titulo
             ordem.id_ativo = ativo.id_ativo
             ordem.id_servico = servico.id_servico
-            ordem.prioridade = getattr(agendamento_data, 'criticidade', ordem.prioridade)
-            db.commit()
-            db.refresh(ordem)
+            if criticidade:
+                ordem.prioridade = str(criticidade)
         else:
-            nova_ordem = OrdemServico(
+            ordem = OrdemServico(
                 titulo=agendamento_data.titulo,
-                descricao=agendamento_data.descricao,
-                id_usuario=agendamento_data.id_usuario,
+                descricao=getattr(agendamento_data, "descricao", None) or agendamento_data.titulo,
+                id_usuario=id_dono,
                 id_ativo=ativo.id_ativo,
                 id_servico=servico.id_servico,
-                prioridade=getattr(agendamento_data, 'criticidade', None)
+                prioridade=str(criticidade) if criticidade else "Alta"
             )
-            db.add(nova_ordem)
-            db.commit()
-            db.refresh(nova_ordem)
-            agendamento.id_ordem_servico = nova_ordem.id_ordem_servico
+            db.add(ordem)
+            db.flush()
+            agendamento.id_ordem_servico = ordem.id_ordem_servico
 
-        agendamento.data_agendamento = agendamento_data.data_agendamento
-        if agendamento_data.status:
+        data_ag = agendamento_data.data_agendamento
+        if isinstance(data_ag, str):
+            data_ag = datetime.fromisoformat(data_ag.replace("Z", "+00:00"))
+        agendamento.data_agendamento = data_ag
+
+        if getattr(agendamento_data, "status", None):
             agendamento.status = agendamento_data.status
 
         db.commit()
@@ -289,11 +399,19 @@ def atualizar_agendamento(
             "message": "Agendamento atualizado com sucesso",
             "agendamento": {
                 "id_agendamento": agendamento.id_agendamento,
-                "data_agendamento": agendamento.data_agendamento.isoformat(),
+                "data_agendamento": agendamento.data_agendamento.isoformat() if agendamento.data_agendamento else None,
                 "status": agendamento.status,
                 "id_ordem_servico": agendamento.id_ordem_servico
             }
         }
+
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
-        return {"error": f"Erro ao atualizar agendamento: {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"Erro ao atualizar: {str(e)}")
+
+
+@router.post("/teste")
+def teste_criar():
+    return {"message": "Rota de agendamentos funcionando"}
