@@ -87,21 +87,39 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 
 ---
 
-## 📌 Funcionalidades
+## Funcionalidades
 
- **Gerenciamento de Usuários:** Cadastro e autenticação de usuários, com controle de acesso baseado em três perfis: COMUM, TÉCNICO e ADMINISTRADOR.  
- **Gerenciamento de Tarefas:** Permite criar, agendar, visualizar e acompanhar tarefas, respeitando as permissões de cada perfil.  
- **Controle de Acesso e Permissões:** Cada tipo de usuário possui permissões específicas, garantindo acesso restrito às funcionalidades e informações autorizadas.  
- **Gestão de Tarefas por Perfil:**  
-   - **COMUM:** Pode criar, agendar e visualizar exclusivamente suas próprias tarefas.  
-   - **TÉCNICO:** Pode visualizar tarefas de todos os usuários, realizar atendimentos e atualizar o andamento das atividades.  
-   - **ADMINISTRADOR:** Pode criar tarefas, visualizar todas as atividades, listar usuários e promover usuários COMUM para TÉCNICO.
+### Gerenciamento e Operações
 
- **Personalização de Interface:** Disponibiliza três opções de aparência: tema claro, escuro e intermediário, permitindo adaptar a experiência visual às preferências do usuário.  
- **Persistência de Dados:** Utiliza PostgreSQL para armazenamento e gerenciamento das informações, com SQLAlchemy como ORM e Alembic para versionamento do banco de dados.  
- **Autenticação e Segurança:** Implementa autenticação baseada em JWT e gerenciamento de credenciais, com proteção de rotas conforme o nível de autorização do usuário.  
- **Ambiente Conteinerizado:** Utiliza Docker e Docker Compose para padronizar o ambiente de execução, facilitando a implantação e a utilização em diferentes sistemas operacionais.  
- **Gerenciamento de Configurações:** Utiliza variáveis de ambiente para armazenar credenciais e configurações sensíveis, mantendo o arquivo `.env` fora do controle de versão.
+- **Gerenciamento de Tarefas:** Criação, agendamento, visualização e acompanhamento de tarefas, conforme as permissões de cada perfil.
+- **Gestão de Atividades:** Visualização e gerenciamento centralizado das tarefas, permitindo que usuários técnicos acompanhem e resolvam atividades.
+- **Administração de Usuários:** Consulta dos usuários cadastrados e gerenciamento dos níveis de acesso por administradores.
+- **Personalização da Interface:** Disponibilização de três temas visuais: claro, escuro e intermediário, permitindo adaptar a interface às preferências do usuário.
+
+### Segurança e Controle de Acesso
+
+- **Autenticação de Usuários:** Sistema de autenticação baseado em JWT para identificação e acesso à aplicação.
+- **Controle de Acesso por Perfil (RBAC):** Implementação de três níveis de autorização: COMUM, TÉCNICO e ADMINISTRADOR.
+- **Permissões Individualizadas:** Cada perfil possui acesso específico às funcionalidades e informações do sistema.
+- **Isolamento de Informações:** Usuários comuns podem visualizar exclusivamente suas próprias tarefas, enquanto técnicos e administradores possuem permissões ampliadas.
+- **Gerenciamento de Permissões:** Administradores podem promover usuários do perfil COMUM para TÉCNICO.
+
+### Perfis de Acesso
+
+| Perfil | Permissões |
+|---|---|
+| **COMUM** | Criar, agendar e visualizar as próprias tarefas. |
+| **TÉCNICO** | Visualizar tarefas de todos os usuários, realizar atendimentos e atualizar o andamento das atividades. |
+| **ADMINISTRADOR** | Criar tarefas, visualizar todas as atividades, listar usuários e promover usuários COMUM para TÉCNICO. |
+
+### Infraestrutura e Tecnologias
+
+- **Banco de Dados PostgreSQL:** Persistência e gerenciamento das informações da aplicação.
+- **SQLAlchemy:** Mapeamento objeto-relacional (ORM) para interação com o banco de dados.
+- **Alembic:** Gerenciamento e versionamento das alterações na estrutura do banco de dados.
+- **Docker e Docker Compose:** Conteinerização e padronização do ambiente de execução.
+- **Variáveis de Ambiente:** Gerenciamento de credenciais e configurações sensíveis por meio de arquivos `.env`, excluídos do controle de versão.
+- **Portabilidade:** Ambiente padronizado para execução em diferentes sistemas operacionais que oferecem suporte ao Docker.
 
 ---
 
