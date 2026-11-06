@@ -302,5 +302,5 @@ Esse comando preserva os dados armazenados nos volumes do PostgreSQL.
 
 ## Participantes
 
-| [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) | [<img src="https://github.com/MrFelps.png" width=115><br><sub>Felipe Gabriel</sub>](https://github.com/MrFelps) | [<img src="https://github.com/Gustavo-Urbano-Alvarenga.png" width=115><br><sub>Gustavo Urbano</sub>](https://github.com/Gustavo-Urbano-Alvarenga) |
-| :---: | :---: | :---: |
+| [<img src="https://github.com/bielgb13.png" width=115><br><sub>Gabriel Ferreira</sub>](https://github.com/bielgb13) | [<img src="https://github.com/Gustavo-Urbano-Alvarenga.png" width=115><br><sub>Gustavo Urbano</sub>](https://github.com/Gustavo-Urbano-Alvarenga) |
+| :---: | :---: |
