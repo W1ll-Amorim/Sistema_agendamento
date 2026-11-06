@@ -9,7 +9,8 @@ class Prioridade(enum.Enum):
     baixo = "Baixo"
     medio = "Médio"
     alto  = "Alto"
-
+    critico = "Crítico"
+    
 class TipoUsuario(enum.Enum):
     COMUM = "comum"
     TECNICO = "tecnico" 
