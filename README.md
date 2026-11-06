@@ -89,10 +89,19 @@ Este projeto utiliza o modelo de ramificação para garantir a estabilidade da v
 
 ## 📌 Funcionalidades
 
-* **Cadastro e histórico de clientes:** Armazena dados dos clientes e histórico de agendamentos para agilizar o atendimento e personalizar o serviço.
-* **Planejamento de Tarefas:** Permite que clientes marquem, reagendem ou cancelem consultas/serviços a qualquer hora.
-* **Calendário e Disponibilidade em Tempo Real:** Exibe horários disponíveis instantaneamente, evitando choques de agenda e duplicidade de marcações.
-* **Gestão de Fila de Espera:** Organiza automaticamente quem aguarda uma vaga, preenchendo horários vagos rapidamente em caso de cancelamento.
+ **Gerenciamento de Usuários:** Cadastro e autenticação de usuários, com controle de acesso baseado em três perfis: COMUM, TÉCNICO e ADMINISTRADOR.  
+ **Gerenciamento de Tarefas:** Permite criar, agendar, visualizar e acompanhar tarefas, respeitando as permissões de cada perfil.  
+ **Controle de Acesso e Permissões:** Cada tipo de usuário possui permissões específicas, garantindo acesso restrito às funcionalidades e informações autorizadas.  
+ **Gestão de Tarefas por Perfil:**  
+   - **COMUM:** Pode criar, agendar e visualizar exclusivamente suas próprias tarefas.  
+   - **TÉCNICO:** Pode visualizar tarefas de todos os usuários, realizar atendimentos e atualizar o andamento das atividades.  
+   - **ADMINISTRADOR:** Pode criar tarefas, visualizar todas as atividades, listar usuários e promover usuários COMUM para TÉCNICO.
+
+ **Personalização de Interface:** Disponibiliza três opções de aparência: tema claro, escuro e intermediário, permitindo adaptar a experiência visual às preferências do usuário.  
+ **Persistência de Dados:** Utiliza PostgreSQL para armazenamento e gerenciamento das informações, com SQLAlchemy como ORM e Alembic para versionamento do banco de dados.  
+ **Autenticação e Segurança:** Implementa autenticação baseada em JWT e gerenciamento de credenciais, com proteção de rotas conforme o nível de autorização do usuário.  
+ **Ambiente Conteinerizado:** Utiliza Docker e Docker Compose para padronizar o ambiente de execução, facilitando a implantação e a utilização em diferentes sistemas operacionais.  
+ **Gerenciamento de Configurações:** Utiliza variáveis de ambiente para armazenar credenciais e configurações sensíveis, mantendo o arquivo `.env` fora do controle de versão.
 
 ---
 
