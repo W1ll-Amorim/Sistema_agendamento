@@ -258,7 +258,7 @@ Esse comando preserva os dados armazenados nos volumes do PostgreSQL.
 <div align="center">
   <table width="100%">
     <tr>
-      <td align="center" width="50%">
+      <td align="center" width="33.3%">
         <a href="https://github.com/LilNavaHoods">
           <img src="https://github.com/LilNavaHoods.png" width="100" alt="Foto de Lohan da Silva"/><br>
           <sub><b>Lohan da Silva</b></sub>
@@ -270,7 +270,7 @@ Esse comando preserva os dados armazenados nos volumes do PostgreSQL.
           <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
         </a>
       </td>
-      <td align="center" width="50%">
+      <td align="center" width="33.3%">
         <a href="https://github.com/Victoroliveira07">
           <img src="https://github.com/Victoroliveira07.png" width="100" alt="Foto de João Cavalcante"/><br>
           <sub><b>João Cavalcante</b></sub>
@@ -279,6 +279,18 @@ Esse comando preserva os dados armazenados nos volumes do PostgreSQL.
         <i>Desenvolvedor front-end</i>
         <br><br>
         <a href="https://www.linkedin.com/in/joão-victor-oliveira-cavalcante-720331209" target="_blank">
+          <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+        </a>
+      </td>
+     <td align="center" width="33.3%">
+        <a href="https://github.com/MrFelps">
+          <img src="https://github.com/MrFelps.png" width="100" alt="Foto de Felipe Gabriel"/><br>
+          <sub><b>Felipe Gabriel</b></sub>
+        </a>
+        <br>
+        <i>Desenvolvedor front-end</i>
+        <br><br>
+        <a href="https://www.linkedin.com/in/felipe-gabriel-boccardo-de-jesus-4b87101a4" target="_blank">
           <img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
         </a>
       </td>
