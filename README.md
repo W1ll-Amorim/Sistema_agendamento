@@ -262,6 +262,10 @@ Esse comando preserva os dados armazenados nos volumes do PostgreSQL.
 ![Diagrama](static/img/sistema_tela2.png)
 ![Diagrama](static/img/sistema_tela3.png)
 
+## 🗺️ Diagrama de Fluxo
+
+![Diagrama](static/img/fluxograma.jpeg)
+
 ## 🗄️ Banco de Dados
 ![Diagrama](static/img/banco01.jpg)
 ![Diagrama](static/img/banco02.jpg)
