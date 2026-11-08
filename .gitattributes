@@ -1,0 +1,14 @@
+# Scripts Shell
+*.sh text eol=lf
+
+# Python
+*.py text eol=lf
+
+# Docker
+Dockerfile text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Configurações
+*.ini text eol=lf
+*.toml text eol=lf
