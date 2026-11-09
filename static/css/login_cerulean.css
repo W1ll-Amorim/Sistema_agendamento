@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap');
+
+:root, [data-theme="dark"] {
+    --bg-page: #080d14; --bg-card: rgba(14, 23, 36, 0.92);
+    --border-card: rgba(0, 123, 167, 0.28); --border-highlight: rgba(255, 255, 255, 0.08);
+    --text-primary: #f0f4f8; --text-muted: #8ca3ba;
+    --nexus-title: #ffffff; --nexus-glow: 0 0 16px rgba(0, 164, 228, 0.45);
+    --input-bg: #0d1724; --input-border: rgba(0, 123, 167, 0.35); --input-focus: #0090c5;
+    --btn-primary-bg: linear-gradient(180deg, #0090c5 0%, #007ba7 100%);
+    --btn-shadow: 0 4px 0 #005676, 0 10px 22px rgba(0, 123, 167, 0.35);
+    --btn-shadow-active: 0 2px 0 #005676, 0 4px 10px rgba(0, 123, 167, 0.25);
+    --link-color: #38bdf8;
+}
+
+[data-theme="medium"] {
+    --bg-page: #151e2c; --bg-card: rgba(26, 36, 52, 0.95);
+    --border-card: rgba(0, 144, 197, 0.35); --border-highlight: rgba(255, 255, 255, 0.12);
+    --text-primary: #ffffff; --text-muted: #a6b9cb;
+    --nexus-title: #ffffff; --nexus-glow: 0 0 14px rgba(56, 189, 248, 0.4);
+    --input-bg: #111a28; --input-border: rgba(0, 144, 197, 0.45); --input-focus: #00a4e4;
+    --btn-primary-bg: linear-gradient(180deg, #00a4e4 0%, #007ba7 100%);
+    --btn-shadow: 0 4px 0 #005b7d, 0 10px 22px rgba(0, 144, 197, 0.4);
+    --btn-shadow-active: 0 2px 0 #005b7d, 0 4px 10px rgba(0, 144, 197, 0.3);
+    --link-color: #60a5fa;
+}
+
+[data-theme="light"] {
+    --bg-page: #eef4f9; --bg-card: #ffffff;
+    --border-card: rgba(0, 123, 167, 0.22); --border-highlight: rgba(255, 255, 255, 0.85);
+    --text-primary: #0f172a; --text-muted: #51657a;
+    --nexus-title: #007ba7; --nexus-glow: none;
+    --input-bg: #f8fafc; --input-border: #cbd5e1; --input-focus: #007ba7;
+    --btn-primary-bg: linear-gradient(180deg, #0090c5 0%, #007ba7 100%);
+    --btn-shadow: 0 4px 0 #005676, 0 8px 18px rgba(0, 123, 167, 0.22);
+    --btn-shadow-active: 0 2px 0 #005676, 0 3px 8px rgba(0, 123, 167, 0.18);
+    --link-color: #0284c7;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-page);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    color: var(--text-primary);
+    padding: 24px 16px;
+    transition: background 0.25s ease;
+}
+
+/* Seletor Triplo em Cápsula com Ícones SVG */
+.theme-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 30px;
+    padding: 3px;
+    gap: 3px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.theme-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.theme-btn:hover { color: var(--text-primary); }
+.theme-btn.active {
+    background: var(--btn-primary-bg);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 123, 167, 0.4);
+}
+.theme-btn svg { width: 16px; height: 16px; }
+
+/* Card Cerulean 3D para Login e Cadastro */
+.login_box, .cadastro_box {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 14px;
+    padding: 36px 28px;
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.32), inset 0 1px 0 var(--border-highlight);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.login_box h2, .cadastro_box h2 {
+    font-family: 'Orbitron', -apple-system, sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--nexus-title);
+    text-shadow: var(--nexus-glow);
+    margin-bottom: 8px;
+}
+
+.login_box h3, .cadastro_box h3 {
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 22px;
+}
+
+.login_box input:not([type="submit"]):not([type="checkbox"]),
+.cadastro_box input:not([type="submit"]):not([type="checkbox"]) {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.login_box input:focus, .cadastro_box input:focus {
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(0, 123, 167, 0.28);
+}
+
+.senha-container { position: relative; width: 100%; margin-bottom: 12px; }
+.senha-container input { margin-bottom: 0 !important; padding-right: 44px !important; }
+.toggle-senha {
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 15px; opacity: 0.7; user-select: none;
+}
+.toggle-senha:hover { opacity: 1; }
+
+.lembrar-container {
+    display: flex; align-items: center; gap: 8px; margin: 4px 0 18px;
+    font-size: 13px; color: var(--text-muted);
+}
+.lembrar-container input[type="checkbox"] {
+    width: 17px; height: 17px; accent-color: var(--input-focus); cursor: pointer;
+}
+.lembrar-container label { cursor: pointer; user-select: none; }
+
+.login_box input[type="submit"], .cadastro_box input[type="submit"] {
+    display: flex; justify-content: center; align-items: center;
+    width: 100%; min-height: 46px; border-radius: 8px; border: none;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.5px; color: #ffffff;
+    background: var(--btn-primary-bg); box-shadow: var(--btn-shadow);
+    cursor: pointer; outline: none; margin-top: 4px; margin-bottom: 16px;
+    transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+}
+.login_box input[type="submit"]:hover, .cadastro_box input[type="submit"]:hover { filter: brightness(1.06); }
+.login_box input[type="submit"]:active, .cadastro_box input[type="submit"]:active {
+    transform: translateY(2px); box-shadow: var(--btn-shadow-active);
+}
+
+.link-cadastro, .cadastro_box a {
+    display: block; text-align: center; font-size: 13px; color: var(--text-muted);
+    text-decoration: none; margin-top: 6px;
+}
+.link-cadastro span, .cadastro_box a span { color: var(--link-color); font-weight: 600; }
+.link-cadastro:hover span, .cadastro_box a:hover { text-decoration: underline; color: var(--link-color); }

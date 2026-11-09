@@ -42,3 +42,4 @@ htmlcov/
 *.sqlite3
 database/database.db
 preview_lab/
+dev_server.py

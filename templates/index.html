@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/login_cerulean.css') }}">
     <title>Stellare Kitchens - Login</title>
 </head>
 <body>
     <script>
-        // Limpar sessão ao acessar a página de login (usuário voltou pelo botão do navegador)
         localStorage.removeItem('token');
         localStorage.removeItem('id_usuario');
         localStorage.removeItem('email');
     </script>
+
+    <!-- SELETOR DOS 3 TEMAS: DARK, MÉDIO E CLARO -->
+    <div class="theme-switcher">
+        <button id="btn-theme-dark" class="theme-btn active" onclick="setTheme('dark')" title="Escuro - Lua Completa">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+        </button>
+        <button id="btn-theme-medium" class="theme-btn" onclick="setTheme('medium')" title="Médio - Lua com Sol">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button id="btn-theme-light" class="theme-btn" onclick="setTheme('light')" title="Claro - Solzinho">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+    </div>
 
     <div class="login_box">
         <h2> Nexus </h2>
@@ -41,5 +53,24 @@
     </div>
 
     <script src="/static/js/login.js"></script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`btn-theme-${theme}`);
+            if (activeBtn) activeBtn.classList.add('active');
+            localStorage.setItem('cerulean_theme', theme);
+        }
+
+        const savedTheme = localStorage.getItem('cerulean_theme') || 'dark';
+        setTheme(savedTheme);
+
+        function toggleSenha() {
+            const campo = document.getElementById('senha');
+            if (!campo) return;
+            const isPassword = campo.type === 'password';
+            campo.type = isPassword ? 'text' : 'password';
+        }
+    </script>
 </body>
 </html>
