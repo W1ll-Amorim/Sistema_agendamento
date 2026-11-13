@@ -12,6 +12,7 @@
         /* TOKENS CERULEAN 3D - 3 TEMAS: DARK, MÉDIO E CLARO         */
         /* ========================================================= */
         :root, [data-theme="dark"] {
+            color-scheme: dark;
             --bg-main: #07121e;
             --bg-card: #0d2135;
             --bg-card-hover: #122c46;
@@ -57,6 +58,7 @@
         }
 
         [data-theme="medium"] {
+            color-scheme: dark;
             --bg-main: #1a2332;
             --bg-card: #243044;
             --bg-card-hover: #2b3952;
@@ -95,6 +97,7 @@
         }
 
         [data-theme="light"] {
+            color-scheme: light;
             --bg-main: #eef2f6;
             --bg-card: #ffffff;
             --bg-card-hover: #f8fafc;
@@ -1097,9 +1100,52 @@
             box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
         }
 
-        .form-select option {
+        .form-select, select {
+            color-scheme: inherit;
+        }
+
+        .form-select option, select option {
             background-color: var(--bg-card);
             color: var(--text-main);
+        }
+
+        [data-theme="light"] .form-select,
+        [data-theme="light"] select {
+            color-scheme: light !important;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .form-select option,
+        [data-theme="light"] select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        [data-theme="medium"] .form-select,
+        [data-theme="medium"] select {
+            color-scheme: dark !important;
+            background-color: #192230 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="medium"] .form-select option,
+        [data-theme="medium"] select option {
+            background-color: #243044 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .form-select,
+        [data-theme="dark"] select {
+            color-scheme: dark !important;
+            background-color: #060e18 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .form-select option,
+        [data-theme="dark"] select option {
+            background-color: #0d2135 !important;
+            color: #ffffff !important;
         }
 
         .form-textarea {
