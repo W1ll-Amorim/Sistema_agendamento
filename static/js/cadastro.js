@@ -50,14 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (response.ok) {
-                alert("Cadastro realizado com sucesso!");
-                form.reset();
-                window.location.href = "/";
-                // 🔥 limpa o formulário
+                // 1. Mensagem simples e amigável ao usuário
+                alert("Cadastro realizado com sucesso! Redirecionando para o login...");
                 form.reset();
 
-                // redireciona
-                window.location.href = "/";
+                // 2. Conexão direta entre telas (mockup ou oficial)
+                const destinoLogin = window.location.pathname.includes('mockup') ? '/login-mockup' : '/';
+                window.location.href = destinoLogin;
             } else {
                 tratarErro(data);
             }
