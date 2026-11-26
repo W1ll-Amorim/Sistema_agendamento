@@ -44,3 +44,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+// 👁️ Função para mostrar/esconder a senha
+function toggleSenha() {
+    const inputSenha = document.getElementById("senha");
+    const olhoAberto = document.getElementById("icone-olho-aberto");
+    const olhoFechado = document.getElementById("icone-olho-fechado");
+
+    if (inputSenha.type === "password") {
+        inputSenha.type = "text";
+        olhoAberto.style.display = "block";
+        olhoFechado.style.display = "none";
+    } else {
+        inputSenha.type = "password";
+        olhoAberto.style.display = "none";
+        olhoFechado.style.display = "block";
+    }
+}

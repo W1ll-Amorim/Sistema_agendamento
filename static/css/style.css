@@ -184,11 +184,21 @@ input {
 
 .toggle-senha {
     position: absolute;
-    right: 15px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ba1b0;
+    transition: color 0.2s ease;
+    z-index: 10;
+    user-select: none;
+}
+
+.toggle-senha:hover {
+    color: #00E5FF;
 }
 
 button, 

@@ -1,3 +1,4 @@
+
 FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -17,10 +18,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=appuser:appuser . .
 
+# Copia o entrypoint e garante permissao de execucao
 COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 USER appuser
 
 EXPOSE 8000
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "/usr/local/bin/entrypoint.sh"]
