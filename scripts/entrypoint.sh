@@ -1,4 +1,3 @@
-
 #!/bin/sh
 set -eu
 
@@ -24,7 +23,7 @@ for tentativa in range(1, 31):
         with psycopg2.connect(**config):
             pass
 
-        print("==> PostgreSQL disponível!", flush=True)
+        print("==> PostgreSQL disponível!")
         break
 
     except psycopg2.OperationalError as erro:
@@ -34,10 +33,7 @@ for tentativa in range(1, 31):
         )
 
         if tentativa == 30:
-            print(
-                f"ERRO: não foi possível conectar ao PostgreSQL: {erro}",
-                flush=True,
-            )
+            print(f"ERRO: não foi possível conectar ao PostgreSQL: {erro}")
             sys.exit(1)
 
         time.sleep(2)
