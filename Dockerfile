@@ -1,3 +1,4 @@
+
 FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -32,4 +33,4 @@ USER appuser
 
 EXPOSE 8000
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "/usr/local/bin/entrypoint.sh"]

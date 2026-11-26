@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
-    <style>
+   
+   <style>
         /* ========================================================= */
         /* TOKENS CERULEAN 3D - 3 TEMAS: DARK, MÉDIO E CLARO         */
         /* ========================================================= */
@@ -293,7 +294,7 @@
             margin-bottom: 16px;
         }
 
-       .hero-title .highlight {
+        .hero-title .highlight {
             background: var(--grad-primary);
             -webkit-background-clip: text;
             background-clip: text;
@@ -563,9 +564,8 @@
         }
 
         .popover-item.selected {
-            background-color: rgba(0, 123, 167, 0.22);
+            background-color: rgba(0, 229, 255, 0.2);
             color: var(--text-main);
-            font-weight: 700;
         }
 
         .item-check {
@@ -1367,49 +1367,37 @@
 
             <div class="filter-panel">
                 <div class="filter-group">
-                    <label class="filter-label">Setor</label>
-                    <div class="custom-select-trigger" onclick="togglePopover('popover-setor', this, event)">
-                        <span id="selected-setor-text">Todos os setores</span>
-                        <span class="select-chevron">▼</span>
-                    </div>
-                    <div class="dark-popover-menu" id="popover-setor">
-                        <div class="popover-item selected" data-value="all" onclick="selectFilter('setor', 'all', 'Todos os setores', event)"><span class="item-check">✓</span> Todos os setores</div>
-                        <div class="popover-item" data-value="Produção" onclick="selectFilter('setor', 'Produção', 'Produção', event)"><span class="item-check"></span> Produção</div>
-                        <div class="popover-item" data-value="Logística" onclick="selectFilter('setor', 'Logística', 'Logística', event)"><span class="item-check"></span> Logística</div>
-                        <div class="popover-item" data-value="Comercial" onclick="selectFilter('setor', 'Comercial', 'Comercial', event)"><span class="item-check"></span> Comercial</div>
-                        <div class="popover-item" data-value="Manutenção" onclick="selectFilter('setor', 'Manutenção', 'Manutenção', event)"><span class="item-check"></span> Manutenção</div>
-                        <div class="popover-item" data-value="Financeiro" onclick="selectFilter('setor', 'Financeiro', 'Financeiro', event)"><span class="item-check"></span> Financeiro</div>
-                        <div class="popover-item" data-value="Qualidade" onclick="selectFilter('setor', 'Qualidade', 'Qualidade', event)"><span class="item-check"></span> Qualidade</div>
-                    </div>
+                    <label class="filter-label" for="filtro-setor">Setor</label>
+                    <select id="filtro-setor" class="form-select" onchange="aplicarFiltroSelect('setor', this.value)">
+                        <option value="all">Todos os setores</option>
+                        <option value="Produção">Produção</option>
+                        <option value="Logística">Logística</option>
+                        <option value="Comercial">Comercial</option>
+                        <option value="Manutenção">Manutenção</option>
+                        <option value="Financeiro">Financeiro</option>
+                        <option value="Qualidade">Qualidade</option>
+                    </select>
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label">Status</label>
-                    <div class="custom-select-trigger" onclick="togglePopover('popover-status', this, event)">
-                        <span id="selected-status-text">Todos</span>
-                        <span class="select-chevron">▼</span>
-                    </div>
-                    <div class="dark-popover-menu" id="popover-status">
-                        <div class="popover-item selected" data-value="all" onclick="selectFilter('status', 'all', 'Todos', event)"><span class="item-check">✓</span> Todos</div>
-                        <div class="popover-item" data-value="Pendente" onclick="selectFilter('status', 'Pendente', 'Pendente', event)"><span class="item-check"></span> Pendente</div>
-                        <div class="popover-item" data-value="Em Progresso" onclick="selectFilter('status', 'Em Progresso', 'Em Progresso', event)"><span class="item-check"></span> Em Progresso</div>
-                        <div class="popover-item" data-value="Concluído" onclick="selectFilter('status', 'Concluído', 'Concluído', event)"><span class="item-check"></span> Concluído</div>
-                    </div>
+                    <label class="filter-label" for="filtro-status">Status</label>
+                    <select id="filtro-status" class="form-select" onchange="aplicarFiltroSelect('status', this.value)">
+                        <option value="all">Todos</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Progresso">Em Progresso</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
                 </div>
 
                 <div class="filter-group">
-                    <label class="filter-label">Prioridade</label>
-                    <div class="custom-select-trigger" onclick="togglePopover('popover-prioridade', this, event)">
-                        <span id="selected-prioridade-text">Todas</span>
-                        <span class="select-chevron">▼</span>
-                    </div>
-                    <div class="dark-popover-menu" id="popover-prioridade">
-                        <div class="popover-item selected" data-value="all" onclick="selectFilter('prioridade', 'all', 'Todas', event)"><span class="item-check">✓</span> Todas</div>
-                        <div class="popover-item" data-value="Crítica" onclick="selectFilter('prioridade', 'Crítica', 'Crítica', event)"><span class="item-check"></span> Crítica</div>
-                        <div class="popover-item" data-value="Alta" onclick="selectFilter('prioridade', 'Alta', 'Alta', event)"><span class="item-check"></span> Alta</div>
-                        <div class="popover-item" data-value="Média" onclick="selectFilter('prioridade', 'Média', 'Média', event)"><span class="item-check"></span> Média</div>
-                        <div class="popover-item" data-value="Baixa" onclick="selectFilter('prioridade', 'Baixa', 'Baixa', event)"><span class="item-check"></span> Baixa</div>
-                    </div>
+                    <label class="filter-label" for="filtro-prioridade">Prioridade</label>
+                    <select id="filtro-prioridade" class="form-select" onchange="aplicarFiltroSelect('prioridade', this.value)">
+                        <option value="all">Todas</option>
+                        <option value="Crítica">Crítica</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Média">Média</option>
+                        <option value="Baixa">Baixa</option>
+                    </select>
                 </div>
             </div>
 
@@ -1430,10 +1418,9 @@
 
             <div class="folders-grid" id="folders-container"></div>
         </main>
+
         <!-- VISÃO DE GERENCIAMENTO DE USUÁRIOS -->
-
         <main id="view-usuarios" class="view-section">
-
             <div class="module-header">
                 <div>
                     <div class="module-meta">Administração</div>
@@ -1443,7 +1430,6 @@
 
             <div class="table-card">
                 <table class="products-table">
-
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -1452,13 +1438,11 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-
                     <tbody id="usuarios-tbody"></tbody>
-
                 </table>
             </div>
-
         </main>
+
         <!-- VISÃO DETALHE DA PASTA -->
         <main id="view-pasta-detalhe" class="view-section">
             <button class="back-nav-btn" onclick="switchView('pedidos')">
@@ -1666,10 +1650,11 @@
         <span id="toast-message">Operação realizada com sucesso!</span>
     </div>
 
-        <!-- ========================================== -->
+    <!-- ========================================== -->
     <!-- SCRIPTS DE INTEGRAÇÃO COM ROTAS DE BACKEND -->
     <!-- ========================================== -->
     <script>
+        let TODAS_TAREFAS_BACKEND = [];
         let TAREFAS_BACKEND = [];
         let PASTAS_MOCK = [
             {
@@ -1712,14 +1697,14 @@
         }
 
         function normalizarPrioridade(p) {
-            const s = String(p || 'Alta').trim();
+            const s = String(p || 'Alta').trim().toLowerCase();
             const map = {
-                'critica': 'Crítica', 'crítico': 'Crítico', 'crítica': 'critico',
-                'alto': 'Alto', 'alta': 'Alta',
-                'media': 'Média', 'média': 'Media', 'medio': 'Médio', 'médio': 'Medio',
-                'baixa': 'Baixa', 'baixo': 'Baixo'
+                'critica': 'Crítica', 'crítico': 'Crítica', 'crítica': 'Crítica', 'critico': 'Crítica',
+                'alto': 'Alta', 'alta': 'Alta',
+                'media': 'Média', 'média': 'Média', 'medio': 'Média', 'médio': 'Média',
+                'baixa': 'Baixa', 'baixo': 'Baixa'
             };
-            return map[s.toLowerCase()] || s;
+            return map[s] || 'Alta';
         }
 
         async function carregarUsuario() {
@@ -1898,7 +1883,7 @@
         }
 
         function aplicarListaAgendamentos(agendamentos, verTodas) {
-            TAREFAS_BACKEND = agendamentos.map(ag => {
+            let lista = agendamentos.map(ag => {
                 const dataIso = ag.data_agendamento || '';
                 let dataDisplay = 'Data Indefinida';
                 let hora = '09:00';
@@ -1920,55 +1905,34 @@
                     nomeAtivo: ag.nome_ativo || 'Geral',
                     prioridade: normalizarPrioridade(ag.criticidade || ag.prioridade || 'Alta'),
                     urgencia: 'Ainda hoje',
-                    setor: ag.descricao_servico || ag.nome_servico || 'Logística',
+                    setor: (ag.descricao_servico || ag.nome_servico || 'Logística').trim(),
                     profissional: ag.profissional || 'Responsável',
                     status: normalizarStatus(ag.status || 'Pendente'),
                     id_usuario: ag.id_usuario != null ? String(ag.id_usuario) : null
                 };
             });
+
             if (!verTodas && ID_USUARIO_LOGADO) {
-                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(
+                lista = lista.filter(
                     t => !t.id_usuario || String(t.id_usuario) === String(ID_USUARIO_LOGADO)
                 );
             }
+
+            TODAS_TAREFAS_BACKEND = lista;
+            TAREFAS_BACKEND = lista;
             renderTimeline();
             atualizarContadores();
         }
 
-       async function carregarAgendamentos() {
+        async function carregarAgendamentos() {
             const token = localStorage.getItem('token');
-
             if (!token) {
                 window.location.href = '/';
                 return;
             }
 
             try {
-                // 1. URL da rota registrada no main.py
-                const url = new URL('/agendamentos/', window.location.origin);
-
-                // 2. Organiza os filtros recebidos da interface
-                const filtros = {
-                    setor: activeFilters.setor,
-                    status: activeFilters.status,
-                    prioridade: activeFilters.prioridade
-                };
-
-                // 3. Adiciona somente filtros selecionados
-                Object.entries(filtros).forEach(([chave, valor]) => {
-
-                    if (
-                        valor &&
-                        valor.trim() !== '' &&
-                        valor.toLowerCase() !== 'all'
-                    ) {
-                        url.searchParams.set(chave, valor.trim());
-                    }
-
-                });
-
-                // 4. Requisição autenticada ao FastAPI
-                const response = await fetch(url.toString(), {
+                const response = await fetch('/agendamentos/', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -1976,36 +1940,18 @@
                     }
                 });
 
-                // 5. Tratamento de erros da API
-                if (!response.ok) {
-                    let detalhe = `HTTP ${response.status}`;
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-                    try {
-                        const erro = await response.json();
-                        detalhe = erro.detail || detalhe;
-                    } catch (_) {}
-
-                    throw new Error(detalhe);
-                }
-
-                // 6. Recebe os agendamentos filtrados pelo backend
                 const result = await response.json();
+                const agendamentos = Array.isArray(result) ? result : (result.agendamentos || []);
 
-                const agendamentos = Array.isArray(result)
-                    ? result
-                    : (result.agendamentos || []);
-
-                // 7. Atualiza a interface com os resultados
-                aplicarListaAgendamentos(agendamentos, true);
-
+                aplicarListaAgendamentos(agendamentos, podeVerTodasTarefas());
             } catch (error) {
                 console.error('Erro ao carregar agendamentos:', error);
-
+                TODAS_TAREFAS_BACKEND = [];
                 TAREFAS_BACKEND = [];
-
                 renderTimeline();
                 atualizarContadores();
-
                 showToast('Não foi possível carregar as tarefas.');
             }
         }
@@ -2031,12 +1977,14 @@
             if (!token) {
                 const dataObj = new Date(data + 'T12:00:00');
                 let dataFormatada = dataObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
-                TAREFAS_BACKEND.unshift({
+                const novaTarefa = {
                     id: Date.now(), idOrdemServico: null,
                     dataDisplay: dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1),
                     hora, titulo, descricao: titulo, nomeAtivo, prioridade, urgencia, setor, profissional, status,
                     id_usuario: idUsuario
-                });
+                };
+                TODAS_TAREFAS_BACKEND.unshift(novaTarefa);
+                TAREFAS_BACKEND = TODAS_TAREFAS_BACKEND;
                 closeModal('modal-tarefa');
                 event.target.reset();
                 showToast('Tarefa simulada localmente!');
@@ -2065,6 +2013,11 @@
                     event.target.reset();
                     showToast('Nova tarefa salva no servidor!');
                     await carregarAgendamentos();
+                } else if (response.status === 401) {
+                    alert('Sua sessão expirou. Faça login novamente.');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('id_usuario');
+                    window.location.href = '/index';
                 } else {
                     let detalhe = 'Erro ao salvar tarefa no servidor.';
                     try { const err = await response.json(); detalhe = err.detail || detalhe; } catch (_) {}
@@ -2083,7 +2036,7 @@
             }
             const id = String(idAgendamento);
             const token = localStorage.getItem('token');
-            const t = TAREFAS_BACKEND.find(x => String(x.id) === id);
+            const t = TODAS_TAREFAS_BACKEND.find(x => String(x.id) === id);
             const statusAnterior = t ? t.status : null;
             if (t) {
                 t.status = normalizarStatus(novoStatus);
@@ -2116,7 +2069,7 @@
         }
 
         async function deletarTarefa(idAgendamento) {
-            const task = TAREFAS_BACKEND.find(t => String(t.id) === String(idAgendamento));
+            const task = TODAS_TAREFAS_BACKEND.find(t => String(t.id) === String(idAgendamento));
             if (!podeExcluirTarefa(task)) {
                 alert('Você só pode excluir os próprios registros.');
                 return;
@@ -2124,7 +2077,8 @@
             if (!confirm('Deseja remover esta tarefa do sistema?')) return;
             const token = localStorage.getItem('token');
             if (!token) {
-                TAREFAS_BACKEND = TAREFAS_BACKEND.filter(t => String(t.id) !== String(idAgendamento));
+                TODAS_TAREFAS_BACKEND = TODAS_TAREFAS_BACKEND.filter(t => String(t.id) !== String(idAgendamento));
+                TAREFAS_BACKEND = TODAS_TAREFAS_BACKEND;
                 renderTimeline(); atualizarContadores(); showToast('Removido localmente!');
                 return;
             }
@@ -2201,8 +2155,6 @@
             drawer.style.display = (drawer.style.display === 'none' || drawer.style.display === '') ? 'block' : 'none';
         }
 
-        
-        // Controle dinâmico dos 3 temas Cerulean 3D
         function setTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem('app_theme', themeName);
@@ -2241,8 +2193,8 @@
         }
 
         function atualizarContadores() {
-            const abertas = TAREFAS_BACKEND.filter(t => normalizarStatus(t.status) !== 'Concluído').length;
-            const criticas = TAREFAS_BACKEND.filter(t => normalizarPrioridade(t.prioridade) === 'Crítica' && normalizarStatus(t.status) !== 'Concluído').length;
+            const abertas = TODAS_TAREFAS_BACKEND.filter(t => normalizarStatus(t.status) !== 'Concluído').length;
+            const criticas = TODAS_TAREFAS_BACKEND.filter(t => normalizarPrioridade(t.prioridade) === 'Crítica' && normalizarStatus(t.status) !== 'Concluído').length;
             let totalItens = 0;
             PASTAS_MOCK.forEach(p => { totalItens += p.produtos.length; });
             document.getElementById('count-tarefas').textContent = abertas.toString().padStart(2, '0');
@@ -2271,13 +2223,11 @@
             if (!e.target.closest('.filter-group')) closeAllPopovers();
         });
 
-       function selectFilter(filterType, val, displayText, event) {
+        function selectFilter(filterType, val, displayText, event) {
             if (event) { event.preventDefault(); event.stopPropagation(); }
             
-            // 1. Atualiza o estado global dos filtros
             activeFilters[filterType] = val;
             
-            // 2. Atualiza os textos dos botões na tela
             if (filterType === 'setor') {
                 const el = document.getElementById('selected-setor-text');
                 if (el) el.textContent = displayText;
@@ -2291,7 +2241,6 @@
                 if (el) el.textContent = displayText;
             }
             
-            // 3. Marca o item com o "✓" no popover
             const popover = document.getElementById(`popover-${filterType}`);
             if (popover) {
                 popover.querySelectorAll('.popover-item').forEach(item => {
@@ -2303,10 +2252,12 @@
                 });
             }
             closeAllPopovers();
-            
-            // 🚀 MUDANÇA ARQUITETURAL AQUI:
-            // Dispara a requisição para o backend aplicando os novos filtros no banco
-            carregarAgendamentos(); 
+            renderTimeline(); 
+        }
+
+        function aplicarFiltroSelect(tipo, valor) {
+            activeFilters[tipo] = valor;
+            renderTimeline();
         }
 
         function renderTimeline() {
@@ -2314,8 +2265,18 @@
             if (!container) return;
             container.innerHTML = '';
 
-            // NOVA LÓGICA: O backend já filtrou, então usamos todas as tarefas recebidas
-            const filteredTasks = TAREFAS_BACKEND;
+            const filteredTasks = TODAS_TAREFAS_BACKEND.filter(task => {
+                const matchSetor = activeFilters.setor === 'all' || 
+                                   task.setor.toLowerCase() === activeFilters.setor.toLowerCase();
+                
+                const matchStatus = activeFilters.status === 'all' || 
+                                    normalizarStatus(task.status).toLowerCase() === activeFilters.status.toLowerCase();
+                
+                const matchPrioridade = activeFilters.prioridade === 'all' || 
+                                        normalizarPrioridade(task.prioridade).toLowerCase() === activeFilters.prioridade.toLowerCase();
+
+                return matchSetor && matchStatus && matchPrioridade;
+            });
 
             if (filteredTasks.length === 0) {
                 container.innerHTML = `
@@ -2324,8 +2285,6 @@
                     </div>`;
                 return;
             }
-            
-            // ... restante do código do groupsByDate continua igual ...
 
             const groupsByDate = {};
             filteredTasks.forEach(task => {
