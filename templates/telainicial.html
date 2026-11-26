@@ -13,6 +13,7 @@
         /* TOKENS CERULEAN 3D - 3 TEMAS: DARK, MÉDIO E CLARO         */
         /* ========================================================= */
         :root, [data-theme="dark"] {
+            color-scheme: dark;
             --bg-main: #07121e;
             --bg-card: #0d2135;
             --bg-card-hover: #122c46;
@@ -58,44 +59,46 @@
         }
 
         [data-theme="medium"] {
-            --bg-main: #A9BED2;
-            --bg-card: #EDF4FA;
-            --bg-card-hover: #F7FAFD;
-            --bg-surface: #BFD0E0;
-            --bg-input: #D9E5F0;
-            --bg-dark-popover: #F7FAFD;
-            --text-main: #193B5A;
-            --text-muted: #5D7690;
-            --text-light: #7A91A7;
-            --border-color: rgba(25, 59, 90, 0.15);
-            --border-hover: #079FC9;
-            --border-dark: #087FA8;
-            --color-primary: #087FA8;
-            --color-cerulean: #007BA7;
-            --color-secondary: #007BA7;
-            --grad-primary: linear-gradient(135deg, #087FA8 0%, #007BA7 100%);
-            --grad-card: linear-gradient(180deg, #F7FAFD 0%, #EDF4FA 100%);
-            --grad-glow: 0px 4px 14px rgba(8, 127, 168, 0.25);
-            --shadow-3d: 0 8px 20px -3px rgba(25, 59, 90, 0.16), inset 0 1px 1px #ffffff;
-            --btn-primary-bg: #087FA8;
-            --btn-primary-hover: #066C91;
+            color-scheme: dark;
+            --bg-main: #1a2332;
+            --bg-card: #243044;
+            --bg-card-hover: #2b3952;
+            --bg-surface: #1e293b;
+            --bg-input: #192230;
+            --bg-dark-popover: #243044;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-light: #64748b;
+            --border-color: rgba(0, 144, 197, 0.28);
+            --border-hover: #00a4e4;
+            --border-dark: #007ba7;
+            --color-primary: #0284c7;
+            --color-cerulean: #007ba7;
+            --color-secondary: #007ba7;
+            --grad-primary: linear-gradient(135deg, #0284c7 0%, #007ba7 100%);
+            --grad-card: linear-gradient(180deg, #243044 0%, #1e293b 100%);
+            --grad-glow: 0px 4px 14px rgba(2, 132, 199, 0.25);
+            --shadow-3d: 0 10px 24px -4px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            --btn-primary-bg: #0284c7;
+            --btn-primary-hover: #0369a1;
             --btn-primary-text: #FFFFFF;
-            --btn-sec-bg: #E5EEF6;
-            --btn-sec-border: #B9CDDF;
-            --btn-sec-text: #244662;
-            --btn-danger-bg: #FBECEF;
-            --btn-danger-text: #AD354D;
-            --btn-danger-border: #E8BAC4;
-            --btn-danger-hover: #F6DDE3;
-            --color-critical: #AD354D;
-            --color-critical-bg: #FBECEF;
-            --color-high: #d97706;
-            --color-medium: #079FC9;
-            --color-low: #5D7690;
-            --color-success: #28BFA8;
+            --btn-sec-bg: #1e293b;
+            --btn-sec-border: #334155;
+            --btn-sec-text: #f8fafc;
+            --btn-danger-bg: rgba(225, 29, 72, 0.15);
+            --btn-danger-text: #fb7185;
+            --btn-danger-border: rgba(225, 29, 72, 0.35);
+            --btn-danger-hover: rgba(225, 29, 72, 0.25);
+            --color-critical: #fb7185;
+            --color-critical-bg: rgba(225, 29, 72, 0.15);
+            --color-high: #f59e0b;
+            --color-medium: #0284c7;
+            --color-low: #64748b;
+            --color-success: #10b981;
         }
 
         [data-theme="light"] {
+            color-scheme: light;
             --bg-main: #eef2f6;
             --bg-card: #ffffff;
             --bg-card-hover: #f8fafc;
@@ -788,7 +791,7 @@
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             padding: 6px 10px;
-            color: #fff;
+            color: var(--text-main);
             border-radius: 4px;
             font-size: 12px;
             outline: none;
@@ -875,7 +878,7 @@
             font-family: var(--font-mono);
             font-size: 15px;
             font-weight: 700;
-            color: #FFFFFF;
+            color: var(--text-main);
         }
 
         .back-nav-btn {
@@ -984,7 +987,7 @@
             font-weight: 700;
             background-color: var(--bg-surface);
             border-bottom: none;
-            color: #FFFFFF;
+            color: var(--text-main);
         }
 
         .modal-overlay {
@@ -1097,6 +1100,54 @@
             box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
         }
 
+        .form-select, select {
+            color-scheme: inherit;
+        }
+
+        .form-select option, select option {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        [data-theme="light"] .form-select,
+        [data-theme="light"] select {
+            color-scheme: light !important;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .form-select option,
+        [data-theme="light"] select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        [data-theme="medium"] .form-select,
+        [data-theme="medium"] select {
+            color-scheme: dark !important;
+            background-color: #192230 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="medium"] .form-select option,
+        [data-theme="medium"] select option {
+            background-color: #243044 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .form-select,
+        [data-theme="dark"] select {
+            color-scheme: dark !important;
+            background-color: #060e18 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .form-select option,
+        [data-theme="dark"] select option {
+            background-color: #0d2135 !important;
+            color: #ffffff !important;
+        }
+
         .form-textarea {
             resize: vertical;
             min-height: 80px;
@@ -1204,7 +1255,7 @@
             const idUsuario = localStorage.getItem('id_usuario');
             if (!token || !idUsuario) {
                 // Descomente em produção caso tenha página de login configurada:
-                // window.location.href = '/index';
+                // const rotaLogin = window.location.pathname.includes('mockup') ? '/login-mockup' : '/'; window.location.href = rotaLogin;
             }
         })();
 

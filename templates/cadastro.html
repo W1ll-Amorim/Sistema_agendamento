@@ -1,39 +1,60 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/login_cerulean.css') }}">
     <title>Cadastro</title>
 </head>
 <body>
-
-<div class="cadastro_box">
-    <h2>Nexus</h2>
-
-    <form id="cadastroForm">
-    <h3>Cadastre-se para começar!</h3>
-
-    <input type="text" id="nome" name="nome" placeholder="Nome" required><br>
-    <input type="email" id="email" name="email" placeholder="E-mail" required><br> 
-    <input type="telefone" id="telefone" name="telefone" placeholder="Telefone" required><br> 
-    <input type="password" id="senha" name="senha" placeholder="Senha" required><br>
-    
-    <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme a Senha" required><br>
-
-    <div class="lembrar-container">
-        <input type="checkbox" id="remember">
-        <label for="remember">Lembrar senha</label>
+    <!-- SELETOR DOS 3 TEMAS: DARK, MÉDIO E CLARO -->
+    <div class="theme-switcher">
+        <button id="btn-theme-dark" class="theme-btn active" onclick="setTheme('dark')" title="Escuro - Lua Completa">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+        </button>
+        <button id="btn-theme-medium" class="theme-btn" onclick="setTheme('medium')" title="Médio - Lua com Sol">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0 0 18V3z" fill="currentColor"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button id="btn-theme-light" class="theme-btn" onclick="setTheme('light')" title="Claro - Solzinho">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
     </div>
 
-    <input type="submit" value="Cadastrar">
-</form>
+    <div class="cadastro_box">
+        <h2>Nexus</h2>
 
-<!-- JS separado -->
-<script src="/static/js/cadastro.js"></script>
+        <form id="cadastroForm">
+            <h3>Cadastre-se para começar!</h3>
 
-    <a href="/">Já tem uma conta? Faça login</a>
-</div>
+            <input type="text" id="nome" name="nome" placeholder="Nome" required>
+            <input type="email" id="email" name="email" placeholder="E-mail" required>
+            <input type="tel" id="telefone" name="telefone" placeholder="Telefone" required>
+            <input type="password" id="senha" name="senha" placeholder="Senha" required>
+            <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme a Senha" required>
 
+            <div class="lembrar-container">
+                <input type="checkbox" id="remember">
+                <label for="remember">Lembrar senha</label>
+            </div>
+
+            <input type="submit" value="Cadastrar">
+        </form>
+
+        <a href="/">Já tem uma conta? Faça login</a>
+    </div>
+
+    <script src="/static/js/cadastro.js"></script>
+    <script>
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`btn-theme-${theme}`);
+            if (activeBtn) activeBtn.classList.add('active');
+            localStorage.setItem('cerulean_theme', theme);
+        }
+
+        const savedTheme = localStorage.getItem('cerulean_theme') || 'dark';
+        setTheme(savedTheme);
+    </script>
 </body>
 </html>

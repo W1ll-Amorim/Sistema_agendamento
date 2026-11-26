@@ -48,46 +48,46 @@
 
 /* --- 2. TEMA MÉDIO - Fundo azul névoa com cards 3D azul-gelo --- */
 [data-theme="medium"] {
-    /* Cores das superfícies e fundos */
-    --kb-bg-main: #A9BED2;
-    --kb-bg-column: #BFD0E0;
-    --kb-bg-card: #EDF4FA;
-    --kb-bg-card-hover: #F7FAFD;
-    --kb-bg-input: #D9E5F0;
+    /* Cores das superfícies e fundos - Steel Navy */
+    --kb-bg-main: #1a2332;
+    --kb-bg-column: #1e293b;
+    --kb-bg-card: #243044;
+    --kb-bg-card-hover: #2b3952;
+    --kb-bg-input: #192230;
     
     /* Cores de tipografia corporativa */
-    --kb-text-main: #193B5A;
-    --kb-text-muted: #5D7690;
-    --kb-text-light: #7A91A7;
+    --kb-text-main: #f8fafc;
+    --kb-text-muted: #94a3b8;
+    --kb-text-light: #64748b;
     
-    /* Bordas suaves */
-    --kb-border-subtle: rgba(25, 59, 90, 0.12);
-    --kb-border-card: rgba(25, 59, 90, 0.15);
-    --kb-border-hover: #079FC9;
-    --kb-color-primary: #087FA8;
-    --kb-color-accent: #079FC9;
-    --kb-color-turquoise: #28BFA8;
+    /* Bordas e acentos */
+    --kb-border-subtle: rgba(0, 144, 197, 0.2);
+    --kb-border-card: rgba(0, 144, 197, 0.28);
+    --kb-border-hover: #00a4e4;
+    --kb-color-primary: #0284c7;
+    --kb-color-accent: #00a4e4;
+    --kb-color-turquoise: #10b981;
     
     /* Efeitos de relevo suave */
-    --kb-grad-card: linear-gradient(180deg, #F7FAFD 0%, #EDF4FA 100%);
-    --kb-shadow-3d: 0 8px 20px -3px rgba(25, 59, 90, 0.16), 0 2px 5px -1px rgba(25, 59, 90, 0.08), inset 0 1px 1px #ffffff, inset 0 -2px 3px rgba(25, 59, 90, 0.04);
-    --kb-shadow-drag: 0 16px 32px -4px rgba(25, 59, 90, 0.25), inset 0 1px 1px #ffffff;
+    --kb-grad-card: linear-gradient(180deg, #243044 0%, #1e293b 100%);
+    --kb-shadow-3d: 0 10px 24px -4px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    --kb-shadow-drag: 0 16px 32px -4px rgba(0, 0, 0, 0.45);
     
     /* Botões semânticos */
-    --kb-btn-primary-bg: #087FA8;
-    --kb-btn-primary-hover: #066C91;
-    --kb-btn-primary-active: #075A79;
+    --kb-btn-primary-bg: #0284c7;
+    --kb-btn-primary-hover: #0369a1;
+    --kb-btn-primary-active: #0284c7;
     --kb-btn-primary-text: #FFFFFF;
-    --kb-btn-danger-bg: #FBECEF;
-    --kb-btn-danger-text: #AD354D;
-    --kb-btn-danger-border: #E8BAC4;
-    --kb-btn-danger-hover: #F6DDE3;
+    --kb-btn-danger-bg: rgba(225, 29, 72, 0.15);
+    --kb-btn-danger-text: #fb7185;
+    --kb-btn-danger-border: rgba(225, 29, 72, 0.35);
+    --kb-btn-danger-hover: rgba(225, 29, 72, 0.25);
     
     /* Etiquetas de prioridade */
-    --kb-status-urgent: #AD354D;
-    --kb-status-schedule: #079FC9;
-    --kb-status-delegate: #d97706;
-    --kb-status-delete: #5D7690;
+    --kb-status-urgent: #fb7185;
+    --kb-status-schedule: #0284c7;
+    --kb-status-delegate: #f59e0b;
+    --kb-status-delete: #64748b;
 }
 
 /* --- 3. TEMA CLARO - Superfície limpa com contraste corporativo --- */
@@ -97,7 +97,7 @@
     --kb-bg-column: #e2e8f0;
     --kb-bg-card: #ffffff;
     --kb-bg-card-hover: #f8fafc;
-    --kb-bg-input: #0080ff;
+    --kb-bg-input: #f8fafc;
     
     /* Cores de tipografia */
     --kb-text-main: #0f172a;
@@ -133,3 +133,4 @@
     --kb-status-delegate: #d97706;
     --kb-status-delete: #64748b;
 }
+

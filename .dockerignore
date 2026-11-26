@@ -1,44 +1,108 @@
-### Python ###
-# Ambientes virtuais (o principal que você pediu)
+# ======================
+# Ambientes virtuais
+# ======================
 venv/
 .venv/
 env/
-*.env
-venv.bak/
 ENV/
+venv.bak/
+.python-version
 
-# Arquivos compilados e cache
+# ======================
+# Cache e arquivos compilados Python
+# ======================
 __pycache__/
 *.py[cod]
-*.pyc
 *$py.class
+*.so
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-
-# Distribuição / Pacotes
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+*.egg-info/
+.eggs/
 dist/
 build/
-*.egg-info/
-nosetests.xml
-coverage.xml
-htmlcov/
-.tower/
+*.egg
 
-### Variáveis de Ambiente (Segurança!) ###
-# Nunca suba senhas ou chaves de API
+# ======================
+# Variáveis de ambiente e secrets (SEGURANÇA)
+# ======================
 .env
+.env.*
+!.env.example
+!.env.sample
 .flaskenv
+*.pem
+*.key
+id_rsa*
+secrets.*
+credentials.*
+*.secret
 
-### Editores de Código ###
-.vscode/
-.idea/
+# ======================
+# Logs e arquivos temporários
+# ======================
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
 *.swp
 *.swo
+*~
+
+# ======================
+# IDEs e sistema operacional
+# ======================
+.vscode/
+.idea/
+*.sublime-*
 .DS_Store
-### Banco_dados ###
+Thumbs.db
+.directory
+
+# ======================
+# Banco de dados local
+# ======================
 *.db
 *.sqlite
 *.sqlite3
-database/database.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ======================
+# Ferramentas de desenvolvimento / testes
+# ======================
+.coverage
+coverage.xml
+nosetests.xml
+.hypothesis/
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ======================
+# Específicos do seu projeto
+# ======================
 preview_lab/
+dev_server.py
+.tower/
+
+# ======================
+# Docker e Git (geralmente não devem ir para a imagem)
+# ======================
+.git/
+.gitignore
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+*.md
+!README.md
